@@ -11,3 +11,8 @@ enum DocumentCategory {
   final IconData icon;
   const DocumentCategory(this.label, this.icon);
 }
+
+final List<DocumentCategory> documentCategories = [
+  for (final category in DocumentCategory.values)
+    if (category != DocumentCategory.all) category,
+];

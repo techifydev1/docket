@@ -1,10 +1,10 @@
 import 'package:docket/features/documents/widgets/attach_file_tile.dart';
-import 'package:docket/features/documents/widgets/category_selector.dart';
 import 'package:docket/features/documents/document_category.dart';
 import 'package:docket/features/documents/document_item.dart';
 import 'package:docket/features/documents/widgets/owner_selector.dart';
 import 'package:docket/features/documents/widgets/tags_field.dart';
 import 'package:docket/shared/cta_section.dart';
+import 'package:docket/shared/chip_selector.dart';
 import 'package:docket/shared/form_card.dart';
 import 'package:docket/shared/header.dart';
 import 'package:docket/shared/pill_chip.dart';
@@ -111,8 +111,10 @@ class _AddFileScreenState extends State<AddFileScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    CategorySelector(
+                    ChipSelector<DocumentCategory>(
+                      values: documentCategories,
                       selected: _category,
+                      labelOf: (category) => category.label,
                       onChanged: (value) => setState(() => _category = value),
                     ),
                   ],

@@ -1,4 +1,5 @@
 import 'package:docket/features/documents/screens/add_file_screen.dart';
+import 'package:docket/features/home/screens/invite_member_screen.dart';
 import 'package:docket/features/home/widgets/family_members.dart';
 import 'package:docket/features/home/widgets/home_header.dart';
 import 'package:docket/features/home/widgets/quick_actions.dart';
@@ -7,6 +8,7 @@ import 'package:docket/shared/bottom_nav.dart';
 import 'package:docket/shared/document_card.dart';
 import 'package:docket/shared/section_header.dart';
 import 'package:docket/shared/trust_card.dart';
+import 'package:docket/shared/vault_member.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -16,6 +18,14 @@ class HomeScreen extends StatelessWidget {
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => const AddFileScreen()));
+  }
+
+  Future<void> _invite(BuildContext context) async {
+    final member = await Navigator.of(context).push<VaultMember>(
+      MaterialPageRoute(builder: (_) => const InviteMemberScreen()),
+    );
+    if (member == null) return;
+    vaultMembers.add(member);
   }
 
   @override
@@ -37,7 +47,10 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     const VaultCard(),
                     const SizedBox(height: 16),
-                    QuickActions(onUpload: () => _upload(context)),
+                    QuickActions(
+                      onUpload: () => _upload(context),
+                      onInvite: () => _invite(context),
+                    ),
                     const SizedBox(height: 24),
                     const SectionHeader(
                       title: "Recent Documents",
@@ -64,7 +77,7 @@ class HomeScreen extends StatelessWidget {
                     const SizedBox(height: 24),
                     const SectionHeader(title: "Family Members"),
                     const SizedBox(height: 12),
-                    const FamilyMembers(),
+                    FamilyMembers(onInvite: () => _invite(context)),
                     const SizedBox(height: 24),
                     const TrustCard(
                       icon: Icons.verified_user,

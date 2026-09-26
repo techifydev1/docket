@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 
 class QuickActions extends StatelessWidget {
   final VoidCallback onUpload;
-  const QuickActions({super.key, required this.onUpload});
+  final VoidCallback onInvite;
+  const QuickActions({
+    super.key,
+    required this.onUpload,
+    required this.onInvite,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +47,7 @@ class QuickActions extends StatelessWidget {
           child: SizedBox(
             height: 48,
             child: OutlinedButton(
-              onPressed: () {},
+              onPressed: onInvite,
               style: OutlinedButton.styleFrom(
                 foregroundColor: colors.onSurface,
                 backgroundColor: colors.surfaceContainerLowest,
