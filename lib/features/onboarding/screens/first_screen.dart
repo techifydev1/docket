@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'continue_section.dart';
-import 'family_name_input.dart';
-import 'headline_and_value_prop.dart';
-import 'privacy_card.dart';
-import 'trust_section.dart';
+import 'package:docket/features/onboarding/widgets/continue_section.dart';
+import 'package:docket/features/onboarding/widgets/family_name_input.dart';
+import 'package:docket/features/onboarding/widgets/headline_and_value_prop.dart';
+import 'package:docket/features/onboarding/widgets/privacy_card.dart';
+import 'package:docket/features/onboarding/widgets/trust_section.dart';
 
 class FirstScreen extends StatefulWidget {
   final PageController pageController;

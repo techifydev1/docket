@@ -7,13 +7,18 @@ class DocketTextField extends StatefulWidget {
   final bool isPassword;
   final TextEditingController? controller;
   final VoidCallback? onChanged;
+  final VoidCallback? onSubmitted;
+  final Widget? suffixIcon;
   const DocketTextField({
+    super.key,
     this.label = "Full Legal Name",
     this.placeholder = "Your full legal name",
     this.keyboardType,
     this.isPassword = false,
     this.controller,
     this.onChanged,
+    this.onSubmitted,
+    this.suffixIcon,
   });
 
   @override
@@ -31,7 +36,7 @@ class _DocketTextFieldState extends State<DocketTextField> {
         widget.keyboardType ??
         (widget.isPassword ? TextInputType.visiblePassword : null);
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: .start,
       children: [
         Text(
           widget.label,
@@ -43,28 +48,29 @@ class _DocketTextFieldState extends State<DocketTextField> {
           keyboardType: keyboardType,
           obscureText: _obscured,
           textCapitalization: widget.isPassword
-              ? TextCapitalization.none
-              : (keyboardType == null
-                    ? TextCapitalization.sentences
-                    : TextCapitalization.none),
+              ? .none
+              : (keyboardType == null ? .sentences : .none),
           autocorrect: !widget.isPassword && keyboardType == null,
           onChanged: (_) => widget.onChanged?.call(),
+          onSubmitted: widget.onSubmitted == null
+              ? null
+              : (_) => widget.onSubmitted!(),
+          textInputAction: widget.onSubmitted == null
+              ? null
+              : TextInputAction.done,
           style: textTheme.bodyMedium?.copyWith(color: colors.onSurface),
           decoration: InputDecoration(
             filled: true,
             fillColor: colors.surfaceContainerLow,
             border: OutlineInputBorder(
               borderSide: BorderSide.none,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: .circular(8),
             ),
             hintText: widget.placeholder,
             hintStyle: textTheme.bodyMedium?.copyWith(
               color: colors.onSurfaceVariant.withValues(alpha: 0.6),
             ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: 14,
-            ),
+            contentPadding: const .symmetric(horizontal: 14, vertical: 14),
             suffixIcon: widget.isPassword
                 ? IconButton(
                     onPressed: () => setState(() => _obscured = !_obscured),
@@ -73,7 +79,7 @@ class _DocketTextFieldState extends State<DocketTextField> {
                     ),
                     color: colors.onSurfaceVariant,
                   )
-                : null,
+                : widget.suffixIcon,
           ),
         ),
       ],

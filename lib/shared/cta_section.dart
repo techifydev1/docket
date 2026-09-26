@@ -27,15 +27,15 @@ class CtaSection extends StatelessWidget {
           child: FilledButton(
             onPressed: onPressed,
             style: FilledButton.styleFrom(
-              backgroundColor: isEntry ? colors.primary : colors.primaryContainer,
+              backgroundColor: isEntry
+                  ? colors.primary
+                  : colors.primaryContainer,
               foregroundColor: colors.onPrimary,
               elevation: 1,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: .circular(8)),
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: .center,
               children: [
                 Text(
                   label,
@@ -57,14 +57,13 @@ class CtaSection extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             helperText!,
-            textAlign: TextAlign.center,
-            style: textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant),
+            textAlign: .center,
+            style: textTheme.bodySmall?.copyWith(
+              color: colors.onSurfaceVariant,
+            ),
           ),
         ],
-        if (footer != null) ...[
-          const SizedBox(height: 8),
-          footer!,
-        ],
+        if (footer != null) ...[const SizedBox(height: 8), footer!],
       ],
     );
   }

@@ -1,9 +1,9 @@
-import 'package:docket/features/home/home_screen.dart';
+import 'package:docket/features/home/screens/home_screen.dart';
 import 'package:docket/features/onboarding/screens/first_screen.dart';
 import 'package:docket/features/onboarding/screens/second_screen.dart';
 import 'package:docket/features/onboarding/screens/third_screen.dart';
 
-import '../shared/top_bar.dart';
+import 'package:docket/features/onboarding/widgets/top_bar.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {
@@ -41,7 +41,7 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const .all(16),
           child: Column(
             crossAxisAlignment: .center,
             children: [

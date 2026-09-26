@@ -3,7 +3,7 @@ import 'package:docket/shared/header.dart';
 import 'package:docket/shared/trust_card.dart';
 import 'package:flutter/material.dart';
 
-import 'profile_card.dart';
+import 'package:docket/features/onboarding/widgets/profile_card.dart';
 
 class SecondScreen extends StatefulWidget {
   final PageController pageController;
@@ -37,7 +37,7 @@ class _SecondScreenState extends State<SecondScreen> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: .stretch,
         children: [
           const Header(
             title: "Set up your profile",

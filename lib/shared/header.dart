@@ -18,29 +18,25 @@ class Header extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final colors = Theme.of(context).colorScheme;
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: .start,
       children: [
         if (icon != null) ...[
           Container(
             width: 64,
             height: 64,
-            alignment: Alignment.center,
+            alignment: .center,
             decoration: BoxDecoration(
               color: colors.surfaceContainerHigh,
-              shape: BoxShape.circle,
+              shape: .circle,
             ),
-            child: Icon(
-              icon,
-              size: 28,
-              color: Theme.of(context).primaryColor,
-            ),
+            child: Icon(icon, size: 28, color: Theme.of(context).primaryColor),
           ),
           const SizedBox(height: 16),
         ],
         Text(
           title,
           style: textTheme.headlineLarge?.copyWith(
-            fontWeight: FontWeight.w700,
+            fontWeight: .w700,
             color: colors.onSurface,
           ),
         ),

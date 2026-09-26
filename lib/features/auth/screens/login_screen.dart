@@ -1,10 +1,10 @@
-import 'package:docket/features/home/home_screen.dart';
+import 'package:docket/features/home/screens/home_screen.dart';
 import 'package:docket/shared/cta_section.dart';
 import 'package:docket/shared/header.dart';
 import 'package:docket/shared/trust_card.dart';
 import 'package:flutter/material.dart';
 
-import 'login_card.dart';
+import 'package:docket/features/auth/widgets/login_card.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -41,16 +41,16 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: const .all(16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: .stretch,
             children: [
               Align(
-                alignment: Alignment.centerLeft,
+                alignment: .centerLeft,
                 child: IconButton(
                   onPressed: () => Navigator.of(context).maybePop(),
                   tooltip: 'Go back',
-                  visualDensity: VisualDensity.compact,
+                  visualDensity: .compact,
                   icon: Icon(
                     Icons.arrow_back,
                     size: 20,
@@ -85,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 label: "Log In",
                 isEntry: true,
                 footer: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: .center,
                   children: [
                     Text(
                       "Don't have a vault? ",
@@ -96,16 +96,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextButton(
                       onPressed: () => Navigator.of(context).maybePop(),
                       style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
+                        padding: .zero,
                         minimumSize: const Size(0, 0),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        tapTargetSize: .shrinkWrap,
                       ),
                       child: Text(
                         "Create one",
-                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: Theme.of(context).primaryColor,
-                        ),
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(
+                              fontWeight: .w700,
+                              color: Theme.of(context).primaryColor,
+                            ),
                       ),
                     ),
                   ],

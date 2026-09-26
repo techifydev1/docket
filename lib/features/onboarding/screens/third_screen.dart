@@ -3,7 +3,7 @@ import 'package:docket/shared/header.dart';
 import 'package:docket/shared/trust_card.dart';
 import 'package:flutter/material.dart';
 
-import 'code_card.dart';
+import 'package:docket/features/onboarding/widgets/code_card.dart';
 
 class ThirdScreen extends StatefulWidget {
   final VoidCallback onComplete;
@@ -22,7 +22,7 @@ class _ThirdScreenState extends State<ThirdScreen> {
     final isValid = _code.length == 6;
     return SingleChildScrollView(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: .stretch,
         children: [
           const Header(
             icon: Icons.mail_outline,
@@ -41,7 +41,7 @@ class _ThirdScreenState extends State<ThirdScreen> {
             cardRadius: 8,
             iconBgColor: colors.secondaryContainer,
             iconColor: colors.onSecondaryContainer,
-            iconShape: BoxShape.circle,
+            iconShape: .circle,
           ),
           const SizedBox(height: 16),
           CtaSection(

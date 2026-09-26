@@ -1,23 +1,7 @@
 import 'package:flutter/material.dart';
 
-class TrustCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String description;
-  final double cardRadius;
-  final Color? iconBgColor;
-  final Color? iconColor;
-  final BoxShape iconShape;
-  const TrustCard({
-    super.key,
-    required this.icon,
-    required this.title,
-    required this.description,
-    this.cardRadius = 12,
-    this.iconBgColor,
-    this.iconColor,
-    this.iconShape = .rectangle,
-  });
+class PrivacyCard extends StatelessWidget {
+  const PrivacyCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +11,15 @@ class TrustCard extends StatelessWidget {
       padding: const .all(14),
       decoration: BoxDecoration(
         color: colors.surfaceContainerLow,
-        borderRadius: .circular(cardRadius),
+        borderRadius: .circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: colors.onSurface.withValues(alpha: 0.05),
+            offset: const Offset(0, 1),
+            blurRadius: 2,
+            spreadRadius: 0,
+          ),
+        ],
       ),
       child: Row(
         crossAxisAlignment: .start,
@@ -37,14 +29,13 @@ class TrustCard extends StatelessWidget {
             height: 32,
             margin: const .only(top: 2),
             decoration: BoxDecoration(
-              color: iconBgColor ?? colors.surfaceContainerHighest,
-              borderRadius: iconShape == .rectangle ? .circular(8) : null,
-              shape: iconShape,
+              color: colors.secondaryContainer,
+              shape: .circle,
             ),
             child: Icon(
-              icon,
+              Icons.lock_outline,
               size: 18,
-              color: iconColor ?? Theme.of(context).primaryColor,
+              color: colors.onSecondaryContainer,
             ),
           ),
           const SizedBox(width: 12),
@@ -53,7 +44,7 @@ class TrustCard extends StatelessWidget {
               crossAxisAlignment: .start,
               children: [
                 Text(
-                  title,
+                  "Strict Family Privacy",
                   style: textTheme.labelMedium?.copyWith(
                     fontWeight: .w600,
                     color: colors.onSurface,
@@ -61,7 +52,7 @@ class TrustCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  description,
+                  "Only invited household members can access these documents. You will be prompted to invite loved ones or an executor in Step 3.",
                   style: textTheme.bodySmall?.copyWith(
                     color: colors.onSurfaceVariant,
                   ),
