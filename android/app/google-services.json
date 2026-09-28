@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "183220422155",
+    "project_id": "docket-bd33b",
+    "storage_bucket": "docket-bd33b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:183220422155:android:bda707a601ac6fe790690e",
+        "android_client_info": {
+          "package_name": "com.example.docket"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "183220422155-pt77drn9c4crjcd0e3v4t1r06874glbr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyJKU_0cbE8h2L6FIIZNMIc7_VbuuTgeE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "183220422155-pt77drn9c4crjcd0e3v4t1r06874glbr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
