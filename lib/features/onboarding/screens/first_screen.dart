@@ -43,6 +43,7 @@ class _FirstScreenState extends State<FirstScreen> {
           ContinueSection(
             pageController: widget.pageController,
             enabled: hasName,
+            vaultNameController: _nameController,
           ),
         ],
       ),

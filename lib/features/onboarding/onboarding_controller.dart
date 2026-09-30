@@ -1,4 +1,4 @@
-import 'package:docket/features/auth/widgets/register_request.dart';
+import 'package:docket/features/auth/models/register_request.dart';
 import 'package:flutter/material.dart';
 
 class OnboardingController with ChangeNotifier {

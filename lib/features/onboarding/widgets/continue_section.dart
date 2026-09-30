@@ -1,14 +1,18 @@
 import 'package:docket/features/auth/screens/login_screen.dart';
+import 'package:docket/features/onboarding/onboarding_controller.dart';
 import 'package:docket/shared/cta_section.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ContinueSection extends StatelessWidget {
   final PageController pageController;
   final bool enabled;
+  final TextEditingController vaultNameController;
   const ContinueSection({
     super.key,
     required this.pageController,
     required this.enabled,
+    required this.vaultNameController,
   });
 
   @override
@@ -18,6 +22,9 @@ class ContinueSection extends StatelessWidget {
         CtaSection(
           onPressed: enabled
               ? () {
+                  context.read<OnboardingController>().updateStep1(
+                    vaultName: vaultNameController.value.text,
+                  );
                   pageController.nextPage(
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,

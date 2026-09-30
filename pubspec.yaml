@@ -38,6 +38,8 @@ dependencies:
   pinput: ^6.0.2
   firebase_auth: ^6.7.0
   provider: ^6.1.5+1
+  firebase_core: ^4.15.0
+  dio: ^5.11.1
 
 dev_dependencies:
   flutter_test:
