@@ -33,12 +33,14 @@ class AuthService {
           "weak_password",
           "You used a weak password, use a much stronger one",
           000,
+          DateTime.now().toString(),
         );
       } else if (e.code == "email-already-in-use") {
         throw ApiError(
           "email_already_in_use",
           "The email you used already exists, please check and use the correct one",
           000,
+          DateTime.now().toString(),
         );
       }
       debugPrint("Firebase auth unknown error: ${e.message}");
@@ -46,6 +48,7 @@ class AuthService {
         "unknown_error",
         "An unknown error occured, please try again",
         000,
+        DateTime.now().toString(),
       );
     }
   }
@@ -69,14 +72,25 @@ class AuthService {
       rethrow;
     } on FirebaseAuthException catch (e) {
       if (e.code == "user-not-found") {
-        throw ApiError("user_not_found", "Invalid email or password", 000);
+        throw ApiError(
+          "user_not_found",
+          "Invalid email or password",
+          000,
+          DateTime.now().toString(),
+        );
       } else if (e.code == "wrong-password") {
-        throw ApiError("wrong_password", "Invalid email or password", 000);
+        throw ApiError(
+          "wrong_password",
+          "Invalid email or password",
+          000,
+          DateTime.now().toString(),
+        );
       }
       throw ApiError(
         "unknown_error",
         "An unknown error occured, please try again",
         000,
+        DateTime.now().toString(),
       );
     }
   }

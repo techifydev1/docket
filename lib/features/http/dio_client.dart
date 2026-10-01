@@ -43,6 +43,7 @@ class DioClient {
         "unknown_error",
         "An unknown error occured, please try again",
         000,
+        DateTime.now().toString(),
       );
     } catch (e) {
       debugPrint(e.toString());
@@ -50,6 +51,7 @@ class DioClient {
         "unknown_error",
         "An unknown error occured, please try again",
         000,
+        DateTime.now().toString(),
       );
     }
   }
@@ -66,6 +68,7 @@ class DioClient {
         "unknown_error",
         "An unknown error occured, please try again",
         000,
+        DateTime.now().toString(),
       );
     } catch (e) {
       debugPrint(e.toString());
@@ -73,6 +76,7 @@ class DioClient {
         "unknown_error",
         "An unknown error occured, please try again",
         000,
+        DateTime.now().toString(),
       );
     }
   }

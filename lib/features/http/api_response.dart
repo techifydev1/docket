@@ -17,11 +17,13 @@ class ApiError implements Exception {
   final String errorCode;
   final String errorMessage;
   final int statusCode;
+  final String timestamp;
   final List<FieldError>? fieldErrors;
   ApiError(
     this.errorCode,
     this.errorMessage,
-    this.statusCode, {
+    this.statusCode,
+    this.timestamp, {
     this.fieldErrors,
   });
 
@@ -30,7 +32,10 @@ class ApiError implements Exception {
       json["errorCode"],
       json["errorMessage"],
       json["statusCode"],
-      fieldErrors: json["fieldErrors"],
+      json["timestamp"],
+      fieldErrors: json["fieldErrors"]?.map(
+        (e) => FieldError.fromJson(e as Map<String, dynamic>),
+      ),
     );
   }
 
@@ -44,4 +49,8 @@ class FieldError {
   final String name;
   final String reason;
   FieldError(this.name, this.reason);
+
+  factory FieldError.fromJson(Map<String, dynamic> json) {
+    return FieldError(json["name"], json["reason"]);
+  }
 }
