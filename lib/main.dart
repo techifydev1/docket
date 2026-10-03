@@ -1,5 +1,6 @@
 import 'package:docket/core/theme/app_theme.dart';
-import 'package:docket/features/home/screens/home_screen.dart';
+import 'package:docket/features/auth/auth_state_provider.dart';
+import 'package:docket/features/family/family_provider.dart';
 import 'package:docket/features/onboarding/onboarding_controller.dart';
 import 'package:docket/features/onboarding/screens/main_screen.dart';
 import 'package:docket/features/user/user_provider.dart';
@@ -16,6 +17,11 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => OnboardingController()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => FamilyProvider()),
+        ChangeNotifierProvider(
+          create: (_) => AuthStateProvider(),
+          child: const MyApp(),
+        ),
       ],
       child: const MyApp(),
     ),

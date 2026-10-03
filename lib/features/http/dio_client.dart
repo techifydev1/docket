@@ -11,6 +11,7 @@ class DioClient {
   final tokenInterceptor = InterceptorsWrapper(
     onRequest: (options, handler) async {
       String? token = await FirebaseAuth.instance.currentUser?.getIdToken();
+      debugPrint("Firebase token: $token");
       if (token != null) options.headers["Authorization"] = "Bearer $token";
       options.contentType = Headers.jsonContentType;
       return handler.next(options);
@@ -18,9 +19,12 @@ class DioClient {
   );
 
   DioClient._internal()
-    : baseOptions = BaseOptions(baseUrl: "http://localhost/api"),
+    : baseOptions = BaseOptions(
+        baseUrl: "https://nutmeg-repent-cilantro.ngrok-free.dev/api",
+      ),
       dio = Dio() {
     dio.options = baseOptions;
+    dio.interceptors.add(tokenInterceptor);
   }
 
   factory DioClient() {

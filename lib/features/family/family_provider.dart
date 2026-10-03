@@ -2,12 +2,20 @@ import 'package:docket/features/family/family_response.dart';
 import 'package:flutter/material.dart';
 
 class FamilyProvider extends ChangeNotifier {
-  FamilyResponse? _familyResponse;
+  List<FamilyResponse> _families = const [];
+  FamilyResponse? _selectedFamily;
   FamilyProvider();
-  FamilyResponse? get familyResponse => _familyResponse;
+  List<FamilyResponse> get families => _families;
+  FamilyResponse? get selectedFamily => _selectedFamily;
+
+  void updateFamilies(List<FamilyResponse> families) {
+    _families = families;
+    _selectedFamily = families.isEmpty ? null : families.first;
+    notifyListeners();
+  }
 
   void updateFamily(FamilyResponse family) {
-    _familyResponse = family;
+    _selectedFamily = family;
     notifyListeners();
   }
 }

@@ -19,7 +19,7 @@ class AuthService {
       );
       final client = DioClient();
       final response = await client.post<AuthResponse>(
-        "/register",
+        "/auth/register",
         request.toJson(),
         decoder: (json) => AuthResponse.json(json),
       );

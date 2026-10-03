@@ -21,7 +21,7 @@ class OnboardingController with ChangeNotifier {
     _requestData.email = email;
     _requestData.password = password;
     _requestData.phone = phone;
-    _requestData.biometricsEnabled = biometricsActive;
+    _requestData.isBiometricsEnabled = biometricsActive;
     notifyListeners();
   }
 }

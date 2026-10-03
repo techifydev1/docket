@@ -4,7 +4,7 @@ class RegisterRequest {
   late String email;
   late String? phone;
   late String password;
-  late bool biometricsEnabled;
+  late bool isBiometricsEnabled;
 
   RegisterRequest();
 
@@ -12,7 +12,8 @@ class RegisterRequest {
     "vaultName": vaultName,
     "fullName": fullName,
     "email": email,
+    "phone": phone,
     "password": password,
-    "biometricsEnabled": biometricsEnabled,
+    "isBiometricsEnabled": isBiometricsEnabled,
   };
 }

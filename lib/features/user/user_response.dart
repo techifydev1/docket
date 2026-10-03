@@ -5,6 +5,7 @@ class UserResponse {
   String phone;
   String? profilePic;
   String createdAt;
+  bool emailVerified;
 
   UserResponse({
     required this.fullName,
@@ -13,6 +14,7 @@ class UserResponse {
     required this.phone,
     this.profilePic,
     required this.createdAt,
+    required this.emailVerified,
   });
 
   factory UserResponse.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class UserResponse {
       phone: json["phone"],
       profilePic: json["profilePic"],
       createdAt: json["createdAt"],
+      emailVerified: json["emailVerified"],
     );
   }
 }

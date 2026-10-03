@@ -87,13 +87,14 @@ class _SecondScreenState extends State<SecondScreen> {
                     final req = RegisterRequest();
                     req.fullName = cont.requestData.fullName;
                     req.vaultName = cont.requestData.vaultName;
-                    req.biometricsEnabled = cont.requestData.biometricsEnabled;
+                    req.isBiometricsEnabled =
+                        cont.requestData.isBiometricsEnabled;
                     req.email = cont.requestData.email;
                     req.password = cont.requestData.password;
                     req.phone = cont.requestData.phone;
                     final res = await AuthService.register(req);
                     userProvider.updateUser(res.user);
-                    familyProvider.updateFamily(res.family);
+                    familyProvider.updateFamilies(res.families);
                     widget.pageController.nextPage(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
