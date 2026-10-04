@@ -1,4 +1,4 @@
-import 'package:docket/features/auth/widgets/family_card.dart';
+import 'package:docket/features/family/widgets/family_card.dart';
 import 'package:docket/features/family/family_provider.dart';
 import 'package:docket/features/family/family_response.dart';
 import 'package:docket/features/home/screens/home_screen.dart';
@@ -8,32 +8,11 @@ import 'package:docket/shared/section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class SelectFamilyScreen extends StatefulWidget {
-  final List<FamilyResponse> families;
-  const SelectFamilyScreen({super.key, required this.families});
+class SelectFamilyScreen extends StatelessWidget {
+  const SelectFamilyScreen({super.key});
 
-  @override
-  State<SelectFamilyScreen> createState() => _SelectFamilyScreenState();
-}
-
-class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
-  String? _selectedId;
-
-  FamilyResponse? get _selected {
-    for (final family in widget.families) {
-      if (family.id == _selectedId) return family;
-    }
-    return null;
-  }
-
-  void _select(FamilyResponse family) {
-    setState(() => _selectedId = family.id);
-  }
-
-  void _continue() {
-    final family = _selected;
-    if (family == null) return;
-    context.read<FamilyProvider>().updateFamily(family);
+  void _continue(BuildContext context, FamilyResponse? selected) {
+    if (selected == null) return;
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const HomeScreen()),
       (route) => false,
@@ -43,6 +22,9 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final provider = context.watch<FamilyProvider>();
+    final families = provider.families;
+    final selected = provider.selectedFamily;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -71,27 +53,29 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
                     "Select the family vault you want to open. You can switch later from settings.",
               ),
               const SizedBox(height: 24),
-              if (widget.families.isEmpty)
+              if (families.isEmpty)
                 const _EmptyFamilies()
               else ...[
                 const SectionHeader(title: "Family Vaults"),
                 const SizedBox(height: 12),
-                for (final family in widget.families)
+                for (final family in families)
                   Padding(
                     padding: const .only(bottom: 12),
                     child: FamilyCard(
                       family: family,
-                      isSelected: family.id == _selectedId,
-                      onTap: () => _select(family),
+                      isSelected: family.id == selected?.id,
+                      onTap: () => provider.updateFamily(family),
                     ),
                   ),
               ],
               const SizedBox(height: 16),
               CtaSection(
-                onPressed: _selected == null ? null : _continue,
+                onPressed: selected == null
+                    ? null
+                    : () => _continue(context, selected),
                 label: "Continue",
                 isEntry: true,
-                helperText: _selected == null
+                helperText: selected == null
                     ? "Pick a family vault to continue"
                     : "You'll only see the documents you're allowed to view.",
               ),

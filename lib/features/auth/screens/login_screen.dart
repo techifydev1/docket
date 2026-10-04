@@ -1,5 +1,4 @@
-import 'package:docket/features/auth/screens/select_family_screen.dart';
-import 'package:docket/features/family/family_response.dart';
+import 'package:docket/features/family/screens/select_family_screen.dart';
 import 'package:docket/shared/cta_section.dart';
 import 'package:docket/shared/header.dart';
 import 'package:docket/shared/trust_card.dart';
@@ -15,21 +14,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  static const List<FamilyResponse> _familyVaults = [
-    FamilyResponse(
-      name: "The Vance Family",
-      id: "0f2c9a41-6b8e-4d2f-9a7c-1e5b3d8a4c10",
-      memberCount: 4,
-      createdAt: "2026-03-12T09:14:00Z",
-    ),
-    FamilyResponse(
-      name: "Adeyemi Household",
-      id: "b7d41c02-3f95-4a68-8c2d-70a9f1e6b3d4",
-      memberCount: 2,
-      createdAt: "2025-11-02T17:45:00Z",
-    ),
-  ];
-
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -45,11 +29,9 @@ class _LoginScreenState extends State<LoginScreen> {
       _passwordController.text.isNotEmpty;
 
   void _login() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => const SelectFamilyScreen(families: _familyVaults),
-      ),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const SelectFamilyScreen()));
   }
 
   @override

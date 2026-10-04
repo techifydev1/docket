@@ -1,8 +1,7 @@
 import 'package:docket/core/theme/app_theme.dart';
-import 'package:docket/features/auth/auth_state_provider.dart';
+import 'package:docket/features/auth/auth_gate.dart';
 import 'package:docket/features/family/family_provider.dart';
 import 'package:docket/features/onboarding/onboarding_controller.dart';
-import 'package:docket/features/onboarding/screens/main_screen.dart';
 import 'package:docket/features/user/user_provider.dart';
 import 'package:docket/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -18,10 +17,6 @@ void main() async {
         ChangeNotifierProvider(create: (_) => OnboardingController()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => FamilyProvider()),
-        ChangeNotifierProvider(
-          create: (_) => AuthStateProvider(),
-          child: const MyApp(),
-        ),
       ],
       child: const MyApp(),
     ),
@@ -37,7 +32,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: AppTheme.lightTheme,
-      home: MainScreen(),
+      home: AuthGate(),
     );
   }
 }
