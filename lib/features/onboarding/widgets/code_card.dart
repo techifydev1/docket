@@ -34,7 +34,7 @@ class CodeCard extends StatelessWidget {
                 style: textTheme.labelMedium?.copyWith(color: colors.onSurface),
               ),
               Text(
-                "Expires in 10:00",
+                "Expires in 15:00",
                 style: textTheme.bodySmall?.copyWith(
                   color: colors.onSurfaceVariant,
                 ),

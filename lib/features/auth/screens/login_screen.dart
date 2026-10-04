@@ -1,4 +1,5 @@
 import 'package:docket/features/family/screens/select_family_screen.dart';
+import 'package:docket/features/onboarding/screens/main_screen.dart';
 import 'package:docket/shared/cta_section.dart';
 import 'package:docket/shared/header.dart';
 import 'package:docket/shared/trust_card.dart';
@@ -93,7 +94,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     TextButton(
-                      onPressed: () => Navigator.of(context).maybePop(),
+                      onPressed: () => Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MainScreen(),
+                        ),
+                      ),
                       style: TextButton.styleFrom(
                         padding: .zero,
                         minimumSize: const Size(0, 0),

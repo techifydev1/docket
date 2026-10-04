@@ -1,10 +1,12 @@
 import 'package:docket/features/auth/auth_service.dart';
 import 'package:docket/features/auth/models/register_request.dart';
 import 'package:docket/features/family/family_provider.dart';
+import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/onboarding/onboarding_controller.dart';
 import 'package:docket/features/user/user_provider.dart';
 import 'package:docket/shared/cta_section.dart';
 import 'package:docket/shared/header.dart';
+import 'package:docket/shared/toast.dart';
 import 'package:docket/shared/trust_card.dart';
 import 'package:flutter/material.dart';
 
@@ -24,6 +26,7 @@ class _SecondScreenState extends State<SecondScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isRegistering = false;
 
   @override
   void dispose() {
@@ -68,37 +71,50 @@ class _SecondScreenState extends State<SecondScreen> {
           ),
           const SizedBox(height: 16),
           CtaSection(
+            isLoading: _isRegistering,
             onPressed: _isValid
                 ? () async {
-                    OnboardingController cont = context
-                        .read<OnboardingController>();
-                    UserProvider userProvider = context.read<UserProvider>();
-                    FamilyProvider familyProvider = context
-                        .read<FamilyProvider>();
-                    cont.updateStep2(
-                      name: _nameController.value.text,
-                      email: _emailController.value.text,
-                      phone: _phoneController.value.text,
-                      password: _passwordController.value.text,
-                    );
-                    debugPrint(
-                      "Read stuffs from the context: ${cont.requestData.fullName}, ${cont.requestData.email}, ${cont.requestData.password}, ${cont.requestData.phone}",
-                    );
-                    final req = RegisterRequest();
-                    req.fullName = cont.requestData.fullName;
-                    req.vaultName = cont.requestData.vaultName;
-                    req.isBiometricsEnabled =
-                        cont.requestData.isBiometricsEnabled;
-                    req.email = cont.requestData.email;
-                    req.password = cont.requestData.password;
-                    req.phone = cont.requestData.phone;
-                    final res = await AuthService.register(req);
-                    userProvider.updateUser(res.user);
-                    familyProvider.updateFamilies(res.families);
-                    widget.pageController.nextPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
+                    setState(() => _isRegistering = true);
+                    try {
+                      OnboardingController cont = context
+                          .read<OnboardingController>();
+                      UserProvider userProvider = context.read<UserProvider>();
+                      FamilyProvider familyProvider = context
+                          .read<FamilyProvider>();
+                      cont.updateStep2(
+                        name: _nameController.value.text,
+                        email: _emailController.value.text,
+                        phone: _phoneController.value.text,
+                        password: _passwordController.value.text,
+                      );
+                      debugPrint(
+                        "Read stuffs from the context: ${cont.requestData.fullName}, ${cont.requestData.email}, ${cont.requestData.password}, ${cont.requestData.phone}",
+                      );
+                      final req = RegisterRequest();
+                      req.fullName = cont.requestData.fullName;
+                      req.vaultName = cont.requestData.vaultName;
+                      req.isBiometricsEnabled =
+                          cont.requestData.isBiometricsEnabled;
+                      req.email = cont.requestData.email;
+                      req.password = cont.requestData.password;
+                      req.phone = cont.requestData.phone;
+                      final res = await AuthService.register(req);
+                      userProvider.updateUser(res.user);
+                      familyProvider.updateFamilies(res.families);
+                      widget.pageController.nextPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      );
+                    } on ApiError catch (e) {
+                      if (!context.mounted) return;
+                      Toast.show(
+                        context,
+                        e.errorMessage,
+                        variant: ToastVariant.error,
+                      );
+                    } finally {
+                      if (mounted) setState(() => _isRegistering = false);
+                    }
                   }
                 : null,
             label: "Complete Setup & Enter Vault",

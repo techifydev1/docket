@@ -4,6 +4,7 @@ class CtaSection extends StatelessWidget {
   final VoidCallback? onPressed;
   final String label;
   final bool isEntry;
+  final bool isLoading;
   final String? helperText;
   final Widget? footer;
   const CtaSection({
@@ -11,6 +12,7 @@ class CtaSection extends StatelessWidget {
     this.onPressed,
     required this.label,
     this.isEntry = true,
+    this.isLoading = false,
     this.helperText,
     this.footer,
   });
@@ -25,7 +27,7 @@ class CtaSection extends StatelessWidget {
           width: double.infinity,
           height: isEntry ? 52 : 48,
           child: FilledButton(
-            onPressed: onPressed,
+            onPressed: isLoading ? null : onPressed,
             style: FilledButton.styleFrom(
               backgroundColor: isEntry
                   ? colors.primary
@@ -34,23 +36,32 @@ class CtaSection extends StatelessWidget {
               elevation: 1,
               shape: RoundedRectangleBorder(borderRadius: .circular(8)),
             ),
-            child: Row(
-              mainAxisAlignment: .center,
-              children: [
-                Text(
-                  label,
-                  style: textTheme.labelLarge?.copyWith(
-                    color: colors.onPrimary,
+            child: isLoading
+                ? SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: colors.onPrimary,
+                    ),
+                  )
+                : Row(
+                    mainAxisAlignment: .center,
+                    children: [
+                      Text(
+                        label,
+                        style: textTheme.labelLarge?.copyWith(
+                          color: colors.onPrimary,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(
+                        Icons.arrow_forward,
+                        size: isEntry ? 20 : 18,
+                        color: colors.onPrimary,
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(width: 8),
-                Icon(
-                  Icons.arrow_forward,
-                  size: isEntry ? 20 : 18,
-                  color: colors.onPrimary,
-                ),
-              ],
-            ),
           ),
         ),
         if (helperText != null) ...[

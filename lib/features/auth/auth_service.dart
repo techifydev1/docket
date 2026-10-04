@@ -1,6 +1,7 @@
 import 'package:docket/features/auth/models/auth_response.dart';
 import 'package:docket/features/auth/models/login_request.dart';
 import 'package:docket/features/auth/models/register_request.dart';
+import 'package:docket/features/auth/models/verify_email_request.dart';
 import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/http/dio_client.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -51,6 +52,15 @@ class AuthService {
         DateTime.now().toString(),
       );
     }
+  }
+
+  static Future<String> verifyEmail(String code) async {
+    final client = DioClient();
+    return client.post<String>(
+      "/auth/verify",
+      VerifyEmailRequest(code).toJson(),
+      decoder: (json) => json["message"],
+    );
   }
 
   static Future<AuthResponse> login(LoginRequest request) async {

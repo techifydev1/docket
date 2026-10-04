@@ -11,7 +11,6 @@ class DioClient {
   final tokenInterceptor = InterceptorsWrapper(
     onRequest: (options, handler) async {
       String? token = await FirebaseAuth.instance.currentUser?.getIdToken();
-      debugPrint("Firebase token: $token");
       if (token != null) options.headers["Authorization"] = "Bearer $token";
       options.contentType = Headers.jsonContentType;
       return handler.next(options);
@@ -40,8 +39,8 @@ class DioClient {
       final response = await dio.post(endpoint, data: body);
       return decoder(response.data);
     } on DioException catch (e) {
-      Map<String, dynamic>? errRes = e.response!.data;
-      if (errRes != null) throw ApiError.fromJson(errRes);
+      final errRes = e.response?.data;
+      if (errRes is Map<String, dynamic>) throw ApiError.fromJson(errRes);
       debugPrint(e.message);
       throw ApiError(
         "unknown_error",
@@ -65,8 +64,8 @@ class DioClient {
       final response = await dio.get(endpoint);
       return ApiSuccess.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (e) {
-      Map<String, dynamic>? errRes = e.response!.data;
-      if (errRes != null) throw ApiError.fromJson(errRes);
+      final errRes = e.response?.data;
+      if (errRes is Map<String, dynamic>) throw ApiError.fromJson(errRes);
       debugPrint(e.message);
       throw ApiError(
         "unknown_error",
