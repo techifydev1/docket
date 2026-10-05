@@ -62,6 +62,7 @@ class DioClient {
   Future<T> get<T, J>(String endpoint, {required T Function(J) decoder}) async {
     try {
       final response = await dio.get(endpoint);
+      // debugPrint("Responsen from network client: ${response.data.toString()}");
       return decoder(response.data as J);
     } on DioException catch (e) {
       final errRes = e.response?.data;
