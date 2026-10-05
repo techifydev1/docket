@@ -4,7 +4,16 @@ import 'package:docket/features/onboarding/widgets/code_input.dart';
 
 class CodeCard extends StatelessWidget {
   final ValueChanged<String> onChanged;
-  const CodeCard({super.key, required this.onChanged});
+  final VoidCallback onResend;
+  final bool isSending;
+  final int resetKey;
+  const CodeCard({
+    super.key,
+    required this.onChanged,
+    required this.onResend,
+    this.isSending = false,
+    this.resetKey = 0,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +51,7 @@ class CodeCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          CodeInput(onChanged: onChanged),
+          CodeInput(key: ValueKey(resetKey), onChanged: onChanged),
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: .center,
@@ -54,19 +63,25 @@ class CodeCard extends StatelessWidget {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: isSending ? null : onResend,
                 style: TextButton.styleFrom(
                   padding: .zero,
                   minimumSize: const Size(0, 0),
                   tapTargetSize: .shrinkWrap,
                 ),
-                child: Text(
-                  "Resend code",
-                  style: textTheme.labelMedium?.copyWith(
-                    fontWeight: .w700,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
+                child: isSending
+                    ? const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(
+                        "Resend code",
+                        style: textTheme.labelMedium?.copyWith(
+                          fontWeight: .w700,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
               ),
             ],
           ),

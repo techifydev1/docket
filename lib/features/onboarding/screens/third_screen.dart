@@ -13,8 +13,8 @@ import 'package:provider/provider.dart';
 import 'package:docket/features/onboarding/widgets/code_card.dart';
 
 class ThirdScreen extends StatefulWidget {
-  final VoidCallback onComplete;
-  const ThirdScreen({super.key, required this.onComplete});
+  final VoidCallback? onComplete;
+  const ThirdScreen({super.key, this.onComplete});
 
   @override
   State<ThirdScreen> createState() => _ThirdScreenState();
@@ -23,6 +23,30 @@ class ThirdScreen extends StatefulWidget {
 class _ThirdScreenState extends State<ThirdScreen> {
   String _code = '';
   bool _isVerifying = false;
+  bool _isSending = false;
+  int _codeResets = 0;
+
+  Future<void> _resend() async {
+    setState(() => _isSending = true);
+    String? error;
+    String? message;
+    try {
+      message = await AuthService.sendVerificationEmail();
+    } on ApiError catch (e) {
+      error = e.errorMessage;
+    }
+    if (!mounted) return;
+    setState(() {
+      _isSending = false;
+      _code = '';
+      _codeResets++;
+    });
+    if (error != null) {
+      Toast.show(context, error, variant: ToastVariant.error);
+      return;
+    }
+    Toast.show(context, message!, variant: ToastVariant.success);
+  }
 
   Future<void> _verify() async {
     setState(() => _isVerifying = true);
@@ -57,11 +81,22 @@ class _ThirdScreenState extends State<ThirdScreen> {
       return;
     }
     Toast.show(context, message!, variant: ToastVariant.success);
-    widget.onComplete();
+    await _refreshUser();
+    if (!mounted) return;
+    widget.onComplete?.call();
   }
 
   Future<void> _logout() async {
     await FirebaseAuth.instance.signOut();
+  }
+
+  Future<void> _refreshUser() async {
+    try {
+      await FirebaseAuth.instance.currentUser?.reload();
+      await FirebaseAuth.instance.currentUser?.getIdToken(true);
+    } on FirebaseAuthException catch (e) {
+      debugPrint("Failed to refresh user after verification: ${e.message}");
+    }
   }
 
   @override
@@ -80,7 +115,12 @@ class _ThirdScreenState extends State<ThirdScreen> {
                 "We sent a 6-digit code to your email. Enter it below to confirm you own this address and enable secure account recovery.",
           ),
           const SizedBox(height: 24),
-          CodeCard(onChanged: (pin) => setState(() => _code = pin)),
+          CodeCard(
+            onChanged: (pin) => setState(() => _code = pin),
+            onResend: _resend,
+            isSending: _isSending,
+            resetKey: _codeResets,
+          ),
           const SizedBox(height: 16),
           TrustCard(
             icon: Icons.lock_outline,

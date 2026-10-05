@@ -54,6 +54,15 @@ class AuthService {
     }
   }
 
+  static Future<String> sendVerificationEmail() async {
+    final client = DioClient();
+    return client.post<String>(
+      "/auth/send-verification-email",
+      null,
+      decoder: (json) => json["message"],
+    );
+  }
+
   static Future<String> verifyEmail(String code) async {
     final client = DioClient();
     return client.post<String>(

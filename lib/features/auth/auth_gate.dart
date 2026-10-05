@@ -20,12 +20,7 @@ class AuthGate extends StatelessWidget {
         if (!user.emailVerified) {
           return Scaffold(
             body: SafeArea(
-              child: Padding(
-                padding: const .all(16),
-                child: ThirdScreen(
-                  onComplete: () => FirebaseAuth.instance.currentUser?.reload(),
-                ),
-              ),
+              child: Padding(padding: const .all(16), child: ThirdScreen()),
             ),
           );
         }
