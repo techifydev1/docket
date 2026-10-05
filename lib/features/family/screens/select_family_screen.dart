@@ -4,8 +4,12 @@ import 'package:docket/features/family/family_service.dart';
 import 'package:docket/features/family/widgets/family_card.dart';
 import 'package:docket/features/home/screens/home_screen.dart';
 import 'package:docket/features/http/api_response.dart';
+import 'package:docket/features/user/user_provider.dart';
+import 'package:docket/features/user/user_response.dart';
+import 'package:docket/features/user/user_service.dart';
 import 'package:docket/shared/confirm_dialog.dart';
 import 'package:docket/shared/cta_section.dart';
+import 'package:docket/shared/toast.dart';
 import 'package:docket/shared/header.dart';
 import 'package:docket/shared/section_header.dart';
 import 'package:docket/shared/sign_out_button.dart';
@@ -22,7 +26,9 @@ class SelectFamilyScreen extends StatefulWidget {
 
 class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
   final FamilyService _service = FamilyService();
+  final UserService _userService = UserService();
   bool _isLoading = true;
+  bool _isContinuing = false;
   String? _error;
 
   @override
@@ -65,8 +71,27 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
     await FirebaseAuth.instance.signOut();
   }
 
-  void _continue(BuildContext context, FamilyResponse? selected) {
-    if (selected == null) return;
+  Future<void> _continue(FamilyResponse? selected) async {
+    if (selected == null || _isContinuing) return;
+    setState(() => _isContinuing = true);
+    UserResponse? user;
+    var failed = false;
+    try {
+      user = await _userService.getUser();
+    } on ApiError {
+      failed = true;
+    }
+    if (!mounted) return;
+    if (failed || user == null) {
+      setState(() => _isContinuing = false);
+      Toast.show(
+        context,
+        "We're unable to log you in right now, please try again",
+        variant: ToastVariant.error,
+      );
+      return;
+    }
+    context.read<UserProvider>().updateUser(user);
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const HomeScreen()),
       (route) => false,
@@ -141,9 +166,10 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
                   ],
                   const SizedBox(height: 16),
                   CtaSection(
-                    onPressed: selected == null || _isLoading
+                    onPressed: selected == null || _isLoading || _isContinuing
                         ? null
-                        : () => _continue(context, selected),
+                        : () => _continue(selected),
+                    isLoading: _isContinuing,
                     label: "Continue",
                     isEntry: true,
                     helperText: selected == null

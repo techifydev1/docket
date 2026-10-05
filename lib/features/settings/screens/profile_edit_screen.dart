@@ -2,6 +2,7 @@ import 'package:docket/features/settings/profile.dart';
 import 'package:docket/shared/cta_section.dart';
 import 'package:docket/shared/form_card.dart';
 import 'package:docket/shared/header.dart';
+import 'package:docket/shared/initials.dart';
 import 'package:docket/shared/initials_avatar.dart';
 import 'package:docket/shared/text_field.dart';
 import 'package:docket/shared/trust_card.dart';
@@ -76,7 +77,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               const SizedBox(height: 24),
               Align(
                 child: InitialsAvatar(
-                  initials: _initialsFor(_nameController.text),
+                  initials: initialsOf(_nameController.text),
                 ),
               ),
               const SizedBox(height: 24),
@@ -124,9 +125,5 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         ),
       ),
     );
-  }
-
-  String _initialsFor(String name) {
-    return Profile(name: name, email: '').initials;
   }
 }

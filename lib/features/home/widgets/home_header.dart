@@ -1,4 +1,7 @@
+import 'package:docket/features/user/user_provider.dart';
+import 'package:docket/shared/initials.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key});
@@ -7,6 +10,7 @@ class HomeHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colors = Theme.of(context).colorScheme;
+    final name = context.watch<UserProvider>().userResponse?.fullName ?? "";
     return Row(
       children: [
         Expanded(
@@ -21,7 +25,7 @@ class HomeHeader extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                "Eleanor Vance",
+                name,
                 style: textTheme.headlineSmall?.copyWith(
                   fontWeight: .w700,
                   color: colors.onSurface,
@@ -43,7 +47,7 @@ class HomeHeader extends StatelessWidget {
             ),
           ),
           child: Text(
-            "EV",
+            initialsOf(name),
             style: textTheme.labelLarge?.copyWith(
               fontWeight: .w700,
               color: Theme.of(context).primaryColor,

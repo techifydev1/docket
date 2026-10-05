@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'package:docket/features/family/family_provider.dart';
 import 'package:docket/features/home/widgets/stat.dart';
 
 class VaultCard extends StatelessWidget {
@@ -9,6 +11,7 @@ class VaultCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colors = Theme.of(context).colorScheme;
+    final family = context.watch<FamilyProvider>().selectedFamily;
     return Container(
       padding: const .all(16),
       decoration: BoxDecoration(
@@ -46,7 +49,7 @@ class VaultCard extends StatelessWidget {
                   crossAxisAlignment: .start,
                   children: [
                     Text(
-                      "The Vance Family",
+                      family?.name ?? "",
                       style: textTheme.labelLarge?.copyWith(
                         color: colors.onSurface,
                       ),
@@ -66,15 +69,18 @@ class VaultCard extends StatelessWidget {
           const SizedBox(height: 16),
           Divider(height: 1, thickness: 1, color: colors.surfaceContainerHigh),
           const SizedBox(height: 16),
-          const Row(
+          Row(
             children: [
-              Expanded(
+              const Expanded(
                 child: Stat(value: "12", label: "Documents"),
               ),
               Expanded(
-                child: Stat(value: "4", label: "Members"),
+                child: Stat(
+                  value: "${family?.memberCount ?? 0}",
+                  label: "Members",
+                ),
               ),
-              Expanded(
+              const Expanded(
                 child: Stat(value: "100%", label: "Encrypted"),
               ),
             ],

@@ -1,3 +1,4 @@
+import 'package:docket/features/family/family_provider.dart';
 import 'package:docket/features/settings/profile.dart';
 import 'package:docket/features/settings/screens/profile_edit_screen.dart';
 import 'package:docket/features/settings/widgets/profile_settings_card.dart';
@@ -6,8 +7,10 @@ import 'package:docket/features/settings/widgets/sign_out_row.dart';
 import 'package:docket/features/settings/widgets/vault_info_card.dart';
 import 'package:docket/shared/bottom_nav.dart';
 import 'package:docket/shared/section_header.dart';
+import 'package:docket/features/user/user_provider.dart';
 import 'package:docket/shared/toggle_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -17,24 +20,32 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  Profile _profile = const Profile(
-    name: "Eleanor Vance",
-    email: "eleanor@vance.family",
-  );
+  Profile? _editedProfile;
   bool _biometrics = true;
   bool _lockOnExit = false;
   bool _emailAlerts = true;
 
-  Future<void> _editProfile() async {
+  Future<void> _editProfile(Profile profile) async {
     final updated = await Navigator.of(context).push<Profile>(
-      MaterialPageRoute(builder: (_) => ProfileEditScreen(profile: _profile)),
+      MaterialPageRoute(builder: (_) => ProfileEditScreen(profile: profile)),
     );
     if (updated == null) return;
-    setState(() => _profile = updated);
+    setState(() => _editedProfile = updated);
   }
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<UserProvider>().userResponse;
+    final family = context.watch<FamilyProvider>().selectedFamily;
+    if (user == null) {
+      return const Scaffold(
+        body: SafeArea(
+          child: Center(child: CircularProgressIndicator.adaptive()),
+        ),
+      );
+    }
+    final profile =
+        _editedProfile ?? Profile(name: user.fullName, email: user.email);
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -52,8 +63,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   crossAxisAlignment: .stretch,
                   children: [
                     ProfileSettingsCard(
-                      profile: _profile,
-                      onEdit: _editProfile,
+                      profile: profile,
+                      onEdit: () => _editProfile(profile),
                     ),
                     const SizedBox(height: 24),
                     const SectionHeader(title: "Security"),
@@ -82,10 +93,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       onChanged: (value) =>
                           setState(() => _emailAlerts = value),
                     ),
-                    const SizedBox(height: 24),
-                    const SectionHeader(title: "Vault"),
-                    const SizedBox(height: 12),
-                    const VaultInfoCard(),
+                    if (family != null) ...[
+                      const SizedBox(height: 24),
+                      const SectionHeader(title: "Vault"),
+                      const SizedBox(height: 12),
+                      VaultInfoCard(family: family),
+                    ],
                     const SizedBox(height: 16),
                     const SignOutRow(),
                   ],

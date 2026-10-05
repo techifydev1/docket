@@ -7,7 +7,7 @@ class UserService {
 
   Future<UserResponse> getUser() async {
     try {
-      final response = client.get<UserResponse, Map<String, dynamic>>(
+      final response = await client.get<UserResponse, Map<String, dynamic>>(
         "/user",
         decoder: (userJson) => UserResponse.fromJson(userJson),
       );

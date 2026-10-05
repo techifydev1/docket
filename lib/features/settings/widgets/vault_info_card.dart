@@ -1,13 +1,16 @@
+import 'package:docket/features/family/family_response.dart';
 import 'package:docket/shared/info_row.dart';
 import 'package:flutter/material.dart';
 
 class VaultInfoCard extends StatelessWidget {
-  const VaultInfoCard({super.key});
+  final FamilyResponse family;
+  const VaultInfoCard({super.key, required this.family});
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colors = Theme.of(context).colorScheme;
+    final created = DateTime.tryParse(family.createdAt);
     return Container(
       padding: const .all(16),
       decoration: BoxDecoration(
@@ -45,7 +48,7 @@ class VaultInfoCard extends StatelessWidget {
                   crossAxisAlignment: .start,
                   children: [
                     Text(
-                      "The Vance Family",
+                      family.name,
                       maxLines: 1,
                       overflow: .ellipsis,
                       style: textTheme.labelLarge?.copyWith(
@@ -67,9 +70,16 @@ class VaultInfoCard extends StatelessWidget {
           const SizedBox(height: 16),
           Divider(height: 1, thickness: 1, color: colors.surfaceContainerHigh),
           const SizedBox(height: 8),
-          const InfoRow(label: "Vault ID", value: "VNC-9F42-A1"),
-          const InfoRow(label: "Created", value: "12 March 2026"),
-          const InfoRow(label: "Members", value: "4"),
+          InfoRow(label: "Vault ID", value: family.id),
+          InfoRow(
+            label: "Created",
+            value: created == null
+                ? "-"
+                : MaterialLocalizations.of(
+                    context,
+                  ).formatMediumDate(created.toLocal()),
+          ),
+          InfoRow(label: "Members", value: "${family.memberCount}"),
           const InfoRow(label: "Encryption", value: "Zero-knowledge"),
         ],
       ),
