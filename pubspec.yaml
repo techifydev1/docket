@@ -40,6 +40,8 @@ dependencies:
   provider: ^6.1.5+1
   firebase_core: ^4.15.0
   dio: ^5.11.1
+  flutter_secure_storage: ^11.2.0
+  sodium: ^4.0.4
 
 dev_dependencies:
   flutter_test:
