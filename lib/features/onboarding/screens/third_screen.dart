@@ -2,8 +2,10 @@ import 'package:docket/features/auth/auth_service.dart';
 import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/user/user_provider.dart';
 import 'package:docket/features/user/user_response.dart';
+import 'package:docket/shared/confirm_dialog.dart';
 import 'package:docket/shared/cta_section.dart';
 import 'package:docket/shared/header.dart';
+import 'package:docket/shared/sign_out_button.dart';
 import 'package:docket/shared/toast.dart';
 import 'package:docket/shared/trust_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -87,6 +89,15 @@ class _ThirdScreenState extends State<ThirdScreen> {
   }
 
   Future<void> _logout() async {
+    final confirmed = await ConfirmDialog.show(
+      context,
+      title: "Sign out?",
+      message: "You'll need to sign in again before you can verify your email.",
+      confirmLabel: "Sign out",
+      icon: Icons.logout,
+      isDestructive: true,
+    );
+    if (!confirmed || !context.mounted) return;
     await FirebaseAuth.instance.signOut();
   }
 
@@ -102,7 +113,6 @@ class _ThirdScreenState extends State<ThirdScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
     final isValid = _code.length == 6;
     return SingleChildScrollView(
       child: Column(
@@ -142,21 +152,7 @@ class _ThirdScreenState extends State<ThirdScreen> {
                 "Your email is kept private and only used for essential vault notifications.",
           ),
           const SizedBox(height: 24),
-          Center(
-            child: TextButton.icon(
-              onPressed: _isVerifying ? null : _logout,
-              icon: const Icon(Icons.logout, size: 16),
-              label: const Text("Log out"),
-              style: TextButton.styleFrom(
-                foregroundColor: colors.error,
-                padding: const .symmetric(horizontal: 12, vertical: 8),
-                minimumSize: const Size(0, 0),
-                tapTargetSize: .shrinkWrap,
-                shape: RoundedRectangleBorder(borderRadius: .circular(8)),
-                textStyle: textTheme.labelMedium,
-              ),
-            ),
-          ),
+          SignOutButton(onPressed: _isVerifying ? null : _logout),
         ],
       ),
     );

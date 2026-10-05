@@ -33,7 +33,7 @@ class DioClient {
   Future<T> post<T>(
     String endpoint,
     Map<String, dynamic>? body, {
-    required Function(Map<String, dynamic>) decoder,
+    required T Function(dynamic) decoder,
   }) async {
     try {
       final response = await dio.post(endpoint, data: body);
@@ -59,10 +59,10 @@ class DioClient {
     }
   }
 
-  Future<ApiResponse> get(String endpoint) async {
+  Future<T> get<T, J>(String endpoint, {required T Function(J) decoder}) async {
     try {
       final response = await dio.get(endpoint);
-      return ApiSuccess.fromJson(response.data as Map<String, dynamic>);
+      return decoder(response.data as J);
     } on DioException catch (e) {
       final errRes = e.response?.data;
       if (errRes is Map<String, dynamic>) throw ApiError.fromJson(errRes);
