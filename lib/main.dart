@@ -1,5 +1,6 @@
 import 'package:docket/core/theme/app_theme.dart';
 import 'package:docket/features/auth/auth_gate.dart';
+import 'package:docket/features/crypto/crypto_service.dart';
 import 'package:docket/features/family/family_provider.dart';
 import 'package:docket/features/onboarding/onboarding_controller.dart';
 import 'package:docket/features/user/user_provider.dart';
@@ -11,6 +12,8 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  final sodium = CryptoService();
+  sodium.initSodium();
   runApp(
     MultiProvider(
       providers: [
