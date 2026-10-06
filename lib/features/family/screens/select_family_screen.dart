@@ -1,5 +1,6 @@
 import 'package:docket/features/crypto/crypto_service.dart';
 import 'package:docket/features/family/family_provider.dart';
+import 'package:docket/features/family/screens/create_family_screen.dart';
 import 'package:docket/features/family/family_response.dart';
 import 'package:docket/features/family/family_service.dart';
 import 'package:docket/features/family/widgets/family_card.dart';
@@ -424,6 +425,13 @@ class _EmptyFamilies extends StatelessWidget {
             textAlign: .center,
             style: textTheme.bodySmall?.copyWith(
               color: colors.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 16),
+          CtaSection(
+            label: "Create a vault",
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const CreateFamilyScreen()),
             ),
           ),
         ],

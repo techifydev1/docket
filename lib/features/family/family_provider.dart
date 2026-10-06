@@ -10,10 +10,13 @@ class FamilyProvider extends ChangeNotifier {
 
   void updateFamilies(List<FamilyResponse> families) {
     _families = families;
-    debugPrint(
-      "First family member's name: ${families.first.familyMembers.first.name}",
-    );
     _selectedFamily = families.isEmpty ? null : families.first;
+    notifyListeners();
+  }
+
+  void addFamily(FamilyResponse family) {
+    _families = [..._families, family];
+    _selectedFamily = family;
     notifyListeners();
   }
 

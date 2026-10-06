@@ -18,4 +18,19 @@ class FamilyService {
       rethrow;
     }
   }
+
+  Future<FamilyResponse> createFamily(
+    String name,
+    String wrappedFamilyKey,
+  ) async {
+    try {
+      final response = await client.post<FamilyResponse>("/family", {
+        "name": name,
+        "wrappedFamilyKey": wrappedFamilyKey,
+      }, decoder: (json) => FamilyResponse.fromJson(json));
+      return response;
+    } on ApiError {
+      rethrow;
+    }
+  }
 }

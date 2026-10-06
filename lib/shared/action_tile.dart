@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 
-class SwitchVaultTile extends StatelessWidget {
+class ActionTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
   final VoidCallback onTap;
-  const SwitchVaultTile({super.key, required this.onTap});
+  const ActionTile({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,18 +32,14 @@ class SwitchVaultTile extends StatelessWidget {
             padding: const .all(12),
             child: Row(
               children: [
-                Icon(
-                  Icons.swap_horiz,
-                  size: 20,
-                  color: Theme.of(context).primaryColor,
-                ),
+                Icon(icon, size: 20, color: Theme.of(context).primaryColor),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: .start,
                     children: [
                       Text(
-                        "Switch vault",
+                        title,
                         maxLines: 1,
                         overflow: .ellipsis,
                         style: textTheme.labelMedium?.copyWith(
@@ -42,7 +47,7 @@ class SwitchVaultTile extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "Open a different family vault",
+                        subtitle,
                         maxLines: 1,
                         overflow: .ellipsis,
                         style: textTheme.bodySmall?.copyWith(

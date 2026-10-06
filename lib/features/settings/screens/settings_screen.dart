@@ -1,13 +1,14 @@
 import 'package:docket/features/family/family_provider.dart';
+import 'package:docket/features/family/screens/create_family_screen.dart';
 import 'package:docket/features/family/screens/select_family_screen.dart';
 import 'package:docket/features/settings/profile.dart';
 import 'package:docket/features/settings/screens/profile_edit_screen.dart';
 import 'package:docket/features/settings/widgets/profile_settings_card.dart';
 import 'package:docket/features/settings/widgets/settings_header.dart';
-import 'package:docket/features/settings/widgets/switch_vault_tile.dart';
 import 'package:docket/features/settings/widgets/sign_out_row.dart';
 import 'package:docket/features/settings/widgets/vault_info_card.dart';
 import 'package:docket/shared/bottom_nav.dart';
+import 'package:docket/shared/action_tile.dart';
 import 'package:docket/shared/section_header.dart';
 import 'package:docket/features/user/user_provider.dart';
 import 'package:docket/shared/toggle_tile.dart';
@@ -104,7 +105,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       VaultInfoCard(family: family),
                       if (families.length > 1) ...[
                         const SizedBox(height: 12),
-                        SwitchVaultTile(
+                        ActionTile(
+                          icon: Icons.swap_horiz,
+                          title: "Switch vault",
+                          subtitle: "Open a different family vault",
                           onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (_) =>
@@ -113,6 +117,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ),
                       ],
+                      const SizedBox(height: 12),
+                      ActionTile(
+                        icon: Icons.add,
+                        title: "Create new vault",
+                        subtitle: "Start a separate family vault",
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const CreateFamilyScreen(),
+                          ),
+                        ),
+                      ),
                     ],
                     const SizedBox(height: 16),
                     const SignOutRow(),
