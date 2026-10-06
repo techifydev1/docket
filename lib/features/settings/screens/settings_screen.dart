@@ -1,8 +1,10 @@
 import 'package:docket/features/family/family_provider.dart';
+import 'package:docket/features/family/screens/select_family_screen.dart';
 import 'package:docket/features/settings/profile.dart';
 import 'package:docket/features/settings/screens/profile_edit_screen.dart';
 import 'package:docket/features/settings/widgets/profile_settings_card.dart';
 import 'package:docket/features/settings/widgets/settings_header.dart';
+import 'package:docket/features/settings/widgets/switch_vault_tile.dart';
 import 'package:docket/features/settings/widgets/sign_out_row.dart';
 import 'package:docket/features/settings/widgets/vault_info_card.dart';
 import 'package:docket/shared/bottom_nav.dart';
@@ -36,7 +38,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final user = context.watch<UserProvider>().userResponse;
-    final family = context.watch<FamilyProvider>().selectedFamily;
+    final provider = context.watch<FamilyProvider>();
+    final family = provider.selectedFamily;
+    final families = provider.families;
     if (user == null) {
       return const Scaffold(
         body: SafeArea(
@@ -98,6 +102,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       const SectionHeader(title: "Vault"),
                       const SizedBox(height: 12),
                       VaultInfoCard(family: family),
+                      if (families.length > 1) ...[
+                        const SizedBox(height: 12),
+                        SwitchVaultTile(
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  const SelectFamilyScreen(isPicker: true),
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                     const SizedBox(height: 16),
                     const SignOutRow(),

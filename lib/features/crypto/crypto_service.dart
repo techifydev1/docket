@@ -11,7 +11,13 @@ class CryptoService {
     sodium = await SodiumInit.init();
   }
 
+  Future<bool> hasUserKeys() async {
+    return await storage.get("private_key") != null &&
+        await storage.get("public_key") != null;
+  }
+
   Future<String> createUserKeys() async {
+    if (await hasUserKeys()) return (await storage.get("public_key"))!;
     final kp = sodium.crypto.box.keyPair();
     await storage.save(
       "private_key",
@@ -63,6 +69,19 @@ class CryptoService {
       return sodium.secureCopy(raw);
     } finally {
       secretKey.dispose();
+    }
+  }
+
+  Future<void> ensureFamilyKey(String familyId, String? wrappedBase64) async {
+    try {
+      if (wrappedBase64 == null || wrappedBase64.isEmpty) return;
+      if (await storage.get('family_key_$familyId') != null) return;
+      if (!await hasUserKeys()) return;
+      final key = await unwrapFamilyKey(wrappedBase64);
+      await saveFamilyKeyLocally(familyId, key);
+      key.dispose();
+    } catch (e) {
+      debugPrint("Unable to restore family key for $familyId: $e");
     }
   }
 

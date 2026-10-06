@@ -1,3 +1,4 @@
+import 'package:docket/features/crypto/crypto_service.dart';
 import 'package:docket/features/family/family_provider.dart';
 import 'package:docket/features/family/family_response.dart';
 import 'package:docket/features/family/family_service.dart';
@@ -18,7 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SelectFamilyScreen extends StatefulWidget {
-  const SelectFamilyScreen({super.key});
+  final bool isPicker;
+  const SelectFamilyScreen({super.key, this.isPicker = false});
 
   @override
   State<SelectFamilyScreen> createState() => _SelectFamilyScreenState();
@@ -30,6 +32,7 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
   bool _isLoading = true;
   bool _isContinuing = false;
   String? _error;
+  FamilyResponse? _pendingSelection;
 
   @override
   void initState() {
@@ -43,10 +46,17 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
       _error = null;
     });
     String? error;
+    final crypto = context.read<CryptoService>();
+    final uid = FirebaseAuth.instance.currentUser?.uid;
     try {
       final families = await _service.getFamilies();
       if (!mounted) return;
       context.read<FamilyProvider>().updateFamilies(families);
+      if (uid != null) {
+        for (final family in families) {
+          await crypto.ensureFamilyKey(family.id, family.wrappedKeys[uid]);
+        }
+      }
     } on ApiError catch (e) {
       error = e.errorMessage;
     }
@@ -103,7 +113,9 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
     final colors = Theme.of(context).colorScheme;
     final provider = context.watch<FamilyProvider>();
     final families = provider.families;
-    final selected = provider.selectedFamily;
+    final selected = widget.isPicker
+        ? (_pendingSelection ?? provider.selectedFamily)
+        : provider.selectedFamily;
     final showSkeleton = _isLoading && families.isEmpty;
     return Scaffold(
       body: SafeArea(
@@ -134,11 +146,12 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
                     ),
                     const SizedBox(height: 8),
                   ],
-                  const Header(
+                  Header(
                     icon: Icons.groups,
                     title: "Choose a family",
-                    subtitle:
-                        "Select the family vault you want to open. You can switch later from settings.",
+                    subtitle: widget.isPicker
+                        ? "Pick the family vault you want to switch to."
+                        : "Select the family vault you want to open. You can switch later from settings.",
                   ),
                   const SizedBox(height: 24),
                   if (showSkeleton)
@@ -160,7 +173,13 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
                         child: FamilyCard(
                           family: family,
                           isSelected: family.id == selected?.id,
-                          onTap: () => provider.updateFamily(family),
+                          onTap: () {
+                            if (widget.isPicker) {
+                              setState(() => _pendingSelection = family);
+                            } else {
+                              provider.updateFamily(family);
+                            }
+                          },
                         ),
                       ),
                   ],
@@ -168,16 +187,27 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
                   CtaSection(
                     onPressed: selected == null || _isLoading || _isContinuing
                         ? null
-                        : () => _continue(selected),
+                        : () {
+                            if (widget.isPicker) {
+                              provider.updateFamily(selected);
+                              Navigator.of(context).maybePop();
+                            } else {
+                              _continue(selected);
+                            }
+                          },
                     isLoading: _isContinuing,
-                    label: "Continue",
+                    label: widget.isPicker ? "Use this vault" : "Continue",
                     isEntry: true,
                     helperText: selected == null
                         ? "Pick a family vault to continue"
+                        : widget.isPicker
+                        ? "Home and settings will switch to this vault"
                         : "You'll only see the documents you're allowed to view.",
                   ),
-                  const SizedBox(height: 24),
-                  SignOutButton(onPressed: _isLoading ? null : _logout),
+                  if (!widget.isPicker) ...[
+                    const SizedBox(height: 24),
+                    SignOutButton(onPressed: _isLoading ? null : _logout),
+                  ],
                 ],
               ),
             ),

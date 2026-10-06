@@ -12,14 +12,15 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  final sodium = CryptoService();
-  sodium.initSodium();
+  final crypto = CryptoService();
+  await crypto.initSodium();
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => OnboardingController()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => FamilyProvider()),
+        Provider<CryptoService>.value(value: crypto),
       ],
       child: const MyApp(),
     ),

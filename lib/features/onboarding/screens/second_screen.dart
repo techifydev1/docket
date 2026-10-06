@@ -1,5 +1,7 @@
+import 'dart:convert';
+
 import 'package:docket/features/auth/auth_service.dart';
-import 'package:docket/features/auth/models/register_request.dart';
+import 'package:docket/features/crypto/crypto_service.dart';
 import 'package:docket/features/family/family_provider.dart';
 import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/onboarding/onboarding_controller.dart';
@@ -12,6 +14,7 @@ import 'package:flutter/material.dart';
 
 import 'package:docket/features/onboarding/widgets/profile_card.dart';
 import 'package:provider/provider.dart';
+import 'package:sodium/sodium.dart';
 
 class SecondScreen extends StatefulWidget {
   final PageController pageController;
@@ -75,30 +78,34 @@ class _SecondScreenState extends State<SecondScreen> {
             onPressed: _isValid
                 ? () async {
                     setState(() => _isRegistering = true);
+                    final crypto = context.read<CryptoService>();
+                    SecureKey? familyKey;
                     try {
                       OnboardingController cont = context
                           .read<OnboardingController>();
                       UserProvider userProvider = context.read<UserProvider>();
                       FamilyProvider familyProvider = context
                           .read<FamilyProvider>();
+                      final publicKey = await crypto.createUserKeys();
+                      familyKey = crypto.generateFamilyKey();
                       cont.updateStep2(
                         name: _nameController.value.text,
                         email: _emailController.value.text,
                         phone: _phoneController.value.text,
                         password: _passwordController.value.text,
+                        publicKey: publicKey,
+                        wrappedFamilyKey: crypto.wrapFamilyKey(
+                          familyKey,
+                          base64Decode(publicKey),
+                        ),
                       );
-                      debugPrint(
-                        "Read stuffs from the context: ${cont.requestData.fullName}, ${cont.requestData.email}, ${cont.requestData.password}, ${cont.requestData.phone}",
-                      );
-                      final req = RegisterRequest();
-                      req.fullName = cont.requestData.fullName;
-                      req.vaultName = cont.requestData.vaultName;
-                      req.isBiometricsEnabled =
-                          cont.requestData.isBiometricsEnabled;
-                      req.email = cont.requestData.email;
-                      req.password = cont.requestData.password;
-                      req.phone = cont.requestData.phone;
-                      final res = await AuthService.register(req);
+                      final res = await AuthService.register(cont.requestData);
+                      if (res.families.isNotEmpty) {
+                        await crypto.saveFamilyKeyLocally(
+                          res.families.first.id,
+                          familyKey,
+                        );
+                      }
                       userProvider.updateUser(res.user);
                       familyProvider.updateFamilies(res.families);
                       widget.pageController.nextPage(
@@ -113,6 +120,7 @@ class _SecondScreenState extends State<SecondScreen> {
                         variant: ToastVariant.error,
                       );
                     } finally {
+                      familyKey?.dispose();
                       if (mounted) setState(() => _isRegistering = false);
                     }
                   }

@@ -5,6 +5,8 @@ class RegisterRequest {
   late String? phone;
   late String password;
   late bool isBiometricsEnabled;
+  late String publicKey;
+  late String? wrappedFamilyKey;
 
   RegisterRequest();
 
@@ -15,5 +17,7 @@ class RegisterRequest {
     "phone": phone,
     "password": password,
     "isBiometricsEnabled": isBiometricsEnabled,
+    "publicKey": publicKey,
+    "wrappedFamilyKey": wrappedFamilyKey,
   };
 }

@@ -7,6 +7,7 @@ class FamilyResponse {
   final int memberCount;
   final String createdAt;
   final List<FamilyMember> familyMembers;
+  final Map<String, String> wrappedKeys;
 
   const FamilyResponse({
     required this.name,
@@ -15,6 +16,7 @@ class FamilyResponse {
     required this.createdAt,
     this.pic,
     required this.familyMembers,
+    this.wrappedKeys = const {},
   });
 
   factory FamilyResponse.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,8 @@ class FamilyResponse {
           .cast<Map<String, dynamic>>()
           .map(FamilyMember.fromJson)
           .toList(),
+      wrappedKeys: (json["wrappedKeys"] as Map<String, dynamic>? ?? const {})
+          .cast<String, String>(),
     );
   }
 }
