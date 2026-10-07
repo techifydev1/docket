@@ -39,18 +39,22 @@ class CryptoService {
     return base64Encode(wrapped);
   }
 
+  String _familyKeyStorageKey(String familyId, String version) =>
+      'family_key_${familyId}_$version';
+
   Future<void> saveFamilyKeyLocally(
     String familyId,
     SecureKey familyKey,
+    int version,
   ) async {
     await storage.save(
-      'family_key_$familyId',
+      _familyKeyStorageKey(familyId, '$version'),
       base64Encode(familyKey.extractBytes()),
     );
   }
 
-  Future<SecureKey?> loadFamilyKeyLocally(String familyId) async {
-    final b64 = await storage.get('family_key_$familyId');
+  Future<SecureKey?> loadFamilyKeyLocally(String familyId, int version) async {
+    final b64 = await storage.get(_familyKeyStorageKey(familyId, '$version'));
     if (b64 == null) return null;
     return sodium.secureCopy(base64Decode(b64));
   }
@@ -72,13 +76,18 @@ class CryptoService {
     }
   }
 
-  Future<void> ensureFamilyKey(String familyId, String? wrappedBase64) async {
+  Future<void> ensureFamilyKey(
+    String familyId,
+    String? wrappedBase64,
+    int version,
+  ) async {
     try {
       if (wrappedBase64 == null || wrappedBase64.isEmpty) return;
-      if (await storage.get('family_key_$familyId') != null) return;
+      final storageKey = _familyKeyStorageKey(familyId, '$version');
+      if (await storage.get(storageKey) != null) return;
       if (!await hasUserKeys()) return;
       final key = await unwrapFamilyKey(wrappedBase64);
-      await saveFamilyKeyLocally(familyId, key);
+      await storage.save(storageKey, base64Encode(key.extractBytes()));
       key.dispose();
     } catch (e) {
       debugPrint("Unable to restore family key for $familyId: $e");

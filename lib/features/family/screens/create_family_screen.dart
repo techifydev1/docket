@@ -44,7 +44,11 @@ class _CreateFamilyScreenState extends State<CreateFamilyScreen> {
         _nameController.text.trim(),
         crypto.wrapFamilyKey(familyKey, base64Decode(publicKey)),
       );
-      await crypto.saveFamilyKeyLocally(family.id, familyKey);
+      await crypto.saveFamilyKeyLocally(
+        family.id,
+        familyKey,
+        family.keyVersion,
+      );
       if (!mounted) return;
       context.read<FamilyProvider>().addFamily(family);
       Navigator.of(context).maybePop();

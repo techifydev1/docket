@@ -48,15 +48,16 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
     });
     String? error;
     final crypto = context.read<CryptoService>();
-    final uid = FirebaseAuth.instance.currentUser?.uid;
     try {
       final families = await _service.getFamilies();
       if (!mounted) return;
       context.read<FamilyProvider>().updateFamilies(families);
-      if (uid != null) {
-        for (final family in families) {
-          await crypto.ensureFamilyKey(family.id, family.wrappedKeys[uid]);
-        }
+      for (final family in families) {
+        await crypto.ensureFamilyKey(
+          family.id,
+          family.wrappedKey,
+          family.keyVersion,
+        );
       }
     } on ApiError catch (e) {
       error = e.errorMessage;

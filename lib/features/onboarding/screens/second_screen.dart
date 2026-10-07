@@ -101,9 +101,11 @@ class _SecondScreenState extends State<SecondScreen> {
                       );
                       final res = await AuthService.register(cont.requestData);
                       if (res.families.isNotEmpty) {
+                        final family = res.families.first;
                         await crypto.saveFamilyKeyLocally(
-                          res.families.first.id,
+                          family.id,
                           familyKey,
+                          family.keyVersion,
                         );
                       }
                       userProvider.updateUser(res.user);
