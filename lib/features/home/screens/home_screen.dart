@@ -1,4 +1,5 @@
 import 'package:docket/features/documents/screens/add_file_screen.dart';
+import 'package:docket/features/documents/add_document_provider.dart';
 import 'package:docket/features/home/screens/invite_member_screen.dart';
 import 'package:docket/features/home/widgets/family_members.dart';
 import 'package:docket/features/home/widgets/home_header.dart';
@@ -10,11 +11,13 @@ import 'package:docket/shared/section_header.dart';
 import 'package:docket/shared/trust_card.dart';
 import 'package:docket/shared/vault_member.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   void _upload(BuildContext context) {
+    context.read<AddDocumentProvider>().reset();
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => const AddFileScreen()));

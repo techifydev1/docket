@@ -1,4 +1,5 @@
 import 'package:docket/features/documents/screens/add_file_screen.dart';
+import 'package:docket/features/documents/add_document_provider.dart';
 import 'package:docket/features/documents/document_category.dart';
 import 'package:docket/features/documents/screens/document_details_screen.dart';
 import 'package:docket/features/documents/widgets/document_filter_chips.dart';
@@ -7,6 +8,7 @@ import 'package:docket/features/documents/widgets/documents_header.dart';
 import 'package:docket/shared/bottom_nav.dart';
 import 'package:docket/shared/document_card.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class DocumentsScreen extends StatefulWidget {
   const DocumentsScreen({super.key});
@@ -200,6 +202,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   }
 
   Future<void> _addDocument() async {
+    context.read<AddDocumentProvider>().reset();
     final created = await Navigator.of(context).push<DocumentItem>(
       MaterialPageRoute(builder: (_) => const AddFileScreen()),
     );
