@@ -1,3 +1,4 @@
+import 'package:docket/features/auth/auth_gate.dart';
 import 'package:docket/features/crypto/crypto_service.dart';
 import 'package:docket/features/family/family_provider.dart';
 import 'package:docket/features/family/screens/create_family_screen.dart';
@@ -81,6 +82,11 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
     );
     if (!confirmed || !context.mounted) return;
     await FirebaseAuth.instance.signOut();
+    if (!mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const AuthGate()),
+      (route) => false,
+    );
   }
 
   Future<void> _continue(FamilyResponse? selected) async {

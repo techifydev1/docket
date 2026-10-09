@@ -1,3 +1,4 @@
+import 'package:docket/features/auth/auth_gate.dart';
 import 'package:docket/shared/confirm_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,11 @@ class SignOutRow extends StatelessWidget {
     );
     if (!confirmed || !context.mounted) return;
     await FirebaseAuth.instance.signOut();
+    if (!context.mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const AuthGate()),
+      (route) => false,
+    );
   }
 
   @override

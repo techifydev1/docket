@@ -72,7 +72,7 @@ class AuthService {
     );
   }
 
-  static Future<AuthResponse> login(LoginRequest request) async {
+  static Future<void> login(LoginRequest request) async {
     try {
       final credentials = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
@@ -80,31 +80,18 @@ class AuthService {
             password: request.password,
           );
       debugPrint("User signed in for user: ${credentials.user!.email}");
-      final client = DioClient();
-      final response = await client.post(
-        "/login",
-        request.toJson(),
-        decoder: (json) => AuthResponse.json(json),
-      );
-      return response;
-    } on ApiError {
-      rethrow;
     } on FirebaseAuthException catch (e) {
-      if (e.code == "user-not-found") {
+      if (e.code == "user-not-found" ||
+          e.code == "wrong-password" ||
+          e.code == "invalid-credential") {
         throw ApiError(
-          "user_not_found",
-          "Invalid email or password",
-          000,
-          DateTime.now().toString(),
-        );
-      } else if (e.code == "wrong-password") {
-        throw ApiError(
-          "wrong_password",
+          "invalid_credentials",
           "Invalid email or password",
           000,
           DateTime.now().toString(),
         );
       }
+      debugPrint("Firebase auth unknown error: ${e.message}");
       throw ApiError(
         "unknown_error",
         "An unknown error occured, please try again",
