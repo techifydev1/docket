@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:docket/features/crypto/crypto_service.dart';
+import 'package:docket/features/documents/models/document_record.dart';
 import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/http/dio_client.dart';
 import 'package:flutter/foundation.dart';
@@ -30,6 +31,19 @@ class DocumentService {
       return await client.post<Map<String, dynamic>>("/document/sign", {
         "familyId": familyId,
       }, decoder: (json) => json as Map<String, dynamic>);
+    } on ApiError {
+      rethrow;
+    }
+  }
+
+  Future<List<DocumentRecord>> getDocuments(String familyId) async {
+    try {
+      return await client.get<List<DocumentRecord>, List<dynamic>>(
+        "/document/$familyId",
+        decoder: (json) => json
+            .map((doc) => DocumentRecord.fromJson(doc as Map<String, dynamic>))
+            .toList(),
+      );
     } on ApiError {
       rethrow;
     }

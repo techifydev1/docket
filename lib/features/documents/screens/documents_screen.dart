@@ -1,10 +1,12 @@
 import 'package:docket/features/documents/screens/add_file_screen.dart';
 import 'package:docket/features/documents/add_document_provider.dart';
 import 'package:docket/features/documents/document_category.dart';
+import 'package:docket/features/documents/documents_provider.dart';
 import 'package:docket/features/documents/screens/document_details_screen.dart';
 import 'package:docket/features/documents/widgets/document_filter_chips.dart';
 import 'package:docket/features/documents/document_item.dart';
 import 'package:docket/features/documents/widgets/documents_header.dart';
+import 'package:docket/features/family/family_provider.dart';
 import 'package:docket/shared/bottom_nav.dart';
 import 'package:docket/shared/document_card.dart';
 import 'package:flutter/material.dart';
@@ -20,178 +22,28 @@ class DocumentsScreen extends StatefulWidget {
 class _DocumentsScreenState extends State<DocumentsScreen> {
   DocumentCategory _category = DocumentCategory.all;
 
-  final List<DocumentItem> _documents = [
-    DocumentItem(
-      icon: Icons.article_outlined,
-      title: "Birth Certificate",
-      subtitle: "Added 2 days ago",
-      category: DocumentCategory.certificates,
-      owner: "Eleanor Vance",
-      fileName: "Eleanor_Vance_Birth_Certificate.pdf",
-      addedOn: "24 September 2026",
-      modifiedOn: "24 September 2026",
-      fingerprint: "9F42-A1C7",
-      fileSize: "1.2 MB",
-      tags: ["Vital record", "Certified copy"],
-    ),
-    DocumentItem(
-      icon: Icons.article_outlined,
-      title: "Noah's Birth Certificate",
-      subtitle: "Added 6 days ago",
-      category: DocumentCategory.certificates,
-      owner: "Eleanor Vance",
-      fileName: "Noah_Vance_Birth_Certificate.pdf",
-      addedOn: "20 September 2026",
-      modifiedOn: "20 September 2026",
-      fingerprint: "3B7D-90E4",
-      tags: ["Vital record"],
-    ),
-    DocumentItem(
-      icon: Icons.article_outlined,
-      title: "Marriage Certificate",
-      subtitle: "Added 3 weeks ago",
-      category: DocumentCategory.certificates,
-      owner: "Eleanor Vance",
-      fileName: "Vance_Hartley_Marriage_Certificate.pdf",
-      addedOn: "5 September 2026",
-      modifiedOn: "5 September 2026",
-      fingerprint: "C18A-55F2",
-      fileSize: "2.4 MB",
-      pageCount: 4,
-      tags: ["Certified copy"],
-    ),
-    DocumentItem(
-      icon: Icons.home_work_outlined,
-      title: "Property Deed",
-      subtitle: "Added 1 week ago",
-      category: DocumentCategory.property,
-      owner: "James Vance",
-      fileName: "Vance_Home_Deed.pdf",
-      addedOn: "19 September 2026",
-      modifiedOn: "19 September 2026",
-      fingerprint: "7D22-4E90",
-      fileSize: "3.1 MB",
-      pageCount: 6,
-      tags: ["Property", "Original"],
-    ),
-    DocumentItem(
-      icon: Icons.home_work_outlined,
-      title: "Property Tax Record",
-      subtitle: "Added 2 months ago",
-      category: DocumentCategory.property,
-      owner: "James Vance",
-      fileName: "Vance_Home_Property_Tax_2026.pdf",
-      addedOn: "1 August 2026",
-      modifiedOn: "1 August 2026",
-      fingerprint: "E0B6-13C7",
-      tags: ["Property"],
-    ),
-    DocumentItem(
-      icon: Icons.description_outlined,
-      title: "Will & Testament",
-      subtitle: "Added 2 months ago",
-      category: DocumentCategory.property,
-      owner: "Eleanor Vance",
-      fileName: "Vance_Family_Will.pdf",
-      addedOn: "1 August 2026",
-      modifiedOn: "14 August 2026",
-      fingerprint: "5A9F-2E84",
-      fileSize: "0.8 MB",
-      pageCount: 8,
-      addedBy: "Eleanor Vance",
-      visibility: "Eleanor Vance + Executor",
-      tags: ["Legal", "Executed"],
-    ),
-    DocumentItem(
-      icon: Icons.health_and_safety_outlined,
-      title: "Health Record",
-      subtitle: "Added 2 weeks ago",
-      category: DocumentCategory.health,
-      owner: "Eleanor Vance",
-      fileName: "Eleanor_Vance_Health_Records.pdf",
-      addedOn: "12 September 2026",
-      modifiedOn: "18 September 2026",
-      fingerprint: "2F6D-8B31",
-      tags: ["Medical"],
-    ),
-    DocumentItem(
-      icon: Icons.health_and_safety_outlined,
-      title: "Prescription History",
-      subtitle: "Added 1 month ago",
-      category: DocumentCategory.health,
-      owner: "Eleanor Vance",
-      fileName: "Vance_Prescription_History.pdf",
-      addedOn: "26 August 2026",
-      modifiedOn: "26 August 2026",
-      fingerprint: "8C43-1D97",
-      tags: ["Medical"],
-    ),
-    DocumentItem(
-      icon: Icons.badge_outlined,
-      title: "Passport",
-      subtitle: "Added 4 months ago",
-      category: DocumentCategory.identity,
-      owner: "Eleanor Vance",
-      fileName: "Eleanor_Vance_Passport.jpg",
-      addedOn: "26 May 2026",
-      modifiedOn: "26 May 2026",
-      fingerprint: "4E17-B6D2",
-      fileType: "JPG",
-      fileSize: "3.8 MB",
-      pageCount: 1,
-      visibility: "Eleanor Vance only",
-      tags: ["Identity"],
-    ),
-    DocumentItem(
-      icon: Icons.credit_card_outlined,
-      title: "Driver's License",
-      subtitle: "Added 4 months ago",
-      category: DocumentCategory.identity,
-      owner: "Eleanor Vance",
-      fileName: "Eleanor_Vance_Drivers_Licence.pdf",
-      addedOn: "26 May 2026",
-      modifiedOn: "26 May 2026",
-      fingerprint: "A05D-77C3",
-      fileSize: "0.6 MB",
-      pageCount: 1,
-      visibility: "Eleanor Vance only",
-      tags: ["Identity"],
-    ),
-    DocumentItem(
-      icon: Icons.shield_outlined,
-      title: "Insurance Policy",
-      subtitle: "Added 5 months ago",
-      category: DocumentCategory.identity,
-      owner: "Eleanor Vance",
-      fileName: "Vance_Family_Insurance_Policy.pdf",
-      addedOn: "26 April 2026",
-      modifiedOn: "26 April 2026",
-      fingerprint: "6B39-4E15",
-      fileSize: "1.9 MB",
-      pageCount: 5,
-      tags: ["Insurance"],
-    ),
-    DocumentItem(
-      icon: Icons.verified_user_outlined,
-      title: "Executor Letter",
-      subtitle: "Added 2 months ago",
-      category: DocumentCategory.identity,
-      owner: "Eleanor Vance",
-      fileName: "Executor_Appointment_Letter.pdf",
-      addedOn: "1 August 2026",
-      modifiedOn: "1 August 2026",
-      fingerprint: "1F84-C6A2",
-      fileSize: "0.4 MB",
-      pageCount: 1,
-      addedBy: "James Vance",
-      visibility: "Eleanor Vance + Executor",
-      tags: ["Legal"],
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _load());
+  }
 
-  List<DocumentItem> get _visibleDocuments => _category == DocumentCategory.all
-      ? _documents
-      : _documents.where((document) => document.category == _category).toList();
+  Future<void> _load() async {
+    if (!mounted) return;
+    final family = context.read<FamilyProvider>().selectedFamily;
+    if (family == null) return;
+    await context.read<DocumentsProvider>().load(
+      familyId: family.id,
+      members: family.familyMembers,
+    );
+  }
+
+  List<DocumentItem> _visibleDocuments(DocumentsProvider provider) =>
+      _category == DocumentCategory.all
+      ? provider.documents
+      : provider.documents
+            .where((document) => document.category == _category)
+            .toList();
 
   void _openDetails(DocumentItem document) {
     Navigator.of(context).push(
@@ -206,16 +58,15 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     final created = await Navigator.of(context).push<DocumentItem>(
       MaterialPageRoute(builder: (_) => const AddFileScreen()),
     );
-    if (created == null) return;
-    setState(() {
-      _documents.insert(0, created);
-      _category = DocumentCategory.all;
-    });
+    if (created == null || !mounted) return;
+    context.read<DocumentsProvider>().add(created);
+    setState(() => _category = DocumentCategory.all);
   }
 
   @override
   Widget build(BuildContext context) {
-    final documents = _visibleDocuments;
+    final provider = context.watch<DocumentsProvider>();
+    final documents = _visibleDocuments(provider);
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -224,7 +75,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             Padding(
               padding: const .fromLTRB(16, 16, 16, 0),
               child: DocumentsHeader(
-                documentCount: _documents.length,
+                documentCount: provider.documents.length,
                 onAdd: _addDocument,
               ),
             ),
@@ -237,26 +88,117 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            Expanded(
-              child: ListView.separated(
-                padding: const .fromLTRB(16, 0, 16, 16),
-                itemCount: documents.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final document = documents[index];
-                  return DocumentCard(
-                    icon: document.icon,
-                    title: document.title,
-                    subtitle: document.subtitle,
-                    onTap: () => _openDetails(document),
-                  );
-                },
-              ),
-            ),
+            Expanded(child: _body(provider, documents)),
           ],
         ),
       ),
       bottomNavigationBar: const BottomNav(currentIndex: 1),
+    );
+  }
+
+  Widget _body(DocumentsProvider provider, List<DocumentItem> documents) {
+    if (provider.isLoading && provider.documents.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (provider.error != null && provider.documents.isEmpty) {
+      return _DocumentsMessage(
+        icon: Icons.cloud_off_outlined,
+        title: "Couldn't load your documents",
+        message: provider.error!,
+        onRetry: _load,
+      );
+    }
+    if (documents.isEmpty) {
+      return const _DocumentsMessage(
+        icon: Icons.folder_open_outlined,
+        title: "No documents yet",
+        message:
+            "Add your first file and it will show up here, sealed with your family key.",
+      );
+    }
+    return ListView.separated(
+      padding: const .fromLTRB(16, 0, 16, 16),
+      itemCount: documents.length,
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final document = documents[index];
+        return DocumentCard(
+          icon: document.icon,
+          title: document.title,
+          subtitle: document.subtitle,
+          onTap: () => _openDetails(document),
+        );
+      },
+    );
+  }
+}
+
+class _DocumentsMessage extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String message;
+  final VoidCallback? onRetry;
+  const _DocumentsMessage({
+    required this.icon,
+    required this.title,
+    required this.message,
+    this.onRetry,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).colorScheme;
+    return Center(
+      child: Padding(
+        padding: const .all(24),
+        child: Column(
+          mainAxisSize: .min,
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              alignment: .center,
+              decoration: BoxDecoration(
+                color: colors.surfaceContainerHigh,
+                shape: .circle,
+              ),
+              child: Icon(icon, size: 24, color: colors.onSurfaceVariant),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              textAlign: .center,
+              style: textTheme.bodyMedium?.copyWith(
+                fontWeight: .w600,
+                color: colors.onSurface,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              message,
+              textAlign: .center,
+              style: textTheme.bodySmall?.copyWith(
+                color: colors.onSurfaceVariant,
+              ),
+            ),
+            if (onRetry != null) ...[
+              const SizedBox(height: 12),
+              OutlinedButton(
+                onPressed: onRetry,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Theme.of(context).primaryColor,
+                  side: BorderSide(color: colors.outlineVariant),
+                  minimumSize: const Size(0, 40),
+                  shape: RoundedRectangleBorder(borderRadius: .circular(8)),
+                  textStyle: textTheme.labelMedium,
+                ),
+                child: const Text("Try again"),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }

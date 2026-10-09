@@ -2,6 +2,8 @@ import 'package:docket/core/theme/app_theme.dart';
 import 'package:docket/features/auth/auth_gate.dart';
 import 'package:docket/features/crypto/crypto_service.dart';
 import 'package:docket/features/documents/add_document_provider.dart';
+import 'package:docket/features/documents/document_service.dart';
+import 'package:docket/features/documents/documents_provider.dart';
 import 'package:docket/features/family/family_provider.dart';
 import 'package:docket/features/onboarding/onboarding_controller.dart';
 import 'package:docket/features/user/user_provider.dart';
@@ -23,6 +25,10 @@ void main() async {
         ChangeNotifierProvider(create: (_) => FamilyProvider()),
         Provider<CryptoService>.value(value: crypto),
         ChangeNotifierProvider(create: (_) => AddDocumentProvider()),
+        ChangeNotifierProvider(
+          create: (context) =>
+              DocumentsProvider(DocumentService(context.read<CryptoService>())),
+        ),
       ],
       child: const MyApp(),
     ),
