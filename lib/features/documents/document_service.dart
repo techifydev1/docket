@@ -38,6 +38,7 @@ class DocumentService {
   Future<void> confirmUpload({
     required String familyId,
     required String docId,
+    required String publicId,
     required String cloudinaryVersion,
     required String signature,
     required String encryptedMetadata,
@@ -48,6 +49,7 @@ class DocumentService {
       await client.post<Map<String, dynamic>>("/document/confirm", {
         "familyId": familyId,
         "docId": docId,
+        "publicId": publicId,
         "cloudinaryVersion": cloudinaryVersion,
         "signature": signature,
         "encryptedMetadata": encryptedMetadata,
@@ -93,7 +95,8 @@ class DocumentService {
       final uploadedPublicId = "${upload["public_id"]}";
       await confirmUpload(
         familyId: familyId,
-        docId: uploadedPublicId.split("/").last,
+        docId: publicId.split("/").last,
+        publicId: uploadedPublicId,
         cloudinaryVersion: "${upload["version"]}",
         signature: "${upload["signature"]}",
         encryptedMetadata: encryptMetaData({
