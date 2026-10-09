@@ -1,7 +1,5 @@
 import 'package:docket/features/auth/auth_service.dart';
 import 'package:docket/features/auth/models/login_request.dart';
-import 'package:docket/features/family/family_provider.dart';
-import 'package:docket/features/family/family_service.dart';
 import 'package:docket/features/family/screens/select_family_screen.dart';
 import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/onboarding/screens/main_screen.dart';
@@ -10,7 +8,6 @@ import 'package:docket/shared/header.dart';
 import 'package:docket/shared/toast.dart';
 import 'package:docket/shared/trust_card.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'package:docket/features/auth/widgets/login_card.dart';
 
@@ -49,9 +46,6 @@ class _LoginScreenState extends State<LoginScreen> {
           password: _passwordController.text,
         ),
       );
-      final families = await FamilyService().getFamilies();
-      if (!mounted) return;
-      context.read<FamilyProvider>().updateFamilies(families);
     } on ApiError catch (e) {
       error = e.errorMessage;
     }
