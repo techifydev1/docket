@@ -5,11 +5,11 @@ import 'package:docket/features/home/widgets/family_members.dart';
 import 'package:docket/features/home/widgets/home_header.dart';
 import 'package:docket/features/home/widgets/quick_actions.dart';
 import 'package:docket/features/home/widgets/vault_card.dart';
+import 'package:docket/features/invitation/screens/invitations_screen.dart';
 import 'package:docket/shared/bottom_nav.dart';
 import 'package:docket/shared/document_card.dart';
 import 'package:docket/shared/section_header.dart';
 import 'package:docket/shared/trust_card.dart';
-import 'package:docket/shared/vault_member.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,12 +23,16 @@ class HomeScreen extends StatelessWidget {
     ).push(MaterialPageRoute(builder: (_) => const AddFileScreen()));
   }
 
-  Future<void> _invite(BuildContext context) async {
-    final member = await Navigator.of(context).push<VaultMember>(
-      MaterialPageRoute(builder: (_) => const InviteMemberScreen()),
-    );
-    if (member == null) return;
-    vaultMembers.add(member);
+  void _invite(BuildContext context) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const InviteMemberScreen()));
+  }
+
+  void _openInvitations(BuildContext context) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const InvitationsScreen()));
   }
 
   @override
@@ -38,9 +42,9 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: .stretch,
           children: [
-            const Padding(
-              padding: .fromLTRB(16, 16, 16, 16),
-              child: HomeHeader(),
+            Padding(
+              padding: const .fromLTRB(16, 16, 16, 16),
+              child: HomeHeader(onInvitations: () => _openInvitations(context)),
             ),
             Expanded(
               child: SingleChildScrollView(

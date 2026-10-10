@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class HomeHeader extends StatelessWidget {
-  const HomeHeader({super.key});
+  final VoidCallback onInvitations;
+  const HomeHeader({super.key, required this.onInvitations});
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +35,17 @@ class HomeHeader extends StatelessWidget {
             ],
           ),
         ),
+        IconButton(
+          onPressed: onInvitations,
+          tooltip: 'Invitations',
+          visualDensity: .compact,
+          icon: Icon(
+            Icons.mail_outline,
+            size: 22,
+            color: colors.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(width: 4),
         Container(
           width: 48,
           height: 48,

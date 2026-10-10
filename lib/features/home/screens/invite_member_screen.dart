@@ -1,13 +1,21 @@
+import 'dart:convert';
+
+import 'package:docket/features/crypto/crypto_service.dart';
+import 'package:docket/features/family/family_provider.dart';
+import 'package:docket/features/http/api_response.dart';
+import 'package:docket/features/invitation/invitation_service.dart';
 import 'package:docket/shared/chip_selector.dart';
 import 'package:docket/shared/cta_section.dart';
 import 'package:docket/shared/form_card.dart';
 import 'package:docket/shared/header.dart';
-import 'package:docket/shared/initials.dart';
 import 'package:docket/shared/text_field.dart';
+import 'package:docket/shared/toast.dart';
 import 'package:docket/shared/toggle_tile.dart';
 import 'package:docket/shared/trust_card.dart';
 import 'package:docket/shared/vault_member.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sodium/sodium.dart';
 
 class InviteMemberScreen extends StatefulWidget {
   const InviteMemberScreen({super.key});
@@ -17,31 +25,74 @@ class InviteMemberScreen extends StatefulWidget {
 }
 
 class _InviteMemberScreenState extends State<InviteMemberScreen> {
-  final TextEditingController _nameController = TextEditingController();
+  final InvitationService _service = InvitationService();
+  final TextEditingController _emailController = TextEditingController();
   String? _relation;
   bool _canAddDocuments = true;
   bool _canOwnDocuments = false;
+  bool _isSending = false;
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
-  bool get _isValid =>
-      _nameController.text.trim().isNotEmpty && _relation != null;
+  bool get _isValid => _emailController.text.trim().isNotEmpty;
 
-  void _sendInvite() {
-    final name = _nameController.text.trim();
-    Navigator.of(context).pop(
-      VaultMember(
-        name: name,
-        relation: _relation!,
-        initials: initialsOf(name),
-        canAddDocuments: _canAddDocuments,
-        canOwnDocuments: _canOwnDocuments,
-      ),
+  Future<void> _sendInvite() async {
+    if (!_isValid || _isSending) return;
+    final email = _emailController.text.trim();
+    final family = context.read<FamilyProvider>().selectedFamily;
+    if (family == null) {
+      Toast.show(
+        context,
+        "Choose a family vault before inviting members",
+        variant: ToastVariant.error,
+      );
+      return;
+    }
+    setState(() => _isSending = true);
+    final crypto = context.read<CryptoService>();
+    String? error;
+    SecureKey? familyKey;
+    try {
+      final target = await _service.initiateInvite(email, family.id);
+      familyKey = await crypto.loadFamilyKeyLocally(
+        family.id,
+        target.keyVersion,
+      );
+      if (familyKey == null) {
+        error = "This device doesn't hold this vault's key";
+      } else {
+        final wrapped = crypto.wrapFamilyKey(
+          familyKey,
+          base64Decode(target.publicKey),
+        );
+        await _service.invite(
+          inviteeEmail: email,
+          familyId: family.id,
+          inviteePublicKey: target.publicKey,
+          wrappedFamilyKey: wrapped,
+        );
+      }
+    } on ApiError catch (e) {
+      error = e.errorMessage;
+    } finally {
+      familyKey?.dispose();
+    }
+    if (!mounted) return;
+    setState(() => _isSending = false);
+    if (error != null) {
+      Toast.show(context, error, variant: ToastVariant.error);
+      return;
+    }
+    Toast.show(
+      context,
+      "Invitation sent to $email",
+      variant: ToastVariant.success,
     );
+    Navigator.of(context).pop();
   }
 
   @override
@@ -82,9 +133,10 @@ class _InviteMemberScreenState extends State<InviteMemberScreen> {
                   crossAxisAlignment: .start,
                   children: [
                     DocketTextField(
-                      label: "Full name",
-                      placeholder: "e.g., Noah Vance",
-                      controller: _nameController,
+                      label: "Email address",
+                      placeholder: "e.g., noah@example.com",
+                      keyboardType: TextInputType.emailAddress,
+                      controller: _emailController,
                       onChanged: () => setState(() {}),
                     ),
                     const SizedBox(height: 16),
@@ -151,6 +203,7 @@ class _InviteMemberScreenState extends State<InviteMemberScreen> {
                 onPressed: _isValid ? _sendInvite : null,
                 label: "Send invite",
                 isEntry: false,
+                isLoading: _isSending,
                 helperText:
                     "They'll get a one-time code to finish setting up their account.",
               ),
