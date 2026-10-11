@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:docket/features/documents/documents_provider.dart';
 import 'package:docket/features/family/family_provider.dart';
 import 'package:docket/features/home/widgets/stat.dart';
 
@@ -12,6 +13,7 @@ class VaultCard extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final colors = Theme.of(context).colorScheme;
     final family = context.watch<FamilyProvider>().selectedFamily;
+    final documentCount = context.watch<DocumentsProvider>().documents.length;
     return Container(
       padding: const .all(16),
       decoration: BoxDecoration(
@@ -71,8 +73,8 @@ class VaultCard extends StatelessWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              const Expanded(
-                child: Stat(value: "12", label: "Documents"),
+              Expanded(
+                child: Stat(value: "$documentCount", label: "Documents"),
               ),
               Expanded(
                 child: Stat(
