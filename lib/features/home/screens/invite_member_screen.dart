@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:docket/features/crypto/crypto_service.dart';
 import 'package:docket/features/family/family_provider.dart';
+import 'package:docket/features/family/family_relation.dart';
+import 'package:docket/features/family/family_role.dart';
 import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/invitation/invitation_service.dart';
 import 'package:docket/shared/chip_selector.dart';
@@ -10,9 +12,7 @@ import 'package:docket/shared/form_card.dart';
 import 'package:docket/shared/header.dart';
 import 'package:docket/shared/text_field.dart';
 import 'package:docket/shared/toast.dart';
-import 'package:docket/shared/toggle_tile.dart';
 import 'package:docket/shared/trust_card.dart';
-import 'package:docket/shared/vault_member.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sodium/sodium.dart';
@@ -27,9 +27,8 @@ class InviteMemberScreen extends StatefulWidget {
 class _InviteMemberScreenState extends State<InviteMemberScreen> {
   final InvitationService _service = InvitationService();
   final TextEditingController _emailController = TextEditingController();
-  String? _relation;
-  bool _canAddDocuments = true;
-  bool _canOwnDocuments = false;
+  FamilyRelation _relation = FamilyRelation.child;
+  FamilyRole _role = FamilyRole.member;
   bool _isSending = false;
 
   @override
@@ -74,6 +73,8 @@ class _InviteMemberScreenState extends State<InviteMemberScreen> {
           familyId: family.id,
           inviteePublicKey: target.publicKey,
           wrappedFamilyKey: wrapped,
+          role: _role.value,
+          relation: _relation.value,
         );
       }
     } on ApiError catch (e) {
@@ -147,10 +148,10 @@ class _InviteMemberScreenState extends State<InviteMemberScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    ChipSelector<String>(
-                      values: vaultRelations,
+                    ChipSelector<FamilyRelation>(
+                      values: FamilyRelation.assignable,
                       selected: _relation,
-                      labelOf: (relation) => relation,
+                      labelOf: (relation) => relation.label,
                       onChanged: (value) => setState(() => _relation = value),
                     ),
                   ],
@@ -158,32 +159,22 @@ class _InviteMemberScreenState extends State<InviteMemberScreen> {
               ),
               const SizedBox(height: 16),
               FormCard(
-                title: "Access",
+                title: "Role",
                 child: Column(
+                  crossAxisAlignment: .start,
                   children: [
-                    const _StaticAccessRow(
-                      icon: Icons.visibility_outlined,
-                      title: "View shared documents",
-                      detail: "Always on, otherwise the invite is pointless",
+                    Text(
+                      "What they can do in the vault",
+                      style: textTheme.bodySmall?.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
                     ),
                     const SizedBox(height: 12),
-                    ToggleTile(
-                      icon: Icons.upload_file,
-                      title: "Can add documents",
-                      subtitle: "Allowed to put new files into the vault",
-                      value: _canAddDocuments,
-                      onChanged: (value) =>
-                          setState(() => _canAddDocuments = value),
-                    ),
-                    const SizedBox(height: 12),
-                    ToggleTile(
-                      icon: Icons.assignment_ind_outlined,
-                      title: "Can own documents",
-                      subtitle:
-                          "Can be assigned ownership. Ownership can never be transferred later.",
-                      value: _canOwnDocuments,
-                      onChanged: (value) =>
-                          setState(() => _canOwnDocuments = value),
+                    ChipSelector<FamilyRole>(
+                      values: FamilyRole.assignable,
+                      selected: _role,
+                      labelOf: (role) => role.label,
+                      onChanged: (value) => setState(() => _role = value),
                     ),
                   ],
                 ),
@@ -211,61 +202,6 @@ class _InviteMemberScreenState extends State<InviteMemberScreen> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _StaticAccessRow extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String detail;
-  const _StaticAccessRow({
-    required this.icon,
-    required this.title,
-    required this.detail,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
-    return Row(
-      children: [
-        Container(
-          width: 32,
-          height: 32,
-          alignment: .center,
-          decoration: BoxDecoration(
-            color: colors.surfaceContainerHighest,
-            borderRadius: .circular(8),
-          ),
-          child: Icon(icon, size: 16, color: colors.onSurfaceVariant),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: .start,
-            children: [
-              Text(
-                title,
-                style: textTheme.labelLarge?.copyWith(color: colors.onSurface),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                detail,
-                style: textTheme.bodySmall?.copyWith(
-                  color: colors.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Icon(
-          Icons.check_circle,
-          size: 18,
-          color: Theme.of(context).primaryColor,
-        ),
-      ],
     );
   }
 }

@@ -29,6 +29,8 @@ class InvitationService {
     required String familyId,
     required String inviteePublicKey,
     required String wrappedFamilyKey,
+    required String role,
+    required String relation,
   }) async {
     try {
       await client.post<void>("/invitation", {
@@ -36,6 +38,8 @@ class InvitationService {
         "familyId": familyId,
         "inviteePublicKey": inviteePublicKey,
         "wrappedFamilyKey": wrappedFamilyKey,
+        "role": role,
+        "relation": relation,
       }, decoder: (_) {});
     } on ApiError {
       rethrow;

@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class MemberAvatar extends StatelessWidget {
   final String initials;
   final String name;
+  final String relation;
   final bool isYou;
   const MemberAvatar({
     super.key,
     required this.initials,
     required this.name,
+    required this.relation,
     this.isYou = false,
   });
 
@@ -44,6 +46,15 @@ class MemberAvatar extends StatelessWidget {
           name,
           style: textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant),
         ),
+        if (relation.isNotEmpty) ...[
+          const SizedBox(height: 2),
+          Text(
+            relation,
+            style: textTheme.labelSmall?.copyWith(
+              color: colors.onSurfaceVariant,
+            ),
+          ),
+        ],
       ],
     );
   }

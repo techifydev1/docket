@@ -131,7 +131,7 @@ class _ToastCardState extends State<_ToastCard>
                     decoration: BoxDecoration(
                       color: colors.surfaceContainerHigh,
                       borderRadius: .circular(8),
-                      border: Border.all(color: colors.outlineVariant),
+                      border: .all(color: colors.outlineVariant),
                       boxShadow: [
                         BoxShadow(
                           color: colors.onSurface.withValues(alpha: 0.08),

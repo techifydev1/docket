@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:docket/features/family/family_provider.dart';
+import 'package:docket/features/family/family_relation.dart';
 import 'package:docket/features/home/widgets/invite_avatar.dart';
 import 'package:docket/features/home/widgets/member_avatar.dart';
 import 'package:docket/features/user/user_provider.dart';
@@ -34,6 +35,8 @@ class FamilyMembers extends StatelessWidget {
               child: MemberAvatar(
                 initials: initialsOf(member.name),
                 name: member.name,
+                relation:
+                    FamilyRelation.fromValue(member.relation)?.label ?? "",
                 isYou: member.userId == user?.id,
               ),
             ),
