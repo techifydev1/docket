@@ -98,6 +98,7 @@ class DocumentsProvider extends ChangeNotifier {
         const <String>[];
     final dataType = meta["dataType"]?.toString() ?? "";
     return DocumentItem(
+      record: record,
       icon: category.icon,
       title: meta["title"]?.toString() ?? "Untitled document",
       subtitle: _addedLabel(addedAt),

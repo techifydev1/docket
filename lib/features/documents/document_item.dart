@@ -1,7 +1,9 @@
 import 'package:docket/features/documents/document_category.dart';
+import 'package:docket/features/documents/models/document_record.dart';
 import 'package:flutter/material.dart';
 
 class DocumentItem {
+  final DocumentRecord record;
   final IconData icon;
   final String title;
   final String subtitle;
@@ -18,6 +20,7 @@ class DocumentItem {
   final String visibility;
   final List<String> tags;
   const DocumentItem({
+    required this.record,
     required this.icon,
     required this.title,
     required this.subtitle,

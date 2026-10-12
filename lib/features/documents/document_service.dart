@@ -3,9 +3,13 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:docket/features/crypto/crypto_service.dart';
 import 'package:docket/features/documents/models/document_record.dart';
+import 'package:docket/features/family/family_provider.dart';
 import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/http/dio_client.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:sodium/sodium.dart';
 
 class DocumentService {
@@ -75,10 +79,11 @@ class DocumentService {
     }
   }
 
-  Future<void> uploadDocument({
+  Future<DocumentRecord> uploadDocument({
     required String familyId,
     required int keyVersion,
     required String ownerId,
+    required String addedBy,
     required String title,
     required String category,
     required List<String> tags,
@@ -99,6 +104,7 @@ class DocumentService {
     try {
       final sign = await signUpload(familyId);
       final publicId = sign["public_id"] as String;
+      final docId = publicId.split("/").last;
       final cipher = crypto.encryptBytes(data, familyKey);
       final upload = await _uploadToCloudinary(
         sign,
@@ -107,22 +113,34 @@ class DocumentService {
         fileName,
       );
       final uploadedPublicId = "${upload["public_id"]}";
+      final cloudinaryVersion = "${upload["version"]}";
+      final encryptedMetadata = encryptMetaData({
+        "title": title,
+        "category": category,
+        "tags": tags,
+        "fileName": fileName,
+        "size": size,
+        "dataType": dataType,
+      }, familyKey);
       await confirmUpload(
         familyId: familyId,
-        docId: publicId.split("/").last,
+        docId: docId,
         publicId: uploadedPublicId,
-        cloudinaryVersion: "${upload["version"]}",
+        cloudinaryVersion: cloudinaryVersion,
         signature: "${upload["signature"]}",
-        encryptedMetadata: encryptMetaData({
-          "title": title,
-          "category": category,
-          "tags": tags,
-          "fileName": fileName,
-          "size": size,
-          "dataType": dataType,
-        }, familyKey),
+        encryptedMetadata: encryptedMetadata,
         keyVersion: keyVersion,
         ownerId: ownerId,
+      );
+      return DocumentRecord(
+        id: docId,
+        encryptedMetadata: encryptedMetadata,
+        keyVersion: keyVersion,
+        addedBy: addedBy,
+        addedAt: DateTime.now().toUtc().toIso8601String(),
+        ownerId: ownerId,
+        publicId: uploadedPublicId,
+        cloudinaryVersion: cloudinaryVersion,
       );
     } finally {
       familyKey.dispose();
@@ -163,6 +181,148 @@ class DocumentService {
         0,
         DateTime.now().toString(),
       );
+    }
+  }
+
+  Future<String> getDownloadUrl(String familyId, String docId) async {
+    try {
+      return await client.get<String, Map<String, dynamic>>(
+        "/document/$familyId/$docId/url",
+        decoder: (json) => json["url"] as String,
+      );
+    } on ApiError {
+      rethrow;
+    }
+  }
+
+  Future<Uint8List> getDecryptedBytes(
+    BuildContext context,
+    Uint8List encryptedBytes,
+  ) async {
+    final familyKey = await getDecryptedFamilyKey(context);
+    try {
+      return crypto.decryptBytes(encryptedBytes, familyKey);
+    } finally {
+      familyKey.dispose();
+    }
+  }
+
+  Future<SecureKey> getDecryptedFamilyKey(BuildContext context) async {
+    final family = context.read<FamilyProvider>().selectedFamily!;
+    return crypto.unwrapFamilyKey(family.wrappedKey!);
+  }
+
+  Future<Uint8List?> getEncryptedBlob(String familyId, String docId) async {
+    final url = await getDownloadUrl(familyId, docId);
+    try {
+      final response = await Dio().get<List<int>>(
+        url,
+        options: Options(responseType: .bytes),
+        onReceiveProgress: (received, total) {
+          if (total != -1) {
+            final progress = (received / total) * 100;
+            debugPrint("Download progress: ${progress.toStringAsFixed(0)}%");
+          }
+        },
+      );
+      final data = response.data;
+      return data == null ? null : Uint8List.fromList(data);
+    } on DioException catch (e) {
+      throw ApiError(
+        "download_failed",
+        "The file could not be downloaded, please try again",
+        e.response?.statusCode ?? 0,
+        DateTime.now().toString(),
+      );
+    }
+  }
+
+  Future<SecureKey> _loadFamilyKey(
+    String familyId,
+    String wrappedKey,
+    int keyVersion,
+  ) async {
+    final local = await crypto.loadFamilyKeyLocally(familyId, keyVersion);
+    return local ?? await crypto.unwrapFamilyKey(wrappedKey);
+  }
+
+  Future<Uint8List?> getDecryptedDocument(
+    BuildContext context,
+    DocumentRecord document,
+  ) async {
+    final family = context.read<FamilyProvider>().selectedFamily;
+    if (family == null || family.wrappedKey == null) return null;
+    final familyKey = await _loadFamilyKey(
+      family.id,
+      family.wrappedKey!,
+      document.keyVersion,
+    );
+    try {
+      final encryptedBytes = await getEncryptedBlob(family.id, document.id);
+      if (encryptedBytes == null) return null;
+      return crypto.decryptBytes(encryptedBytes, familyKey);
+    } finally {
+      familyKey.dispose();
+    }
+  }
+
+  Future<void> shareDecrypted(
+    BuildContext context,
+    DocumentRecord document,
+  ) async {
+    final family = context.read<FamilyProvider>().selectedFamily;
+    if (family == null || family.wrappedKey == null) return;
+    final familyKey = await _loadFamilyKey(
+      family.id,
+      family.wrappedKey!,
+      document.keyVersion,
+    );
+    try {
+      final metadata = decryptMetaData(document.encryptedMetadata, familyKey);
+      final encryptedBytes = await getEncryptedBlob(family.id, document.id);
+      if (encryptedBytes == null) return;
+      final decryptedBytes = crypto.decryptBytes(encryptedBytes, familyKey);
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [
+            XFile.fromData(
+              decryptedBytes,
+              name: metadata["fileName"]?.toString() ?? "document",
+              mimeType: _mimeFromExtension(metadata["dataType"]?.toString()),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      familyKey.dispose();
+    }
+  }
+
+  String _mimeFromExtension(String? extension) {
+    switch (extension?.toLowerCase()) {
+      case "pdf":
+        return "application/pdf";
+      case "png":
+        return "image/png";
+      case "jpg":
+      case "jpeg":
+        return "image/jpeg";
+      case "gif":
+        return "image/gif";
+      case "webp":
+        return "image/webp";
+      case "txt":
+        return "text/plain";
+      case "doc":
+        return "application/msword";
+      case "docx":
+        return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+      case "xls":
+        return "application/vnd.ms-excel";
+      case "xlsx":
+        return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      default:
+        return "application/octet-stream";
     }
   }
 }

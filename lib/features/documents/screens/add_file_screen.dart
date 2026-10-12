@@ -66,25 +66,31 @@ class _AddFileScreenState extends State<AddFileScreen> {
     final owner = family.familyMembers.firstWhere(
       (member) => member.userId == ownerId,
     );
+    final uploader = family.familyMembers.firstWhere(
+      (member) => member.userId == user.id,
+    );
     setState(() => _isUploading = true);
     try {
-      await DocumentService(context.read<CryptoService>()).uploadDocument(
-        familyId: family.id,
-        keyVersion: family.keyVersion,
-        ownerId: ownerId,
-        title: _titleController.text.trim(),
-        category: category.label,
-        tags: document.tags,
-        data: document.data!,
-        dataType: document.dataType!,
-        size: document.size!,
-        fileName: document.fileName!,
-      );
+      final record = await DocumentService(context.read<CryptoService>())
+          .uploadDocument(
+            familyId: family.id,
+            keyVersion: family.keyVersion,
+            ownerId: ownerId,
+            addedBy: user.id,
+            title: _titleController.text.trim(),
+            category: category.label,
+            tags: document.tags,
+            data: document.data!,
+            dataType: document.dataType!,
+            size: document.size!,
+            fileName: document.fileName!,
+          );
       if (!mounted) return;
       final now = DateTime.now();
       final today = "${now.day} ${_months[now.month - 1]} ${now.year}";
       Navigator.of(context).pop(
         DocumentItem(
+          record: record,
           icon: category.icon,
           title: _titleController.text.trim(),
           subtitle: "Added just now",
@@ -97,6 +103,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
           fileType: document.dataType!.toUpperCase(),
           fileSize: document.sizeLabel,
           pageCount: 0,
+          addedBy: uploader.name,
           tags: document.tags,
         ),
       );
