@@ -10,6 +10,7 @@ import 'package:docket/features/user/user_provider.dart';
 import 'package:docket/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -44,6 +45,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: AppTheme.lightTheme,
+      builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark,
+        child: child!,
+      ),
       home: AuthGate(),
     );
   }

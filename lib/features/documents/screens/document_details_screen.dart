@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:docket/features/documents/document_item.dart';
 import 'package:docket/features/documents/documents_provider.dart';
+import 'package:docket/features/documents/screens/document_viewer_screen.dart';
 import 'package:docket/features/http/api_response.dart';
 import 'package:docket/shared/info_row.dart';
 import 'package:docket/shared/pill_chip.dart';
@@ -22,46 +23,48 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
   static const _imageTypes = {"png", "jpg", "jpeg", "gif", "webp"};
 
   Uint8List? _imageBytes;
-  bool _isViewing = false;
-  bool _isDownloading = false;
+  bool _isGeneratingPreview = false;
+  bool _isSharing = false;
 
   DocumentItem get _document => widget.document;
   bool get _isImage => _imageTypes.contains(_document.fileType.toLowerCase());
-  bool get _isBusy => _isViewing || _isDownloading;
 
-  Future<void> _view() async {
-    if (_isBusy) return;
-    if (!_isImage) {
-      await _download();
-      return;
-    }
-    setState(() => _isViewing = true);
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _generatePreview());
+  }
+
+  Future<void> _generatePreview() async {
+    if (!_isImage || !mounted) return;
+    setState(() => _isGeneratingPreview = true);
     try {
       final bytes = await context
           .read<DocumentsProvider>()
           .service
           .getDecryptedDocument(context, _document.record);
       if (!mounted) return;
-      if (bytes == null) {
-        Toast.show(
-          context,
-          "This file could not be opened",
-          variant: ToastVariant.error,
-        );
-        return;
-      }
       setState(() => _imageBytes = bytes);
     } on ApiError catch (e) {
       if (!mounted) return;
       Toast.show(context, e.errorMessage, variant: ToastVariant.error);
     } finally {
-      if (mounted) setState(() => _isViewing = false);
+      if (mounted) setState(() => _isGeneratingPreview = false);
     }
   }
 
-  Future<void> _download() async {
-    if (_isBusy) return;
-    setState(() => _isDownloading = true);
+  void _view() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) =>
+            DocumentViewerScreen(document: _document, bytes: _imageBytes),
+      ),
+    );
+  }
+
+  Future<void> _share() async {
+    if (_isSharing) return;
+    setState(() => _isSharing = true);
     try {
       await context.read<DocumentsProvider>().service.shareDecrypted(
         context,
@@ -71,7 +74,7 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
       if (!mounted) return;
       Toast.show(context, e.errorMessage, variant: ToastVariant.error);
     } finally {
-      if (mounted) setState(() => _isDownloading = false);
+      if (mounted) setState(() => _isSharing = false);
     }
   }
 
@@ -90,7 +93,10 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
         ),
       );
     }
-    return _PreviewPlaceholder(icon: _document.icon, isLoading: _isViewing);
+    return _PreviewPlaceholder(
+      icon: _document.icon,
+      isLoading: _isGeneratingPreview,
+    );
   }
 
   Widget _actions(BuildContext context) {
@@ -101,17 +107,11 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
           child: SizedBox(
             height: 48,
             child: FilledButton(
-              onPressed: _isBusy ? null : _view,
+              onPressed: _view,
               style: FilledButton.styleFrom(
                 shape: RoundedRectangleBorder(borderRadius: .circular(8)),
               ),
-              child: _isViewing
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text("View", style: textTheme.labelLarge),
+              child: Text("View", style: textTheme.labelLarge),
             ),
           ),
         ),
@@ -120,18 +120,18 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
           child: SizedBox(
             height: 48,
             child: OutlinedButton.icon(
-              onPressed: _isBusy ? null : _download,
+              onPressed: _isSharing ? null : _share,
               style: OutlinedButton.styleFrom(
                 shape: RoundedRectangleBorder(borderRadius: .circular(8)),
               ),
-              icon: _isDownloading
+              icon: _isSharing
                   ? const SizedBox(
                       width: 16,
                       height: 16,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Icon(Icons.download_outlined, size: 18),
-              label: const Text("Download"),
+                  : const Icon(Icons.ios_share, size: 18),
+              label: const Text("Share"),
             ),
           ),
         ),
