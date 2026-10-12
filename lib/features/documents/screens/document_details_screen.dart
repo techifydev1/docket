@@ -9,6 +9,7 @@ import 'package:docket/shared/pill_chip.dart';
 import 'package:docket/shared/toast.dart';
 import 'package:docket/shared/trust_card.dart';
 import 'package:flutter/material.dart';
+import 'package:pdfx/pdfx.dart';
 import 'package:provider/provider.dart';
 
 class DocumentDetailsScreen extends StatefulWidget {
@@ -22,34 +23,69 @@ class DocumentDetailsScreen extends StatefulWidget {
 class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
   static const _imageTypes = {"png", "jpg", "jpeg", "gif", "webp"};
 
-  Uint8List? _imageBytes;
+  Uint8List? _documentBytes;
+  Uint8List? _previewBytes;
   bool _isGeneratingPreview = false;
   bool _isSharing = false;
 
   DocumentItem get _document => widget.document;
   bool get _isImage => _imageTypes.contains(_document.fileType.toLowerCase());
+  bool get _isPdf => _document.fileType.toLowerCase() == "pdf";
+  bool get _canPreview => _isImage || _isPdf;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _generatePreview());
+    _generatePreview();
   }
 
   Future<void> _generatePreview() async {
-    if (!_isImage || !mounted) return;
+    if (!_canPreview || !mounted) return;
     setState(() => _isGeneratingPreview = true);
     try {
       final bytes = await context
           .read<DocumentsProvider>()
           .service
           .getDecryptedDocument(context, _document.record);
+      if (bytes == null || !mounted) return;
+      final preview = _isPdf ? await _renderPdfFirstPage(bytes) : bytes;
       if (!mounted) return;
-      setState(() => _imageBytes = bytes);
+      setState(() {
+        _documentBytes = bytes;
+        _previewBytes = preview;
+      });
     } on ApiError catch (e) {
       if (!mounted) return;
       Toast.show(context, e.errorMessage, variant: ToastVariant.error);
+    } catch (_) {
+      if (!mounted) return;
+      Toast.show(
+        context,
+        "Could not render a preview for this file",
+        variant: ToastVariant.error,
+      );
     } finally {
       if (mounted) setState(() => _isGeneratingPreview = false);
+    }
+  }
+
+  Future<Uint8List?> _renderPdfFirstPage(Uint8List bytes) async {
+    final document = await PdfDocument.openData(bytes);
+    try {
+      final page = await document.getPage(1);
+      try {
+        final image = await page.render(
+          width: page.width * 2,
+          height: page.height * 2,
+          format: PdfPageImageFormat.png,
+          backgroundColor: '#FFFFFF',
+        );
+        return image?.bytes;
+      } finally {
+        await page.close();
+      }
+    } finally {
+      await document.close();
     }
   }
 
@@ -57,7 +93,7 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) =>
-            DocumentViewerScreen(document: _document, bytes: _imageBytes),
+            DocumentViewerScreen(document: _document, bytes: _documentBytes),
       ),
     );
   }
@@ -80,7 +116,7 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
 
   Widget _preview(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final bytes = _imageBytes;
+    final bytes = _previewBytes;
     if (bytes != null) {
       return ClipRRect(
         borderRadius: .circular(12),

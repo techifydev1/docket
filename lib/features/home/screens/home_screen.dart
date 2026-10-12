@@ -41,11 +41,13 @@ class _HomeScreenState extends State<HomeScreen> {
     await provider.load(familyId: family.id, members: family.familyMembers);
   }
 
-  void _upload(BuildContext context) {
+  Future<void> _upload(BuildContext context) async {
     context.read<AddDocumentProvider>().reset();
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (_) => const AddFileScreen()));
+    final created = await Navigator.of(context).push<DocumentItem>(
+      MaterialPageRoute(builder: (_) => const AddFileScreen()),
+    );
+    if (created == null || !context.mounted) return;
+    context.read<DocumentsProvider>().add(created);
   }
 
   void _invite(BuildContext context) {

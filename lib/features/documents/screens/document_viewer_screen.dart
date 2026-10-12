@@ -4,6 +4,7 @@ import 'package:docket/features/http/api_response.dart';
 import 'package:docket/shared/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pdfx/pdfx.dart';
 import 'package:provider/provider.dart';
 
 class DocumentViewerScreen extends StatefulWidget {
@@ -16,23 +17,49 @@ class DocumentViewerScreen extends StatefulWidget {
 }
 
 class _DocumentViewerScreenState extends State<DocumentViewerScreen> {
-  static const _imageTypes = {"png", "jpg", "jpeg", "gif", "webp"};
+  static const _supportedExtension = {
+    "png",
+    "jpg",
+    "jpeg",
+    "gif",
+    "webp",
+    "pdf",
+  };
 
   Uint8List? _bytes;
+  PdfControllerPinch? _pdfController;
   bool _isLoading = false;
   bool _isSharing = false;
   String? _error;
 
-  bool get _isImage =>
-      _imageTypes.contains(widget.document.fileType.toLowerCase());
+  bool get _isSuppported =>
+      _supportedExtension.contains(widget.document.fileType.toLowerCase());
+
+  bool get _isPdf => widget.document.fileType.toLowerCase() == "pdf";
 
   @override
   void initState() {
     super.initState();
     _bytes = widget.bytes;
-    if (_bytes == null && _isImage) {
+    _ensurePdfController();
+    if (_bytes == null && _isSuppported) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _load());
     }
+  }
+
+  @override
+  void dispose() {
+    final controller = _pdfController;
+    controller?.document.then((document) => document.close()).ignore();
+    controller?.dispose();
+    super.dispose();
+  }
+
+  void _ensurePdfController() {
+    if (!_isPdf || _bytes == null || _pdfController != null) return;
+    _pdfController = PdfControllerPinch(
+      document: PdfDocument.openData(_bytes!),
+    );
   }
 
   Future<void> _load() async {
@@ -46,7 +73,10 @@ class _DocumentViewerScreenState extends State<DocumentViewerScreen> {
           .service
           .getDecryptedDocument(context, widget.document.record);
       if (!mounted) return;
-      setState(() => _bytes = bytes);
+      setState(() {
+        _bytes = bytes;
+        _ensurePdfController();
+      });
     } on ApiError catch (e) {
       if (!mounted) return;
       setState(() => _error = e.errorMessage);
@@ -123,11 +153,21 @@ class _DocumentViewerScreenState extends State<DocumentViewerScreen> {
     }
     final bytes = _bytes;
     if (bytes != null) {
-      return InteractiveViewer(
-        minScale: 0.5,
-        maxScale: 5,
-        child: Center(child: Image.memory(bytes, fit: BoxFit.contain)),
-      );
+      if (_isPdf) {
+        final controller = _pdfController;
+        if (controller != null) {
+          return PdfViewPinch(
+            controller: controller,
+            backgroundDecoration: const BoxDecoration(color: Colors.black),
+          );
+        }
+      } else {
+        return InteractiveViewer(
+          minScale: 0.5,
+          maxScale: 5,
+          child: Center(child: Image.memory(bytes, fit: BoxFit.contain)),
+        );
+      }
     }
     return _ViewerMessage(
       icon: widget.document.icon,

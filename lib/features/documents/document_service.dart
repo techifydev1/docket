@@ -19,6 +19,24 @@ class DocumentService {
   DocumentService(this.crypto);
 
   static const _cloudinaryUploadBase = "https://api.cloudinary.com/v1_1";
+  static const _maxCachedDocuments = 5;
+
+  final Map<String, Uint8List> _decryptedCache = {};
+
+  String _cacheKey(DocumentRecord document) =>
+      "${document.id}:${document.cloudinaryVersion}";
+
+  Uint8List? _cachedDecrypted(DocumentRecord document) =>
+      _decryptedCache[_cacheKey(document)];
+
+  void _cacheDecrypted(DocumentRecord document, Uint8List bytes) {
+    final key = _cacheKey(document);
+    _decryptedCache.remove(key);
+    _decryptedCache[key] = bytes;
+    while (_decryptedCache.length > _maxCachedDocuments) {
+      _decryptedCache.remove(_decryptedCache.keys.first);
+    }
+  }
 
   String encryptMetaData(Map<String, dynamic> data, SecureKey familyKey) {
     final bytes = Uint8List.fromList(utf8.encode(jsonEncode(data)));
@@ -174,7 +192,6 @@ class DocumentService {
       final message = body is Map<String, dynamic>
           ? body["message"]?.toString()
           : null;
-      debugPrint(body.toString());
       throw ApiError(
         "upload_failed",
         message ?? "The file could not be uploaded, please try again",
@@ -218,12 +235,6 @@ class DocumentService {
       final response = await Dio().get<List<int>>(
         url,
         options: Options(responseType: .bytes),
-        onReceiveProgress: (received, total) {
-          if (total != -1) {
-            final progress = (received / total) * 100;
-            debugPrint("Download progress: ${progress.toStringAsFixed(0)}%");
-          }
-        },
       );
       final data = response.data;
       return data == null ? null : Uint8List.fromList(data);
@@ -250,6 +261,8 @@ class DocumentService {
     BuildContext context,
     DocumentRecord document,
   ) async {
+    final cached = _cachedDecrypted(document);
+    if (cached != null) return cached;
     final family = context.read<FamilyProvider>().selectedFamily;
     if (family == null || family.wrappedKey == null) return null;
     final familyKey = await _loadFamilyKey(
@@ -258,12 +271,22 @@ class DocumentService {
       document.keyVersion,
     );
     try {
-      final encryptedBytes = await getEncryptedBlob(family.id, document.id);
-      if (encryptedBytes == null) return null;
-      return crypto.decryptBytes(encryptedBytes, familyKey);
+      final bytes = await _downloadAndDecrypt(family.id, document, familyKey);
+      if (bytes != null) _cacheDecrypted(document, bytes);
+      return bytes;
     } finally {
       familyKey.dispose();
     }
+  }
+
+  Future<Uint8List?> _downloadAndDecrypt(
+    String familyId,
+    DocumentRecord document,
+    SecureKey familyKey,
+  ) async {
+    final encryptedBytes = await getEncryptedBlob(familyId, document.id);
+    if (encryptedBytes == null) return null;
+    return crypto.decryptBytes(encryptedBytes, familyKey);
   }
 
   Future<void> shareDecrypted(
@@ -279,9 +302,11 @@ class DocumentService {
     );
     try {
       final metadata = decryptMetaData(document.encryptedMetadata, familyKey);
-      final encryptedBytes = await getEncryptedBlob(family.id, document.id);
-      if (encryptedBytes == null) return;
-      final decryptedBytes = crypto.decryptBytes(encryptedBytes, familyKey);
+      final decryptedBytes =
+          _cachedDecrypted(document) ??
+          await _downloadAndDecrypt(family.id, document, familyKey);
+      if (decryptedBytes == null) return;
+      _cacheDecrypted(document, decryptedBytes);
       await SharePlus.instance.share(
         ShareParams(
           files: [
