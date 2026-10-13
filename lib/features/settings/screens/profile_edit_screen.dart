@@ -1,12 +1,18 @@
+import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/settings/profile.dart';
+import 'package:docket/features/user/user_provider.dart';
+import 'package:docket/features/user/user_response.dart';
+import 'package:docket/features/user/user_service.dart';
 import 'package:docket/shared/cta_section.dart';
 import 'package:docket/shared/form_card.dart';
 import 'package:docket/shared/header.dart';
 import 'package:docket/shared/initials.dart';
 import 'package:docket/shared/initials_avatar.dart';
 import 'package:docket/shared/text_field.dart';
+import 'package:docket/shared/toast.dart';
 import 'package:docket/shared/trust_card.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProfileEditScreen extends StatefulWidget {
   final Profile profile;
@@ -17,12 +23,14 @@ class ProfileEditScreen extends StatefulWidget {
 }
 
 class _ProfileEditScreenState extends State<ProfileEditScreen> {
+  final UserService _service = UserService();
   late final TextEditingController _nameController = TextEditingController(
     text: widget.profile.name,
   );
   late final TextEditingController _emailController = TextEditingController(
     text: widget.profile.email,
   );
+  bool _isSaving = false;
 
   @override
   void dispose() {
@@ -31,17 +39,26 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     super.dispose();
   }
 
-  bool get _isValid =>
-      _nameController.text.trim().isNotEmpty &&
-      _emailController.text.trim().isNotEmpty;
+  bool get _isValid => _nameController.text.trim().isNotEmpty;
 
-  void _save() {
-    Navigator.of(context).pop(
-      Profile(
-        name: _nameController.text.trim(),
-        email: _emailController.text.trim(),
-      ),
-    );
+  Future<void> _save() async {
+    if (!_isValid || _isSaving) return;
+    setState(() => _isSaving = true);
+    UserResponse updated;
+    try {
+      updated = await _service.updateUser(_nameController.text.trim());
+    } on ApiError catch (e) {
+      if (!mounted) return;
+      setState(() => _isSaving = false);
+      Toast.show(context, e.errorMessage, variant: ToastVariant.error);
+      return;
+    }
+    if (!mounted) return;
+    context.read<UserProvider>().updateUser(updated);
+    Toast.show(context, "Profile updated", variant: ToastVariant.success);
+    Navigator.of(
+      context,
+    ).pop(Profile(name: updated.fullName, email: updated.email));
   }
 
   @override
@@ -97,7 +114,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                       placeholder: "you@example.com",
                       keyboardType: TextInputType.emailAddress,
                       controller: _emailController,
-                      onChanged: () => setState(() {}),
+                      enabled: false,
                     ),
                   ],
                 ),
@@ -114,7 +131,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               ),
               const SizedBox(height: 16),
               CtaSection(
-                onPressed: _isValid ? _save : null,
+                onPressed: _isValid && !_isSaving ? _save : null,
+                isLoading: _isSaving,
                 label: "Save changes",
                 isEntry: false,
                 helperText:

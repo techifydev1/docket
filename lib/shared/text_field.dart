@@ -9,6 +9,7 @@ class DocketTextField extends StatefulWidget {
   final VoidCallback? onChanged;
   final VoidCallback? onSubmitted;
   final Widget? suffixIcon;
+  final bool enabled;
   const DocketTextField({
     super.key,
     this.label = "Full Legal Name",
@@ -19,6 +20,7 @@ class DocketTextField extends StatefulWidget {
     this.onChanged,
     this.onSubmitted,
     this.suffixIcon,
+    this.enabled = true,
   });
 
   @override
@@ -45,6 +47,7 @@ class _DocketTextFieldState extends State<DocketTextField> {
         const SizedBox(height: 4),
         TextField(
           controller: widget.controller,
+          enabled: widget.enabled,
           keyboardType: keyboardType,
           obscureText: _obscured,
           textCapitalization: widget.isPassword
@@ -58,10 +61,16 @@ class _DocketTextFieldState extends State<DocketTextField> {
           textInputAction: widget.onSubmitted == null
               ? null
               : TextInputAction.done,
-          style: textTheme.bodyMedium?.copyWith(color: colors.onSurface),
+          style: textTheme.bodyMedium?.copyWith(
+            color: widget.enabled
+                ? colors.onSurface
+                : colors.onSurfaceVariant.withValues(alpha: 0.6),
+          ),
           decoration: InputDecoration(
             filled: true,
-            fillColor: colors.surfaceContainerLow,
+            fillColor: widget.enabled
+                ? colors.surfaceContainerLow
+                : colors.surfaceContainerHigh,
             border: OutlineInputBorder(
               borderSide: BorderSide.none,
               borderRadius: .circular(8),

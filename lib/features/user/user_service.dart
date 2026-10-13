@@ -16,4 +16,15 @@ class UserService {
       rethrow;
     }
   }
+
+  Future<UserResponse> updateUser(String fullName) async {
+    try {
+      final response = await client.post<UserResponse>("/user", {
+        "fullName": fullName,
+      }, decoder: (json) => UserResponse.fromJson(json));
+      return response;
+    } on ApiError {
+      rethrow;
+    }
+  }
 }
