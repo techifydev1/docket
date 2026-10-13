@@ -73,6 +73,7 @@ class _ThirdScreenState extends State<ThirdScreen> {
             profilePic: user.profilePic,
             createdAt: user.createdAt,
             emailVerified: true,
+            keyBackup: user.keyBackup,
           ),
         );
       }

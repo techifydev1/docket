@@ -7,6 +7,7 @@ import 'package:docket/features/family/family_service.dart';
 import 'package:docket/features/family/widgets/family_card.dart';
 import 'package:docket/features/home/screens/home_screen.dart';
 import 'package:docket/features/http/api_response.dart';
+import 'package:docket/features/recovery/screens/recovery_setup_screen.dart';
 import 'package:docket/features/user/user_provider.dart';
 import 'package:docket/features/user/user_response.dart';
 import 'package:docket/features/user/user_service.dart';
@@ -109,7 +110,20 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
       );
       return;
     }
-    context.read<UserProvider>().updateUser(user);
+    final fetchedUser = user;
+    context.read<UserProvider>().updateUser(fetchedUser);
+    if (fetchedUser.keyBackup == null) {
+      final updated = await Navigator.of(context).push<UserResponse>(
+        MaterialPageRoute(
+          builder: (_) => RecoverySetupScreen(user: fetchedUser),
+        ),
+      );
+      if (!mounted) return;
+      if (updated != null) {
+        context.read<UserProvider>().updateUser(updated);
+      }
+    }
+    if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const HomeScreen()),
       (route) => false,

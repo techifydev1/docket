@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:docket/features/storage/storage_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sodium/sodium.dart';
+import 'package:bip39/bip39.dart' as bip39;
 
 class CryptoService {
   late final Sodium sodium;
@@ -111,5 +112,70 @@ class CryptoService {
       nonce: blob.sublist(0, n),
       key: key,
     );
+  }
+
+  String generateRecoveryPhrase() {
+    return bip39.generateMnemonic(strength: 256);
+  }
+
+  bool isValidRecoveryPhrase(String phrase) {
+    return bip39.validateMnemonic(phrase);
+  }
+
+  SecureKey _recoveryKeyFromPhrase(String phrase) {
+    final hash = sodium.crypto.genericHash(
+      message: Uint8List.fromList(utf8.encode(phrase)),
+    );
+    return sodium.secureCopy(hash);
+  }
+
+  Future<String> buildBackupKey(String phrase) async {
+    final privateKey = await storage.get("private_key");
+    final publicKey = await storage.get("public_key");
+    if (privateKey == null || publicKey == null) {
+      throw Exception("No private key or public key present");
+    }
+    final recoveryKey = _recoveryKeyFromPhrase(phrase);
+    final nonce = sodium.randombytes.buf(sodium.crypto.secretBox.nonceBytes);
+    try {
+      final encrypted = sodium.crypto.secretBox.easy(
+        message: Uint8List.fromList(
+          utf8.encode(
+            jsonEncode({"publicKey": publicKey, "privateKey": privateKey}),
+          ),
+        ),
+        nonce: nonce,
+        key: recoveryKey,
+      );
+      return base64Encode([...nonce, ...encrypted]);
+    } finally {
+      recoveryKey.dispose();
+    }
+  }
+
+  Future<void> restoreKeyFromBackup(String phrase, String backup) async {
+    if (!isValidRecoveryPhrase(phrase)) {
+      throw Exception("Invalid recovery phrase");
+    }
+    final blob = base64Decode(backup);
+    final nonceBytes = sodium.crypto.secretBox.nonceBytes;
+    if (blob.length <= nonceBytes) {
+      throw Exception("Invalid recovery backup");
+    }
+    final recoveryKey = _recoveryKeyFromPhrase(phrase);
+    try {
+      final decrypted = sodium.crypto.secretBox.openEasy(
+        cipherText: blob.sublist(nonceBytes),
+        nonce: blob.sublist(0, nonceBytes),
+        key: recoveryKey,
+      );
+      final data = jsonDecode(utf8.decode(decrypted)) as Map<String, dynamic>;
+      await storage.save("private_key", data["privateKey"] as String);
+      await storage.save("public_key", data["publicKey"] as String);
+    } on SodiumException {
+      throw Exception("Invalid recovery phrase or corrupted backup");
+    } finally {
+      recoveryKey.dispose();
+    }
   }
 }
