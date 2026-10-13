@@ -15,4 +15,28 @@ class RecoveryService {
       rethrow;
     }
   }
+
+  Future<String> requestRecoveryCode() async {
+    try {
+      final response = await client.post<String>(
+        "/recovery/request",
+        null,
+        decoder: (json) => json["message"],
+      );
+      return response;
+    } on ApiError {
+      rethrow;
+    }
+  }
+
+  Future<String> confirmRecovery(String code) async {
+    try {
+      final response = await client.post<String>("/recovery/confirm", {
+        "code": code,
+      }, decoder: (json) => json["keyBackup"]);
+      return response;
+    } on ApiError {
+      rethrow;
+    }
+  }
 }

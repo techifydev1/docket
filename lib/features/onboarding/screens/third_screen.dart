@@ -30,12 +30,18 @@ class _ThirdScreenState extends State<ThirdScreen> {
 
   Future<void> _resend() async {
     setState(() => _isSending = true);
-    String? error;
-    String? message;
+    String message;
     try {
       message = await AuthService.sendVerificationEmail();
     } on ApiError catch (e) {
-      error = e.errorMessage;
+      if (!mounted) return;
+      setState(() {
+        _isSending = false;
+        _code = '';
+        _codeResets++;
+      });
+      Toast.show(context, e.errorMessage, variant: ToastVariant.error);
+      return;
     }
     if (!mounted) return;
     setState(() {
@@ -43,47 +49,39 @@ class _ThirdScreenState extends State<ThirdScreen> {
       _code = '';
       _codeResets++;
     });
-    if (error != null) {
-      Toast.show(context, error, variant: ToastVariant.error);
-      return;
-    }
-    Toast.show(context, message!, variant: ToastVariant.success);
+    Toast.show(context, message, variant: ToastVariant.success);
   }
 
   Future<void> _verify() async {
     setState(() => _isVerifying = true);
-    String? error;
-    String? message;
+    String message;
     try {
       message = await AuthService.verifyEmail(_code);
     } on ApiError catch (e) {
-      error = e.errorMessage;
-    }
-    if (!mounted) return;
-    if (error == null) {
-      final userProvider = context.read<UserProvider>();
-      final user = userProvider.userResponse;
-      if (user != null) {
-        userProvider.updateUser(
-          UserResponse(
-            fullName: user.fullName,
-            id: user.id,
-            email: user.email,
-            phone: user.phone,
-            profilePic: user.profilePic,
-            createdAt: user.createdAt,
-            emailVerified: true,
-            keyBackup: user.keyBackup,
-          ),
-        );
-      }
-    }
-    setState(() => _isVerifying = false);
-    if (error != null) {
-      Toast.show(context, error, variant: ToastVariant.error);
+      if (!mounted) return;
+      setState(() => _isVerifying = false);
+      Toast.show(context, e.errorMessage, variant: ToastVariant.error);
       return;
     }
-    Toast.show(context, message!, variant: ToastVariant.success);
+    if (!mounted) return;
+    final userProvider = context.read<UserProvider>();
+    final user = userProvider.userResponse;
+    if (user != null) {
+      userProvider.updateUser(
+        UserResponse(
+          fullName: user.fullName,
+          id: user.id,
+          email: user.email,
+          phone: user.phone,
+          profilePic: user.profilePic,
+          createdAt: user.createdAt,
+          emailVerified: true,
+          keyBackup: user.keyBackup,
+        ),
+      );
+    }
+    setState(() => _isVerifying = false);
+    Toast.show(context, message, variant: ToastVariant.success);
     await _refreshUser();
     if (!mounted) return;
     widget.onComplete?.call();

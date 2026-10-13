@@ -1,5 +1,6 @@
 import 'package:docket/features/crypto/crypto_service.dart';
 import 'package:docket/features/family/family_provider.dart';
+import 'package:docket/features/family/family_response.dart';
 import 'package:docket/features/family/family_service.dart';
 import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/invitation/invitation.dart';
@@ -57,12 +58,10 @@ class _InvitationsScreenState extends State<InvitationsScreen> {
 
   Future<void> _accept(Invitation invitation) async {
     setState(() => _busy.add(invitation.id));
-    String? error;
-    String? familyName;
     final crypto = context.read<CryptoService>();
+    FamilyResponse family;
     try {
-      final family = await _service.acceptInvitation(invitation.id);
-      familyName = family.name;
+      family = await _service.acceptInvitation(invitation.id);
       final families = await FamilyService().getFamilies();
       for (final item in families) {
         await crypto.ensureFamilyKey(item.id, item.wrappedKey, item.keyVersion);
@@ -70,41 +69,38 @@ class _InvitationsScreenState extends State<InvitationsScreen> {
       if (!mounted) return;
       context.read<FamilyProvider>().updateFamilies(families);
     } on ApiError catch (e) {
-      error = e.errorMessage;
+      if (!mounted) return;
+      setState(() => _busy.remove(invitation.id));
+      Toast.show(context, e.errorMessage, variant: ToastVariant.error);
+      return;
     }
     if (!mounted) return;
     setState(() {
       _busy.remove(invitation.id);
-      if (error == null) _remove(invitation.id);
+      _remove(invitation.id);
     });
-    if (error != null) {
-      Toast.show(context, error, variant: ToastVariant.error);
-      return;
-    }
     Toast.show(
       context,
-      "You've joined ${familyName ?? 'the vault'}",
+      "You've joined ${family.name}",
       variant: ToastVariant.success,
     );
   }
 
   Future<void> _decline(Invitation invitation) async {
     setState(() => _busy.add(invitation.id));
-    String? error;
     try {
       await _service.declineInvitation(invitation.id);
     } on ApiError catch (e) {
-      error = e.errorMessage;
+      if (!mounted) return;
+      setState(() => _busy.remove(invitation.id));
+      Toast.show(context, e.errorMessage, variant: ToastVariant.error);
+      return;
     }
     if (!mounted) return;
     setState(() {
       _busy.remove(invitation.id);
-      if (error == null) _remove(invitation.id);
+      _remove(invitation.id);
     });
-    if (error != null) {
-      Toast.show(context, error, variant: ToastVariant.error);
-      return;
-    }
     Toast.show(context, "Invitation declined", variant: ToastVariant.info);
   }
 

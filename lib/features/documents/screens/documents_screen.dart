@@ -35,6 +35,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     await context.read<DocumentsProvider>().load(
       familyId: family.id,
       members: family.familyMembers,
+      wrappedKey: family.wrappedKey,
+      keyVersion: family.keyVersion,
     );
   }
 

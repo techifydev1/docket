@@ -38,7 +38,12 @@ class _HomeScreenState extends State<HomeScreen> {
     if (family == null) return;
     final provider = context.read<DocumentsProvider>();
     if (provider.isLoading || provider.documents.isNotEmpty) return;
-    await provider.load(familyId: family.id, members: family.familyMembers);
+    await provider.load(
+      familyId: family.id,
+      members: family.familyMembers,
+      wrappedKey: family.wrappedKey,
+      keyVersion: family.keyVersion,
+    );
   }
 
   Future<void> _upload(BuildContext context) async {

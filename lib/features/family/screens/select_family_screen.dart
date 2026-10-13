@@ -7,6 +7,7 @@ import 'package:docket/features/family/family_service.dart';
 import 'package:docket/features/family/widgets/family_card.dart';
 import 'package:docket/features/home/screens/home_screen.dart';
 import 'package:docket/features/http/api_response.dart';
+import 'package:docket/features/recovery/screens/recovery_screen.dart';
 import 'package:docket/features/recovery/screens/recovery_setup_screen.dart';
 import 'package:docket/features/user/user_provider.dart';
 import 'package:docket/features/user/user_response.dart';
@@ -93,15 +94,11 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
   Future<void> _continue(FamilyResponse? selected) async {
     if (selected == null || _isContinuing) return;
     setState(() => _isContinuing = true);
-    UserResponse? user;
-    var failed = false;
+    UserResponse user;
     try {
       user = await _userService.getUser();
     } on ApiError {
-      failed = true;
-    }
-    if (!mounted) return;
-    if (failed || user == null) {
+      if (!mounted) return;
       setState(() => _isContinuing = false);
       Toast.show(
         context,
@@ -110,19 +107,51 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
       );
       return;
     }
-    final fetchedUser = user;
-    context.read<UserProvider>().updateUser(fetchedUser);
-    if (fetchedUser.keyBackup == null) {
+    if (!mounted) return;
+    final crypto = context.read<CryptoService>();
+    var currentUser = user;
+    final hasKeys = await crypto.hasUserKeys();
+    if (!mounted) return;
+    if (!hasKeys) {
+      final backup = currentUser.keyBackup;
+      if (backup == null || backup.isEmpty) {
+        setState(() => _isContinuing = false);
+        Toast.show(
+          context,
+          "We couldn't find a recovery key for your account",
+          variant: ToastVariant.error,
+        );
+        return;
+      }
+      final restored = await Navigator.of(
+        context,
+      ).push<bool>(MaterialPageRoute(builder: (_) => const RecoveryScreen()));
+      if (!mounted) return;
+      if (restored != true) {
+        setState(() => _isContinuing = false);
+        return;
+      }
+      final families = context.read<FamilyProvider>().families;
+      for (final family in families) {
+        await crypto.ensureFamilyKey(
+          family.id,
+          family.wrappedKey,
+          family.keyVersion,
+        );
+      }
+      if (!mounted) return;
+    } else if (currentUser.keyBackup == null) {
       final updated = await Navigator.of(context).push<UserResponse>(
         MaterialPageRoute(
-          builder: (_) => RecoverySetupScreen(user: fetchedUser),
+          builder: (_) => RecoverySetupScreen(user: currentUser),
         ),
       );
       if (!mounted) return;
       if (updated != null) {
-        context.read<UserProvider>().updateUser(updated);
+        currentUser = updated;
       }
     }
+    context.read<UserProvider>().updateUser(currentUser);
     if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const HomeScreen()),

@@ -56,24 +56,29 @@ class _RecoverySetupScreenState extends State<RecoverySetupScreen> {
   Future<void> _save() async {
     if (!_confirmed || _isSaving) return;
     setState(() => _isSaving = true);
-    String? error;
-    UserResponse? updated;
+    UserResponse updated;
     try {
       final backup = await _crypto.buildBackupKey(_phrase);
       updated = await _service.uploadKeyBackup(backup);
     } on ApiError catch (e) {
-      error = e.errorMessage;
+      if (!mounted) return;
+      setState(() => _isSaving = false);
+      Toast.show(context, e.errorMessage, variant: ToastVariant.error);
+      return;
     } on Exception catch (e) {
-      error = e.toString().replaceFirst("Exception: ", "");
+      if (!mounted) return;
+      setState(() => _isSaving = false);
+      Toast.show(
+        context,
+        e.toString().replaceFirst("Exception: ", ""),
+        variant: ToastVariant.error,
+      );
+      return;
     }
     if (!mounted) return;
     setState(() => _isSaving = false);
-    if (error != null) {
-      Toast.show(context, error, variant: ToastVariant.error);
-      return;
-    }
     Toast.show(context, "Recovery key saved", variant: ToastVariant.success);
-    Navigator.of(context).pop(updated ?? widget.user);
+    Navigator.of(context).pop(updated);
   }
 
   @override

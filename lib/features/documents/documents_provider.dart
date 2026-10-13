@@ -37,11 +37,14 @@ class DocumentsProvider extends ChangeNotifier {
   Future<void> load({
     required String familyId,
     required List<FamilyMember> members,
+    String? wrappedKey,
+    required int keyVersion,
   }) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
     try {
+      await service.crypto.ensureFamilyKey(familyId, wrappedKey, keyVersion);
       final records = await service.getDocuments(familyId);
       final items = <DocumentItem>[];
       for (final record in records) {

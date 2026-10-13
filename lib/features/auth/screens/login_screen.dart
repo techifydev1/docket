@@ -38,7 +38,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _login() async {
     if (!_isValid || _isLoggingIn) return;
     setState(() => _isLoggingIn = true);
-    String? error;
     try {
       await AuthService.login(
         LoginRequest(
@@ -47,14 +46,13 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
     } on ApiError catch (e) {
-      error = e.errorMessage;
+      if (!mounted) return;
+      setState(() => _isLoggingIn = false);
+      Toast.show(context, e.errorMessage, variant: ToastVariant.error);
+      return;
     }
     if (!mounted) return;
     setState(() => _isLoggingIn = false);
-    if (error != null) {
-      Toast.show(context, error, variant: ToastVariant.error);
-      return;
-    }
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const SelectFamilyScreen()),
       (route) => false,

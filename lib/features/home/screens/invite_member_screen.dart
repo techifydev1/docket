@@ -53,7 +53,6 @@ class _InviteMemberScreenState extends State<InviteMemberScreen> {
     }
     setState(() => _isSending = true);
     final crypto = context.read<CryptoService>();
-    String? error;
     SecureKey? familyKey;
     try {
       final target = await _service.initiateInvite(email, family.id);
@@ -62,32 +61,37 @@ class _InviteMemberScreenState extends State<InviteMemberScreen> {
         target.keyVersion,
       );
       if (familyKey == null) {
-        error = "This device doesn't hold this vault's key";
-      } else {
-        final wrapped = crypto.wrapFamilyKey(
-          familyKey,
-          base64Decode(target.publicKey),
+        if (!mounted) return;
+        setState(() => _isSending = false);
+        Toast.show(
+          context,
+          "This device doesn't hold this vault's key",
+          variant: ToastVariant.error,
         );
-        await _service.invite(
-          inviteeEmail: email,
-          familyId: family.id,
-          inviteePublicKey: target.publicKey,
-          wrappedFamilyKey: wrapped,
-          role: _role.value,
-          relation: _relation.value,
-        );
+        return;
       }
+      final wrapped = crypto.wrapFamilyKey(
+        familyKey,
+        base64Decode(target.publicKey),
+      );
+      await _service.invite(
+        inviteeEmail: email,
+        familyId: family.id,
+        inviteePublicKey: target.publicKey,
+        wrappedFamilyKey: wrapped,
+        role: _role.value,
+        relation: _relation.value,
+      );
     } on ApiError catch (e) {
-      error = e.errorMessage;
+      if (!mounted) return;
+      setState(() => _isSending = false);
+      Toast.show(context, e.errorMessage, variant: ToastVariant.error);
+      return;
     } finally {
       familyKey?.dispose();
     }
     if (!mounted) return;
     setState(() => _isSending = false);
-    if (error != null) {
-      Toast.show(context, error, variant: ToastVariant.error);
-      return;
-    }
     Toast.show(
       context,
       "Invitation sent to $email",
