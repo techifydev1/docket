@@ -17,45 +17,56 @@ class MemberAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colors = Theme.of(context).colorScheme;
-    return Column(
-      children: [
-        Container(
-          width: 48,
-          height: 48,
-          alignment: .center,
-          decoration: BoxDecoration(
-            color: colors.surfaceContainerHigh,
-            shape: .circle,
-            border: isYou
-                ? Border.all(
-                    color: colors.primaryContainer.withValues(alpha: 0.4),
-                    width: 2,
-                  )
-                : null,
-          ),
-          child: Text(
-            initials,
-            style: textTheme.labelLarge?.copyWith(
-              fontWeight: .w700,
-              color: Theme.of(context).primaryColor,
+    return SizedBox(
+      width: 72,
+      child: Column(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            alignment: .center,
+            decoration: BoxDecoration(
+              color: colors.surfaceContainerHigh,
+              shape: .circle,
+              border: isYou
+                  ? Border.all(
+                      color: colors.primaryContainer.withValues(alpha: 0.4),
+                      width: 2,
+                    )
+                  : null,
+            ),
+            child: Text(
+              initials,
+              style: textTheme.labelLarge?.copyWith(
+                fontWeight: .w700,
+                color: Theme.of(context).primaryColor,
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          name,
-          style: textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant),
-        ),
-        if (relation.isNotEmpty) ...[
-          const SizedBox(height: 2),
+          const SizedBox(height: 6),
           Text(
-            relation,
-            style: textTheme.labelSmall?.copyWith(
+            name,
+            maxLines: 1,
+            overflow: .ellipsis,
+            textAlign: .center,
+            style: textTheme.bodySmall?.copyWith(
               color: colors.onSurfaceVariant,
             ),
           ),
+          if (relation.isNotEmpty) ...[
+            const SizedBox(height: 2),
+            Text(
+              relation,
+              maxLines: 1,
+              overflow: .ellipsis,
+              textAlign: .center,
+              style: textTheme.labelSmall?.copyWith(
+                color: colors.onSurfaceVariant,
+              ),
+            ),
+          ],
         ],
-      ],
+      ),
     );
   }
 }

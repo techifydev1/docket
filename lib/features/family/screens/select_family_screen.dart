@@ -1,4 +1,5 @@
 import 'package:docket/features/auth/auth_gate.dart';
+import 'package:docket/features/auth/logout.dart';
 import 'package:docket/features/crypto/crypto_service.dart';
 import 'package:docket/features/family/family_provider.dart';
 import 'package:docket/features/family/screens/create_family_screen.dart';
@@ -18,7 +19,6 @@ import 'package:docket/shared/toast.dart';
 import 'package:docket/shared/header.dart';
 import 'package:docket/shared/section_header.dart';
 import 'package:docket/shared/sign_out_button.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -73,6 +73,7 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
   }
 
   Future<void> _logout() async {
+    final navigator = Navigator.of(context);
     final confirmed = await ConfirmDialog.show(
       context,
       title: "Sign out?",
@@ -81,11 +82,10 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
       confirmLabel: "Sign out",
       icon: Icons.logout,
       isDestructive: true,
+      onConfirm: () => logout(context),
     );
-    if (!confirmed || !context.mounted) return;
-    await FirebaseAuth.instance.signOut();
-    if (!mounted) return;
-    Navigator.of(context).pushAndRemoveUntil(
+    if (!confirmed) return;
+    navigator.pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const AuthGate()),
       (route) => false,
     );

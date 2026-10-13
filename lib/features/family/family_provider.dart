@@ -24,4 +24,10 @@ class FamilyProvider extends ChangeNotifier {
     _selectedFamily = family;
     notifyListeners();
   }
+
+  void clear() {
+    _families = const [];
+    _selectedFamily = null;
+    notifyListeners();
+  }
 }

@@ -65,6 +65,13 @@ class DocumentsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void clear() {
+    _documents = [];
+    _isLoading = false;
+    _error = null;
+    notifyListeners();
+  }
+
   Future<DocumentItem?> _decrypt(
     DocumentRecord record,
     String familyId,

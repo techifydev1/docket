@@ -5,7 +5,9 @@ import 'package:docket/features/crypto/crypto_service.dart';
 import 'package:docket/features/family/family_provider.dart';
 import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/onboarding/onboarding_controller.dart';
+import 'package:docket/features/recovery/screens/recovery_setup_screen.dart';
 import 'package:docket/features/user/user_provider.dart';
+import 'package:docket/features/user/user_response.dart';
 import 'package:docket/shared/cta_section.dart';
 import 'package:docket/shared/header.dart';
 import 'package:docket/shared/toast.dart';
@@ -110,6 +112,16 @@ class _SecondScreenState extends State<SecondScreen> {
                       }
                       userProvider.updateUser(res.user);
                       familyProvider.updateFamilies(res.families);
+                      if (!context.mounted) return;
+                      final saved = await Navigator.of(context)
+                          .push<UserResponse>(
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  RecoverySetupScreen(user: res.user),
+                            ),
+                          );
+                      if (saved != null) userProvider.updateUser(saved);
+                      if (!context.mounted) return;
                       widget.pageController.nextPage(
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeInOut,

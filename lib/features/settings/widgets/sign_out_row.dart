@@ -1,12 +1,13 @@
 import 'package:docket/features/auth/auth_gate.dart';
+import 'package:docket/features/auth/logout.dart';
 import 'package:docket/shared/confirm_dialog.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SignOutRow extends StatelessWidget {
   const SignOutRow({super.key});
 
   Future<void> _signOut(BuildContext context) async {
+    final navigator = Navigator.of(context);
     final confirmed = await ConfirmDialog.show(
       context,
       title: "Sign out?",
@@ -15,11 +16,10 @@ class SignOutRow extends StatelessWidget {
       confirmLabel: "Sign out",
       icon: Icons.logout,
       isDestructive: true,
+      onConfirm: () => logout(context),
     );
-    if (!confirmed || !context.mounted) return;
-    await FirebaseAuth.instance.signOut();
-    if (!context.mounted) return;
-    Navigator.of(context).pushAndRemoveUntil(
+    if (!confirmed) return;
+    navigator.pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const AuthGate()),
       (route) => false,
     );

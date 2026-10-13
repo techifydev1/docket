@@ -1,4 +1,5 @@
 import 'package:docket/features/auth/auth_service.dart';
+import 'package:docket/features/auth/logout.dart';
 import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/user/user_provider.dart';
 import 'package:docket/features/user/user_response.dart';
@@ -88,16 +89,15 @@ class _ThirdScreenState extends State<ThirdScreen> {
   }
 
   Future<void> _logout() async {
-    final confirmed = await ConfirmDialog.show(
+    await ConfirmDialog.show(
       context,
       title: "Sign out?",
       message: "You'll need to sign in again before you can verify your email.",
       confirmLabel: "Sign out",
       icon: Icons.logout,
       isDestructive: true,
+      onConfirm: () => logout(context),
     );
-    if (!confirmed || !context.mounted) return;
-    await FirebaseAuth.instance.signOut();
   }
 
   Future<void> _refreshUser() async {
