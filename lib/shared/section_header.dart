@@ -4,11 +4,13 @@ class SectionHeader extends StatelessWidget {
   final String title;
   final String? action;
   final VoidCallback? onAction;
+  final bool enabled;
   const SectionHeader({
     super.key,
     required this.title,
     this.action,
     this.onAction,
+    this.enabled = true,
   });
 
   @override
@@ -22,7 +24,7 @@ class SectionHeader extends StatelessWidget {
           title,
           style: textTheme.headlineSmall?.copyWith(
             fontWeight: .w700,
-            color: colors.onSurface,
+            color: enabled ? colors.onSurface : colors.onSurfaceVariant,
           ),
         ),
         if (action != null)
@@ -33,7 +35,9 @@ class SectionHeader extends StatelessWidget {
               action!,
               style: textTheme.labelMedium?.copyWith(
                 fontWeight: .w700,
-                color: Theme.of(context).primaryColor,
+                color: enabled
+                    ? Theme.of(context).primaryColor
+                    : colors.onSurfaceVariant,
               ),
             ),
           ),

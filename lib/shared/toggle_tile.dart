@@ -5,14 +5,16 @@ class ToggleTile extends StatelessWidget {
   final String title;
   final String subtitle;
   final bool value;
-  final ValueChanged<bool> onChanged;
+  final ValueChanged<bool>? onChanged;
+  final bool enabled;
   const ToggleTile({
     super.key,
     required this.icon,
     required this.title,
     required this.subtitle,
     required this.value,
-    required this.onChanged,
+    this.onChanged,
+    this.enabled = true,
   });
 
   @override
@@ -27,7 +29,13 @@ class ToggleTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: Theme.of(context).primaryColor),
+          Icon(
+            icon,
+            size: 20,
+            color: enabled
+                ? Theme.of(context).primaryColor
+                : colors.onSurfaceVariant,
+          ),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -38,7 +46,7 @@ class ToggleTile extends StatelessWidget {
                   maxLines: 1,
                   overflow: .ellipsis,
                   style: textTheme.labelMedium?.copyWith(
-                    color: colors.onSurface,
+                    color: enabled ? colors.onSurface : colors.onSurfaceVariant,
                   ),
                 ),
                 Text(
@@ -55,7 +63,7 @@ class ToggleTile extends StatelessWidget {
           const SizedBox(width: 8),
           Switch(
             value: value,
-            onChanged: onChanged,
+            onChanged: enabled ? onChanged : null,
             activeThumbColor: colors.onPrimary,
             activeTrackColor: colors.primaryContainer,
             inactiveThumbColor: colors.onSurfaceVariant,

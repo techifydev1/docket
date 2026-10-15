@@ -24,9 +24,6 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   Profile? _editedProfile;
-  bool _biometrics = true;
-  bool _lockOnExit = false;
-  bool _emailAlerts = true;
 
   Future<void> _editProfile(Profile profile) async {
     final updated = await Navigator.of(context).push<Profile>(
@@ -72,31 +69,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       onEdit: () => _editProfile(profile),
                     ),
                     const SizedBox(height: 24),
-                    const SectionHeader(title: "Security"),
+                    const SectionHeader(
+                      title: "Security",
+                      action: "Coming soon",
+                      enabled: false,
+                    ),
                     const SizedBox(height: 12),
-                    ToggleTile(
+                    const ToggleTile(
                       icon: Icons.fingerprint,
                       title: "Biometric / Face ID Lock",
                       subtitle: "Require biometric passkey to open the vault",
-                      value: _biometrics,
-                      onChanged: (value) => setState(() => _biometrics = value),
+                      value: true,
+                      enabled: false,
                     ),
                     const SizedBox(height: 12),
-                    ToggleTile(
+                    const ToggleTile(
                       icon: Icons.lock_outline,
                       title: "Lock on exit",
                       subtitle: "Re-authenticate whenever the app is reopened",
-                      value: _lockOnExit,
-                      onChanged: (value) => setState(() => _lockOnExit = value),
+                      value: false,
+                      enabled: false,
                     ),
                     const SizedBox(height: 12),
-                    ToggleTile(
+                    const ToggleTile(
                       icon: Icons.notifications_none,
                       title: "Vault email alerts",
                       subtitle: "Notify me when a document is added or shared",
-                      value: _emailAlerts,
-                      onChanged: (value) =>
-                          setState(() => _emailAlerts = value),
+                      value: true,
+                      enabled: false,
                     ),
                     if (family != null) ...[
                       const SizedBox(height: 24),
