@@ -84,4 +84,32 @@ class DioClient {
       );
     }
   }
+
+  Future<T> delete<T>(
+    String endpoint, {
+    required T Function(dynamic) decoder,
+  }) async {
+    try {
+      final response = await dio.delete(endpoint);
+      return decoder(response.data);
+    } on DioException catch (e) {
+      final errRes = e.response?.data;
+      if (errRes is Map<String, dynamic>) throw ApiError.fromJson(errRes);
+      debugPrint(e.message);
+      throw ApiError(
+        "unknown_error",
+        "An unknown error occured, please try again",
+        000,
+        DateTime.now().toString(),
+      );
+    } catch (e) {
+      debugPrint(e.toString());
+      throw ApiError(
+        "unknown_error",
+        "An unknown error occured, please try again",
+        000,
+        DateTime.now().toString(),
+      );
+    }
+  }
 }

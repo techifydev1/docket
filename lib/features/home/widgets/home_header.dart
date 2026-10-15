@@ -25,11 +25,18 @@ class HomeHeader extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 2),
-              Text(
-                name,
-                style: textTheme.headlineSmall?.copyWith(
-                  fontWeight: .w700,
-                  color: colors.onSurface,
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.sizeOf(context).width * 0.5,
+                ),
+                child: Text(
+                  name,
+                  maxLines: 1,
+                  overflow: .ellipsis,
+                  style: textTheme.headlineSmall?.copyWith(
+                    fontWeight: .w700,
+                    color: colors.onSurface,
+                  ),
                 ),
               ),
             ],

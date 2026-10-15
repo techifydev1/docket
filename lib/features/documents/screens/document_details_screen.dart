@@ -3,7 +3,9 @@ import 'dart:typed_data';
 import 'package:docket/features/documents/document_item.dart';
 import 'package:docket/features/documents/documents_provider.dart';
 import 'package:docket/features/documents/screens/document_viewer_screen.dart';
+import 'package:docket/features/family/family_provider.dart';
 import 'package:docket/features/http/api_response.dart';
+import 'package:docket/shared/confirm_dialog.dart';
 import 'package:docket/shared/info_row.dart';
 import 'package:docket/shared/pill_chip.dart';
 import 'package:docket/shared/toast.dart';
@@ -114,6 +116,39 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
     }
   }
 
+  Future<void> _delete() async {
+    final navigator = Navigator.of(context);
+    final provider = context.read<DocumentsProvider>();
+    final family = context.read<FamilyProvider>().selectedFamily;
+    if (family == null) return;
+    final docId = _document.record.id;
+    var deleted = false;
+    final confirmed = await ConfirmDialog.show(
+      context,
+      title: "Delete document?",
+      message:
+          "This permanently removes \"${_document.title}\" for everyone in the vault. This can't be undone.",
+      confirmLabel: "Delete",
+      icon: Icons.delete_outline,
+      isDestructive: true,
+      onConfirm: () async {
+        try {
+          await provider.service.deleteDocument(family.id, docId);
+          deleted = true;
+        } on ApiError catch (e) {
+          if (!mounted) return;
+          Toast.show(context, e.errorMessage, variant: ToastVariant.error);
+        }
+      },
+    );
+    if (!mounted) return;
+    if (confirmed && deleted) {
+      provider.remove(docId);
+      Toast.show(context, "Document deleted", variant: ToastVariant.success);
+      navigator.pop();
+    }
+  }
+
   Widget _preview(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final bytes = _previewBytes;
@@ -207,6 +242,16 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
                       style: textTheme.labelLarge?.copyWith(
                         color: colors.onSurface,
                       ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: _delete,
+                    tooltip: 'Delete',
+                    visualDensity: .compact,
+                    icon: Icon(
+                      Icons.delete_outline,
+                      size: 20,
+                      color: colors.error,
                     ),
                   ),
                 ],

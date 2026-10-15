@@ -58,7 +58,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
     Toast.show(
       context,
       "We sent a reset code to your email",
-      variant: ToastVariant.success,
+      variant: .success,
     );
   }
 

@@ -65,6 +65,11 @@ class DocumentsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void remove(String docId) {
+    _documents = _documents.where((item) => item.record.id != docId).toList();
+    notifyListeners();
+  }
+
   void clear() {
     _documents = [];
     _isLoading = false;

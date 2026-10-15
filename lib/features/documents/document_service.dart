@@ -212,6 +212,18 @@ class DocumentService {
     }
   }
 
+  Future<void> deleteDocument(String familyId, String docId) async {
+    try {
+      await client.delete<Map<String, dynamic>>(
+        "/document/$familyId/$docId",
+        decoder: (json) => json as Map<String, dynamic>,
+      );
+      _decryptedCache.removeWhere((key, _) => key.startsWith("$docId:"));
+    } on ApiError {
+      rethrow;
+    }
+  }
+
   Future<Uint8List> getDecryptedBytes(
     BuildContext context,
     Uint8List encryptedBytes,
