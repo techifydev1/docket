@@ -1,5 +1,6 @@
 import 'package:docket/features/auth/auth_service.dart';
 import 'package:docket/features/auth/models/login_request.dart';
+import 'package:docket/features/auth/screens/password_reset_screen.dart';
 import 'package:docket/features/family/screens/select_family_screen.dart';
 import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/onboarding/screens/main_screen.dart';
@@ -59,6 +60,16 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  Future<void> _forgotPassword() async {
+    final email = await Navigator.of(context).push<String>(
+      MaterialPageRoute(builder: (_) => const PasswordResetScreen()),
+    );
+    if (email == null || !mounted) return;
+    _emailController.text = email;
+    _passwordController.clear();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
@@ -94,6 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 emailController: _emailController,
                 passwordController: _passwordController,
                 onChanged: () => setState(() {}),
+                onForgotPassword: _forgotPassword,
               ),
               const SizedBox(height: 16),
               const TrustCard(

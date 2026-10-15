@@ -5,11 +5,13 @@ class LoginCard extends StatelessWidget {
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final VoidCallback onChanged;
+  final VoidCallback onForgotPassword;
   const LoginCard({
     super.key,
     required this.emailController,
     required this.passwordController,
     required this.onChanged,
+    required this.onForgotPassword,
   });
 
   @override
@@ -50,7 +52,7 @@ class LoginCard extends StatelessWidget {
           Align(
             alignment: .centerRight,
             child: TextButton(
-              onPressed: () {},
+              onPressed: onForgotPassword,
               style: TextButton.styleFrom(
                 padding: .zero,
                 minimumSize: const Size(0, 0),

@@ -72,6 +72,26 @@ class AuthService {
     );
   }
 
+  static Future<String> requestPasswordReset(String email) async {
+    final client = DioClient();
+    return client.post<String>("/auth/init-password-reset", {
+      "email": email,
+    }, decoder: (json) => json["message"]);
+  }
+
+  static Future<String> confirmPasswordReset({
+    required String email,
+    required String otp,
+    required String password,
+  }) async {
+    final client = DioClient();
+    return client.post<String>("/auth/confirm-password-reset", {
+      "email": email,
+      "otp": otp,
+      "password": password,
+    }, decoder: (json) => json["message"]);
+  }
+
   static Future<void> login(LoginRequest request) async {
     try {
       final credentials = await FirebaseAuth.instance
