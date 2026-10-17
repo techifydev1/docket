@@ -19,7 +19,7 @@ class DioClient {
 
   DioClient._internal()
     : baseOptions = BaseOptions(
-        baseUrl: "https://nutmeg-repent-cilantro.ngrok-free.dev/api",
+        baseUrl: "https://docket-backend-6p42.onrender.com/api",
       ),
       dio = Dio() {
     dio.options = baseOptions;
