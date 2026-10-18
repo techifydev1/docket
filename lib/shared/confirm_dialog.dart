@@ -33,6 +33,7 @@ class ConfirmDialog extends StatefulWidget {
   }) async {
     final confirmed = await showDialog<bool>(
       context: context,
+      barrierColor: VaultTheme.ink.withValues(alpha: 0.12),
       builder: (_) => ConfirmDialog(
         title: title,
         message: message,
@@ -79,14 +80,14 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
         child: ClipRRect(
           borderRadius: .circular(VaultTheme.radiusXl),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
             child: Container(
               constraints: const BoxConstraints(maxWidth: 400),
               padding: const .fromLTRB(24, 24, 24, 16),
               decoration: BoxDecoration(
-                color: VaultTheme.surface.withValues(alpha: 0.9),
+                color: VaultTheme.surface.withValues(alpha: 0.72),
                 borderRadius: .circular(VaultTheme.radiusXl),
-                border: .all(color: VaultTheme.hairline),
+                border: .all(color: VaultTheme.surface.withValues(alpha: 0.6)),
                 boxShadow: VaultTheme.e2,
               ),
               child: Column(

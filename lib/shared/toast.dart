@@ -16,7 +16,7 @@ class Toast {
     String message, {
     ToastVariant variant = ToastVariant.info,
     Duration duration = const Duration(seconds: 3),
-    double bottomInset = 16,
+    double topInset = 12,
   }) {
     final overlay = Overlay.of(context, rootOverlay: true);
     dismiss();
@@ -25,7 +25,7 @@ class Toast {
         message: message,
         variant: variant,
         duration: duration,
-        bottomInset: bottomInset,
+        topInset: topInset,
         onFinished: dismiss,
       ),
     );
@@ -44,14 +44,14 @@ class _ToastCard extends StatefulWidget {
     required this.message,
     required this.variant,
     required this.duration,
-    required this.bottomInset,
+    required this.topInset,
     required this.onFinished,
   });
 
   final String message;
   final ToastVariant variant;
   final Duration duration;
-  final double bottomInset;
+  final double topInset;
   final VoidCallback onFinished;
 
   @override
@@ -112,12 +112,12 @@ class _ToastCardState extends State<_ToastCard>
     return Positioned(
       left: 16,
       right: 16,
-      bottom: MediaQuery.paddingOf(context).bottom + widget.bottomInset,
+      top: MediaQuery.paddingOf(context).top + widget.topInset,
       child: FadeTransition(
         opacity: _animation,
         child: SlideTransition(
           position: Tween<Offset>(
-            begin: const Offset(0, 0.06),
+            begin: const Offset(0, -0.06),
             end: Offset.zero,
           ).animate(_animation),
           child: Center(

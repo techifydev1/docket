@@ -2,6 +2,7 @@ import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/features/documents/add_document_provider.dart';
 import 'package:docket/shared/docket_card.dart';
 import 'package:docket/shared/icon_tile.dart';
+import 'package:docket/shared/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
@@ -9,15 +10,27 @@ import 'package:provider/provider.dart';
 class AttachFileTile extends StatelessWidget {
   const AttachFileTile({super.key});
 
+  static const _maxUploadBytes = 10 * 1024 * 1024;
+
   Future<void> _attach(BuildContext context) async {
     try {
       PlatformFile? file = await FilePicker.pickFile(type: FileType.any);
       if (file == null) return;
+      final length = file.lengthSync() ?? await file.length() ?? 0;
+      if (length > _maxUploadBytes) {
+        if (!context.mounted) return;
+        Toast.show(
+          context,
+          "Files must be 10 MB or smaller",
+          variant: ToastVariant.error,
+        );
+        return;
+      }
       if (!context.mounted) return;
       context.read<AddDocumentProvider>().updateFileInfo(
         await file.readAsBytes(),
         file.extension ?? "unknown",
-        (file.lengthSync() ?? await file.length() ?? 0).toString(),
+        length.toString(),
         file.name,
       );
     } catch (e) {
