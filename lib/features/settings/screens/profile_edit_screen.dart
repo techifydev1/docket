@@ -4,10 +4,11 @@ import 'package:docket/features/user/user_provider.dart';
 import 'package:docket/features/user/user_response.dart';
 import 'package:docket/features/user/user_service.dart';
 import 'package:docket/shared/cta_section.dart';
+import 'package:docket/shared/docket_avatar.dart';
+import 'package:docket/shared/docket_back_button.dart';
 import 'package:docket/shared/form_card.dart';
 import 'package:docket/shared/header.dart';
 import 'package:docket/shared/initials.dart';
-import 'package:docket/shared/initials_avatar.dart';
 import 'package:docket/shared/text_field.dart';
 import 'package:docket/shared/toast.dart';
 import 'package:docket/shared/trust_card.dart';
@@ -63,7 +64,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -71,19 +71,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           child: Column(
             crossAxisAlignment: .stretch,
             children: [
-              Align(
-                alignment: .centerLeft,
-                child: IconButton(
-                  onPressed: () => Navigator.of(context).maybePop(),
-                  tooltip: 'Go back',
-                  visualDensity: .compact,
-                  icon: Icon(
-                    Icons.arrow_back,
-                    size: 20,
-                    color: colors.onSurfaceVariant,
-                  ),
-                ),
-              ),
+              const Align(alignment: .centerLeft, child: DocketBackButton()),
               const SizedBox(height: 8),
               const Header(
                 icon: Icons.badge_outlined,
@@ -93,8 +81,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               ),
               const SizedBox(height: 24),
               Align(
-                child: InitialsAvatar(
+                child: DocketAvatar(
                   initials: initialsOf(_nameController.text),
+                  size: 64,
                 ),
               ),
               const SizedBox(height: 24),

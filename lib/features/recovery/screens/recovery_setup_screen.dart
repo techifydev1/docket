@@ -1,8 +1,10 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/features/crypto/crypto_service.dart';
 import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/recovery/recovery_service.dart';
 import 'package:docket/features/user/user_response.dart';
 import 'package:docket/shared/cta_section.dart';
+import 'package:docket/shared/docket_card.dart';
 import 'package:docket/shared/header.dart';
 import 'package:docket/shared/toast.dart';
 import 'package:flutter/material.dart';
@@ -83,8 +85,7 @@ class _RecoverySetupScreenState extends State<RecoverySetupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final textTheme = VaultTheme.textTheme;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -99,20 +100,7 @@ class _RecoverySetupScreenState extends State<RecoverySetupScreen> {
                     "This 24-word key is the only way to restore your vault if you lose access to this device. Write it down and keep it somewhere safe.",
               ),
               const SizedBox(height: 24),
-              Container(
-                padding: const .all(16),
-                decoration: BoxDecoration(
-                  color: colors.surfaceContainerLowest,
-                  borderRadius: .circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: colors.onSurface.withValues(alpha: 0.05),
-                      offset: const Offset(0, 1),
-                      blurRadius: 2,
-                      spreadRadius: 0,
-                    ),
-                  ],
-                ),
+              DocketCard(
                 child: Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -131,12 +119,7 @@ class _RecoverySetupScreenState extends State<RecoverySetupScreen> {
                       icon: const Icon(Icons.copy_all_outlined, size: 18),
                       label: const Text("Copy"),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Theme.of(context).primaryColor,
-                        side: BorderSide(color: colors.outlineVariant),
                         minimumSize: const Size(0, 44),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: .circular(8),
-                        ),
                       ),
                     ),
                   ),
@@ -147,12 +130,7 @@ class _RecoverySetupScreenState extends State<RecoverySetupScreen> {
                       icon: const Icon(Icons.ios_share, size: 18),
                       label: const Text("Download"),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Theme.of(context).primaryColor,
-                        side: BorderSide(color: colors.outlineVariant),
                         minimumSize: const Size(0, 44),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: .circular(8),
-                        ),
                       ),
                     ),
                   ),
@@ -162,24 +140,22 @@ class _RecoverySetupScreenState extends State<RecoverySetupScreen> {
               Container(
                 padding: const .all(14),
                 decoration: BoxDecoration(
-                  color: colors.errorContainer.withValues(alpha: 0.4),
-                  borderRadius: .circular(12),
+                  color: VaultTheme.error.withValues(alpha: 0.06),
+                  borderRadius: .circular(VaultTheme.radiusMd),
                 ),
                 child: Row(
                   crossAxisAlignment: .start,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.warning_amber_rounded,
                       size: 20,
-                      color: colors.error,
+                      color: VaultTheme.error,
                     ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         "Anyone with this key can open all your vaults. We can't show it again, so store it safely.",
-                        style: textTheme.bodySmall?.copyWith(
-                          color: colors.onErrorContainer,
-                        ),
+                        style: textTheme.bodySmall,
                       ),
                     ),
                   ],
@@ -192,12 +168,10 @@ class _RecoverySetupScreenState extends State<RecoverySetupScreen> {
                     setState(() => _confirmed = value ?? false),
                 contentPadding: .zero,
                 controlAffinity: .leading,
-                activeColor: Theme.of(context).primaryColor,
+                activeColor: VaultTheme.primary,
                 title: Text(
                   "I've saved my recovery key somewhere safe",
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: colors.onSurface,
-                  ),
+                  style: textTheme.bodyMedium,
                 ),
               ),
               const SizedBox(height: 16),
@@ -224,31 +198,19 @@ class _WordChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final textTheme = VaultTheme.textTheme;
     return Container(
       padding: const .symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: colors.surfaceContainerHigh,
-        borderRadius: .circular(8),
+        color: VaultTheme.surfaceMuted,
+        borderRadius: .circular(VaultTheme.radiusSm),
       ),
       child: Row(
         mainAxisSize: .min,
         children: [
-          Text(
-            '$index',
-            style: textTheme.labelSmall?.copyWith(
-              color: colors.onSurfaceVariant,
-            ),
-          ),
+          Text('$index', style: textTheme.labelSmall),
           const SizedBox(width: 6),
-          Text(
-            word,
-            style: textTheme.bodyMedium?.copyWith(
-              fontWeight: .w600,
-              color: colors.onSurface,
-            ),
-          ),
+          Text(word, style: textTheme.labelMedium),
         ],
       ),
     );

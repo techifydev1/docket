@@ -1,5 +1,7 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/features/settings/profile.dart';
-import 'package:docket/shared/initials_avatar.dart';
+import 'package:docket/shared/docket_avatar.dart';
+import 'package:docket/shared/docket_card.dart';
 import 'package:flutter/material.dart';
 
 class ProfileSettingsCard extends StatelessWidget {
@@ -14,24 +16,11 @@ class ProfileSettingsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
-    return Container(
-      padding: const .all(16),
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerLowest,
-        borderRadius: .circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: colors.onSurface.withValues(alpha: 0.05),
-            offset: const Offset(0, 1),
-            blurRadius: 2,
-            spreadRadius: 0,
-          ),
-        ],
-      ),
+    return DocketCard(
+      padding: const .all(14),
       child: Row(
         children: [
-          InitialsAvatar(initials: profile.initials),
+          DocketAvatar(initials: profile.initials),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
@@ -41,18 +30,14 @@ class ProfileSettingsCard extends StatelessWidget {
                   profile.name,
                   maxLines: 1,
                   overflow: .ellipsis,
-                  style: textTheme.labelLarge?.copyWith(
-                    color: colors.onSurface,
-                  ),
+                  style: textTheme.labelLarge,
                 ),
                 const SizedBox(height: 2),
                 Text(
                   profile.email,
                   maxLines: 1,
                   overflow: .ellipsis,
-                  style: textTheme.bodySmall?.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
+                  style: textTheme.bodySmall,
                 ),
               ],
             ),
@@ -61,10 +46,10 @@ class ProfileSettingsCard extends StatelessWidget {
             onPressed: onEdit,
             tooltip: 'Edit profile',
             visualDensity: .compact,
-            icon: Icon(
+            icon: const Icon(
               Icons.edit_outlined,
               size: 20,
-              color: Theme.of(context).primaryColor,
+              color: VaultTheme.primary,
             ),
           ),
         ],

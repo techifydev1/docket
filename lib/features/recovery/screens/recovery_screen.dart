@@ -1,9 +1,12 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/features/crypto/crypto_service.dart';
 import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/onboarding/widgets/code_card.dart';
 import 'package:docket/features/recovery/recovery_service.dart';
 import 'package:docket/shared/cta_section.dart';
+import 'package:docket/shared/docket_card.dart';
 import 'package:docket/shared/header.dart';
+import 'package:docket/shared/link_button.dart';
 import 'package:docket/shared/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -103,8 +106,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final textTheme = VaultTheme.textTheme;
     return Scaffold(
       body: SafeArea(
         child: LayoutBuilder(
@@ -131,29 +133,11 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                   ),
                   const SizedBox(height: 24),
                   if (!_codeSent) ...[
-                    Container(
-                      padding: const .all(16),
-                      decoration: BoxDecoration(
-                        color: colors.surfaceContainerLowest,
-                        borderRadius: .circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: colors.onSurface.withValues(alpha: 0.05),
-                            offset: const Offset(0, 1),
-                            blurRadius: 2,
-                            spreadRadius: 0,
-                          ),
-                        ],
-                      ),
+                    DocketCard(
                       child: Column(
                         crossAxisAlignment: .start,
                         children: [
-                          Text(
-                            "Recovery key",
-                            style: textTheme.labelMedium?.copyWith(
-                              color: colors.onSurface,
-                            ),
-                          ),
+                          Text("Recovery key", style: textTheme.labelMedium),
                           const SizedBox(height: 4),
                           TextField(
                             controller: _phraseController,
@@ -164,27 +148,10 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                             autocorrect: false,
                             enableSuggestions: false,
                             onChanged: (_) => _onPhraseChanged(),
-                            style: textTheme.bodyMedium?.copyWith(
-                              color: colors.onSurface,
-                            ),
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: colors.surfaceContainerLow,
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius: .circular(8),
-                              ),
+                            style: textTheme.bodyMedium,
+                            decoration: const InputDecoration(
                               hintText:
                                   "Enter your 24 words separated by spaces",
-                              hintStyle: textTheme.bodyMedium?.copyWith(
-                                color: colors.onSurfaceVariant.withValues(
-                                  alpha: 0.6,
-                                ),
-                              ),
-                              contentPadding: const .symmetric(
-                                horizontal: 14,
-                                vertical: 14,
-                              ),
                             ),
                           ),
                         ],
@@ -220,11 +187,13 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                           "Your recovery key is only used on this device and is never sent to our servers.",
                     ),
                     const SizedBox(height: 12),
-                    TextButton(
-                      onPressed: _isRestoring
-                          ? null
-                          : () => setState(() => _codeSent = false),
-                      child: const Text("Use a different recovery key"),
+                    Center(
+                      child: LinkButton(
+                        label: "Use a different recovery key",
+                        onPressed: _isRestoring
+                            ? null
+                            : () => setState(() => _codeSent = false),
+                      ),
                     ),
                   ],
                 ],

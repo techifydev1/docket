@@ -1,3 +1,4 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:flutter/material.dart';
 
 class SettingsHeader extends StatelessWidget {
@@ -5,22 +6,15 @@ class SettingsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final textTheme = VaultTheme.textTheme;
     return Column(
       crossAxisAlignment: .start,
       children: [
-        Text(
-          "Settings",
-          style: textTheme.headlineLarge?.copyWith(
-            fontWeight: .w700,
-            color: colors.onSurface,
-          ),
-        ),
+        Text("Settings", style: textTheme.headlineLarge),
         const SizedBox(height: 2),
         Text(
           "Manage your profile, security and vault details.",
-          style: textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
+          style: textTheme.bodyMedium,
         ),
       ],
     );

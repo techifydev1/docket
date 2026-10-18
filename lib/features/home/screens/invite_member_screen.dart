@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/features/crypto/crypto_service.dart';
 import 'package:docket/features/family/family_provider.dart';
 import 'package:docket/features/family/family_relation.dart';
@@ -8,6 +9,7 @@ import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/invitation/invitation_service.dart';
 import 'package:docket/shared/chip_selector.dart';
 import 'package:docket/shared/cta_section.dart';
+import 'package:docket/shared/docket_back_button.dart';
 import 'package:docket/shared/form_card.dart';
 import 'package:docket/shared/header.dart';
 import 'package:docket/shared/text_field.dart';
@@ -102,8 +104,7 @@ class _InviteMemberScreenState extends State<InviteMemberScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final textTheme = VaultTheme.textTheme;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -111,18 +112,9 @@ class _InviteMemberScreenState extends State<InviteMemberScreen> {
           child: Column(
             crossAxisAlignment: .stretch,
             children: [
-              Align(
+              const Align(
                 alignment: Alignment.centerLeft,
-                child: IconButton(
-                  onPressed: () => Navigator.of(context).maybePop(),
-                  tooltip: 'Go back',
-                  visualDensity: .compact,
-                  icon: Icon(
-                    Icons.arrow_back,
-                    size: 20,
-                    color: colors.onSurfaceVariant,
-                  ),
-                ),
+                child: DocketBackButton(),
               ),
               const SizedBox(height: 8),
               const Header(
@@ -145,12 +137,7 @@ class _InviteMemberScreenState extends State<InviteMemberScreen> {
                       onChanged: () => setState(() {}),
                     ),
                     const SizedBox(height: 16),
-                    Text(
-                      "Relation",
-                      style: textTheme.labelMedium?.copyWith(
-                        color: colors.onSurface,
-                      ),
-                    ),
+                    Text("Relation", style: textTheme.labelMedium),
                     const SizedBox(height: 8),
                     ChipSelector<FamilyRelation>(
                       values: FamilyRelation.assignable,
@@ -169,9 +156,7 @@ class _InviteMemberScreenState extends State<InviteMemberScreen> {
                   children: [
                     Text(
                       "What they can do in the vault",
-                      style: textTheme.bodySmall?.copyWith(
-                        color: colors.onSurfaceVariant,
-                      ),
+                      style: textTheme.bodySmall,
                     ),
                     const SizedBox(height: 12),
                     ChipSelector<FamilyRole>(

@@ -1,6 +1,8 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/features/auth/auth_gate.dart';
 import 'package:docket/features/auth/logout.dart';
 import 'package:docket/shared/confirm_dialog.dart';
+import 'package:docket/shared/docket_card.dart';
 import 'package:flutter/material.dart';
 
 class SignOutRow extends StatelessWidget {
@@ -27,36 +29,22 @@ class SignOutRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
-    return Container(
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
-        borderRadius: .circular(12),
-      ),
-      child: InkWell(
-        onTap: () => _signOut(context),
-        borderRadius: .circular(12),
-        child: Padding(
-          padding: const .all(14),
-          child: Row(
-            children: [
-              Icon(Icons.logout, size: 20, color: colors.error),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  "Sign out",
-                  style: textTheme.labelLarge?.copyWith(color: colors.error),
-                ),
-              ),
-              Icon(
-                Icons.chevron_right,
-                size: 20,
-                color: colors.onSurfaceVariant,
-              ),
-            ],
+    final textTheme = VaultTheme.textTheme;
+    return DocketCard(
+      padding: const .all(14),
+      onTap: () => _signOut(context),
+      child: Row(
+        children: [
+          const Icon(Icons.logout_rounded, size: 20, color: VaultTheme.error),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              "Sign out",
+              style: textTheme.labelLarge?.copyWith(color: VaultTheme.error),
+            ),
           ),
-        ),
+          const Icon(Icons.chevron_right, size: 20, color: VaultTheme.inkMuted),
+        ],
       ),
     );
   }

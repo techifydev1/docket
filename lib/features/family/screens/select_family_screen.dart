@@ -1,3 +1,4 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/features/auth/auth_gate.dart';
 import 'package:docket/features/auth/logout.dart';
 import 'package:docket/features/crypto/crypto_service.dart';
@@ -14,6 +15,8 @@ import 'package:docket/features/user/user_response.dart';
 import 'package:docket/features/user/user_service.dart';
 import 'package:docket/shared/confirm_dialog.dart';
 import 'package:docket/shared/cta_section.dart';
+import 'package:docket/shared/docket_back_button.dart';
+import 'package:docket/shared/status_message.dart';
 import 'package:docket/shared/toast.dart';
 import 'package:docket/shared/header.dart';
 import 'package:docket/shared/section_header.dart';
@@ -161,7 +164,6 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     final provider = context.watch<FamilyProvider>();
     final families = provider.families;
     final selected = widget.isPicker
@@ -182,18 +184,9 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
                 crossAxisAlignment: .stretch,
                 children: [
                   if (ModalRoute.of(context)?.canPop ?? false) ...[
-                    Align(
+                    const Align(
                       alignment: .centerLeft,
-                      child: IconButton(
-                        onPressed: () => Navigator.of(context).maybePop(),
-                        tooltip: 'Go back',
-                        visualDensity: .compact,
-                        icon: Icon(
-                          Icons.arrow_back,
-                          size: 20,
-                          color: colors.onSurfaceVariant,
-                        ),
-                      ),
+                      child: DocketBackButton(),
                     ),
                     const SizedBox(height: 8),
                   ],
@@ -212,7 +205,12 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
                         child: _FamilyCardSkeleton(),
                       )
                   else if (families.isEmpty && _error != null)
-                    _FamiliesError(message: _error!, onRetry: _fetch)
+                    StatusMessage(
+                      icon: Icons.cloud_off_outlined,
+                      title: "Couldn't load your families",
+                      message: _error!,
+                      onRetry: _fetch,
+                    )
                   else if (families.isEmpty)
                     const _EmptyFamilies()
                   else ...[
@@ -291,7 +289,6 @@ class _FamilyCardSkeletonState extends State<_FamilyCardSkeleton>
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     return FadeTransition(
       opacity: Tween<double>(
         begin: 0.4,
@@ -300,24 +297,17 @@ class _FamilyCardSkeletonState extends State<_FamilyCardSkeleton>
       child: Container(
         padding: const .all(16),
         decoration: BoxDecoration(
-          color: colors.surfaceContainerLowest,
-          borderRadius: .circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: colors.onSurface.withValues(alpha: 0.05),
-              offset: const Offset(0, 1),
-              blurRadius: 2,
-              spreadRadius: 0,
-            ),
-          ],
+          color: VaultTheme.surface,
+          borderRadius: .circular(VaultTheme.radiusLg),
+          boxShadow: VaultTheme.e1,
         ),
         child: Row(
           children: [
             Container(
               width: 48,
               height: 48,
-              decoration: BoxDecoration(
-                color: colors.surfaceContainerHigh,
+              decoration: const BoxDecoration(
+                color: VaultTheme.surfaceMuted,
                 shape: .circle,
               ),
             ),
@@ -331,7 +321,7 @@ class _FamilyCardSkeletonState extends State<_FamilyCardSkeleton>
                     alignment: .centerLeft,
                     child: _SkeletonBar(
                       height: 12,
-                      color: colors.surfaceContainerHigh,
+                      color: VaultTheme.surfaceContainerHigh,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -340,7 +330,7 @@ class _FamilyCardSkeletonState extends State<_FamilyCardSkeleton>
                     alignment: .centerLeft,
                     child: _SkeletonBar(
                       height: 10,
-                      color: colors.surfaceContainerHigh,
+                      color: VaultTheme.surfaceContainerHigh,
                     ),
                   ),
                 ],
@@ -367,125 +357,26 @@ class _SkeletonBar extends StatelessWidget {
   }
 }
 
-class _FamiliesError extends StatelessWidget {
-  final String message;
-  final VoidCallback onRetry;
-  const _FamiliesError({required this.message, required this.onRetry});
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
-    return Container(
-      padding: const .all(16),
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
-        borderRadius: .circular(12),
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            alignment: .center,
-            decoration: BoxDecoration(
-              color: colors.surfaceContainerHigh,
-              shape: .circle,
-            ),
-            child: Icon(
-              Icons.cloud_off_outlined,
-              size: 24,
-              color: colors.error,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            "Couldn't load your families",
-            style: textTheme.bodyMedium?.copyWith(
-              fontWeight: .w600,
-              color: colors.onSurface,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            message,
-            textAlign: .center,
-            style: textTheme.bodySmall?.copyWith(
-              color: colors.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 12),
-          OutlinedButton(
-            onPressed: onRetry,
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Theme.of(context).primaryColor,
-              side: BorderSide(color: colors.outlineVariant),
-              minimumSize: const Size(0, 40),
-              shape: RoundedRectangleBorder(borderRadius: .circular(8)),
-              textStyle: textTheme.labelMedium,
-            ),
-            child: const Text("Try again"),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _EmptyFamilies extends StatelessWidget {
   const _EmptyFamilies();
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
-    return Container(
-      padding: const .all(16),
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
-        borderRadius: .circular(12),
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            alignment: .center,
-            decoration: BoxDecoration(
-              color: colors.surfaceContainerHigh,
-              shape: .circle,
-            ),
-            child: Icon(
-              Icons.group_off_outlined,
-              size: 24,
-              color: Theme.of(context).primaryColor,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            "No family vaults yet",
-            style: textTheme.bodyMedium?.copyWith(
-              fontWeight: .w600,
-              color: colors.onSurface,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            "You're not a member of any family vault. Create one to start storing documents.",
-            textAlign: .center,
-            style: textTheme.bodySmall?.copyWith(
-              color: colors.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 16),
-          CtaSection(
-            label: "Create a vault",
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const CreateFamilyScreen()),
-            ),
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        const StatusMessage(
+          icon: Icons.group_off_outlined,
+          title: "No family vaults yet",
+          message:
+              "You're not a member of any family vault. Create one to start storing documents.",
+        ),
+        CtaSection(
+          label: "Create a vault",
+          onPressed: () => Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const CreateFamilyScreen())),
+        ),
+      ],
     );
   }
 }

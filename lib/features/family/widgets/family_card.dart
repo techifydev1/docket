@@ -1,6 +1,7 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/features/family/family_response.dart';
+import 'package:docket/shared/docket_avatar.dart';
 import 'package:docket/shared/initials.dart';
-import 'package:docket/shared/initials_avatar.dart';
 import 'package:flutter/material.dart';
 
 class FamilyCard extends StatelessWidget {
@@ -16,28 +17,23 @@ class FamilyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final textTheme = VaultTheme.textTheme;
+    final radius = BorderRadius.circular(VaultTheme.radiusLg);
     return Container(
       decoration: BoxDecoration(
-        color: colors.surfaceContainerLowest,
-        borderRadius: .circular(12),
+        color: isSelected ? VaultTheme.primarySoft : VaultTheme.surface,
+        borderRadius: radius,
         border: Border.all(
-          color: isSelected ? colors.primary : Colors.transparent,
+          color: isSelected
+              ? VaultTheme.primary.withValues(alpha: 0.35)
+              : VaultTheme.hairline,
           width: 1.5,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.onSurface.withValues(alpha: 0.05),
-            offset: const Offset(0, 1),
-            blurRadius: 2,
-            spreadRadius: 0,
-          ),
-        ],
+        boxShadow: VaultTheme.e1,
       ),
       child: Material(
         color: Colors.transparent,
-        borderRadius: .circular(12),
+        borderRadius: radius,
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
@@ -55,9 +51,7 @@ class FamilyCard extends StatelessWidget {
                         family.name,
                         maxLines: 1,
                         overflow: .ellipsis,
-                        style: textTheme.labelLarge?.copyWith(
-                          color: colors.onSurface,
-                        ),
+                        style: textTheme.labelLarge,
                       ),
                       const SizedBox(height: 2),
                       _FamilySubtitle(family: family),
@@ -68,9 +62,7 @@ class FamilyCard extends StatelessWidget {
                 Icon(
                   isSelected ? Icons.check_circle : Icons.circle_outlined,
                   size: 20,
-                  color: isSelected
-                      ? Theme.of(context).primaryColor
-                      : colors.onSurfaceVariant,
+                  color: isSelected ? VaultTheme.primary : VaultTheme.inkMuted,
                 ),
               ],
             ),
@@ -89,7 +81,7 @@ class _FamilyAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final pic = family.pic;
     if (pic == null || pic.isEmpty) {
-      return InitialsAvatar(initials: initialsOf(family.name));
+      return DocketAvatar(initials: initialsOf(family.name));
     }
     return ClipOval(
       child: Image.network(
@@ -98,7 +90,7 @@ class _FamilyAvatar extends StatelessWidget {
         height: 48,
         fit: .cover,
         errorBuilder: (_, _, _) =>
-            InitialsAvatar(initials: initialsOf(family.name)),
+            DocketAvatar(initials: initialsOf(family.name)),
       ),
     );
   }
@@ -110,9 +102,7 @@ class _FamilySubtitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
-    final style = textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant);
+    final style = VaultTheme.textTheme.bodySmall;
     final created = DateTime.tryParse(family.createdAt)?.toLocal();
     final createdLabel = created == null
         ? null

@@ -6,6 +6,7 @@ import 'package:docket/features/family/family_service.dart';
 import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/onboarding/widgets/family_name_input.dart';
 import 'package:docket/shared/cta_section.dart';
+import 'package:docket/shared/docket_back_button.dart';
 import 'package:docket/shared/header.dart';
 import 'package:docket/shared/toast.dart';
 import 'package:flutter/material.dart';
@@ -63,7 +64,6 @@ class _CreateFamilyScreenState extends State<CreateFamilyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -72,19 +72,7 @@ class _CreateFamilyScreenState extends State<CreateFamilyScreen> {
             crossAxisAlignment: .stretch,
             children: [
               if (ModalRoute.of(context)?.canPop ?? false) ...[
-                Align(
-                  alignment: .centerLeft,
-                  child: IconButton(
-                    onPressed: () => Navigator.of(context).maybePop(),
-                    tooltip: 'Go back',
-                    visualDensity: .compact,
-                    icon: Icon(
-                      Icons.arrow_back,
-                      size: 20,
-                      color: colors.onSurfaceVariant,
-                    ),
-                  ),
-                ),
+                const Align(alignment: .centerLeft, child: DocketBackButton()),
                 const SizedBox(height: 8),
               ],
               const Header(
