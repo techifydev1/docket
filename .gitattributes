@@ -1,0 +1,14 @@
+# GitHub language stats: count Dart only
+android/** linguist-vendored
+ios/** linguist-vendored
+linux/** linguist-vendored
+macos/** linguist-vendored
+windows/** linguist-vendored
+web/** linguist-vendored
+docs/** linguist-vendored
+.github/** linguist-vendored
+pubspec.yaml linguist-vendored
+pubspec.lock linguist-vendored
+analysis_options.yaml linguist-vendored
+firebase.json linguist-vendored
+.metadata linguist-vendored
