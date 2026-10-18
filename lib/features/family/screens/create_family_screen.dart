@@ -64,37 +64,55 @@ class _CreateFamilyScreenState extends State<CreateFamilyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final canPop = ModalRoute.of(context)?.canPop ?? false;
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const .fromLTRB(16, 8, 16, 16),
-          child: Column(
-            crossAxisAlignment: .stretch,
-            children: [
-              if (ModalRoute.of(context)?.canPop ?? false) ...[
-                const Align(alignment: .centerLeft, child: DocketBackButton()),
-                const SizedBox(height: 8),
-              ],
-              const Header(
-                icon: Icons.create_new_folder_outlined,
-                title: "Create a family vault",
-                subtitle:
-                    "Give your new vault a name. You can invite family members once it's created.",
-              ),
-              const SizedBox(height: 24),
-              FamilyNameInput(
-                controller: _nameController,
-                onChanged: () => setState(() {}),
-              ),
-              const SizedBox(height: 32),
-              CtaSection(
-                onPressed: _isValid ? _create : null,
-                isLoading: _isCreating,
-                label: "Create vault",
-                isEntry: false,
+        child: Column(
+          crossAxisAlignment: .stretch,
+          children: [
+            if (canPop) ...[
+              const Padding(
+                padding: .fromLTRB(16, 8, 16, 0),
+                child: Align(alignment: .centerLeft, child: DocketBackButton()),
               ),
             ],
-          ),
+            Expanded(
+              child: LayoutBuilder(
+                builder: (context, constraints) => SingleChildScrollView(
+                  padding: const .all(16),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight - 32,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: .center,
+                      crossAxisAlignment: .stretch,
+                      children: [
+                        const Header(
+                          icon: Icons.create_new_folder_outlined,
+                          title: "Create a family vault",
+                          subtitle:
+                              "Give your new vault a name. You can invite family members once it's created.",
+                        ),
+                        const SizedBox(height: 24),
+                        FamilyNameInput(
+                          controller: _nameController,
+                          onChanged: () => setState(() {}),
+                        ),
+                        const SizedBox(height: 32),
+                        CtaSection(
+                          onPressed: _isValid ? _create : null,
+                          isLoading: _isCreating,
+                          label: "Create vault",
+                          isEntry: false,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
