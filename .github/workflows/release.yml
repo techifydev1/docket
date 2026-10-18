@@ -3,7 +3,7 @@ name: Build and release the apk file
 on:
   push:
     tags:
-      - '*'
+      - 'v*'
 
 permissions:
   contents: write
@@ -22,7 +22,7 @@ jobs:
 
       - name: Extract version from pubspec
         run: |
-          VERSION=$(grep 'version:' pubspec.yaml | awk '{print $2}')
+          VERSION=$(grep 'version:' pubspec.yaml | awk '{print $2}' | cut -d'+' -f1)
           echo "APP_VERSION=$VERSION" >> "$GITHUB_ENV"
           echo "Extracted version: $VERSION"
 
