@@ -1,9 +1,9 @@
-import 'package:docket/features/home/screens/home_screen.dart';
 import 'package:docket/features/onboarding/screens/first_screen.dart';
 import 'package:docket/features/onboarding/screens/second_screen.dart';
 import 'package:docket/features/onboarding/screens/third_screen.dart';
 
 import 'package:docket/features/onboarding/widgets/top_bar.dart';
+import 'package:docket/shared/app_shell.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {
@@ -33,7 +33,7 @@ class _MainScreenState extends State<MainScreen> {
   void _completeOnboarding() {
     Navigator.of(
       context,
-    ).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
+    ).pushReplacement(MaterialPageRoute(builder: (_) => const AppShell()));
   }
 
   @override

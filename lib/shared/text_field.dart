@@ -1,3 +1,4 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:flutter/material.dart';
 
 class DocketTextField extends StatefulWidget {
@@ -30,21 +31,23 @@ class DocketTextField extends StatefulWidget {
 class _DocketTextFieldState extends State<DocketTextField> {
   late bool _obscured = widget.isPassword;
 
+  OutlineInputBorder _border(Color color, [double width = 0]) =>
+      OutlineInputBorder(
+        borderRadius: .circular(VaultTheme.radiusMd),
+        borderSide: BorderSide(color: color, width: width),
+      );
+
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final textTheme = VaultTheme.textTheme;
     final keyboardType =
         widget.keyboardType ??
         (widget.isPassword ? TextInputType.visiblePassword : null);
     return Column(
       crossAxisAlignment: .start,
       children: [
-        Text(
-          widget.label,
-          style: textTheme.labelMedium?.copyWith(color: colors.onSurface),
-        ),
-        const SizedBox(height: 4),
+        Text(widget.label.toUpperCase(), style: textTheme.labelSmall),
+        const SizedBox(height: 6),
         TextField(
           controller: widget.controller,
           enabled: widget.enabled,
@@ -61,32 +64,34 @@ class _DocketTextFieldState extends State<DocketTextField> {
           textInputAction: widget.onSubmitted == null
               ? null
               : TextInputAction.done,
-          style: textTheme.bodyMedium?.copyWith(
+          style: textTheme.bodyLarge?.copyWith(
             color: widget.enabled
-                ? colors.onSurface
-                : colors.onSurfaceVariant.withValues(alpha: 0.6),
+                ? VaultTheme.ink
+                : VaultTheme.inkMuted.withValues(alpha: 0.6),
           ),
           decoration: InputDecoration(
             filled: true,
             fillColor: widget.enabled
-                ? colors.surfaceContainerLow
-                : colors.surfaceContainerHigh,
-            border: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: .circular(8),
-            ),
+                ? VaultTheme.surfaceMuted
+                : VaultTheme.surfaceMuted.withValues(alpha: 0.6),
+            border: _border(Colors.transparent),
+            enabledBorder: _border(Colors.transparent),
+            focusedBorder: _border(VaultTheme.primary, 1.5),
             hintText: widget.placeholder,
             hintStyle: textTheme.bodyMedium?.copyWith(
-              color: colors.onSurfaceVariant.withValues(alpha: 0.6),
+              color: VaultTheme.inkMuted.withValues(alpha: 0.6),
             ),
-            contentPadding: const .symmetric(horizontal: 14, vertical: 14),
+            contentPadding: const .symmetric(horizontal: 16, vertical: 16),
             suffixIcon: widget.isPassword
                 ? IconButton(
                     onPressed: () => setState(() => _obscured = !_obscured),
                     icon: Icon(
-                      _obscured ? Icons.visibility : Icons.visibility_off,
+                      _obscured
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      size: 20,
                     ),
-                    color: colors.onSurfaceVariant,
+                    color: VaultTheme.inkMuted,
                   )
                 : widget.suffixIcon,
           ),

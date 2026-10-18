@@ -7,8 +7,9 @@ import 'package:docket/features/documents/widgets/document_filter_chips.dart';
 import 'package:docket/features/documents/document_item.dart';
 import 'package:docket/features/documents/widgets/documents_header.dart';
 import 'package:docket/features/family/family_provider.dart';
-import 'package:docket/shared/bottom_nav.dart';
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/shared/document_card.dart';
+import 'package:docket/shared/status_message.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -94,7 +95,6 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomNav(currentIndex: 1),
     );
   }
 
@@ -103,7 +103,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       return const Center(child: CircularProgressIndicator());
     }
     if (provider.error != null && provider.documents.isEmpty) {
-      return _DocumentsMessage(
+      return StatusMessage(
         icon: Icons.cloud_off_outlined,
         title: "Couldn't load your documents",
         message: provider.error!,
@@ -111,7 +111,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       );
     }
     if (documents.isEmpty) {
-      return const _DocumentsMessage(
+      return const StatusMessage(
         icon: Icons.folder_open_outlined,
         title: "No documents yet",
         message:
@@ -119,7 +119,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       );
     }
     return ListView.separated(
-      padding: const .fromLTRB(16, 0, 16, 16),
+      padding: const .fromLTRB(16, 0, 16, VaultTheme.navClearance),
       itemCount: documents.length,
       separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
@@ -131,76 +131,6 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           onTap: () => _openDetails(document),
         );
       },
-    );
-  }
-}
-
-class _DocumentsMessage extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String message;
-  final VoidCallback? onRetry;
-  const _DocumentsMessage({
-    required this.icon,
-    required this.title,
-    required this.message,
-    this.onRetry,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
-    return Center(
-      child: Padding(
-        padding: const .all(24),
-        child: Column(
-          mainAxisSize: .min,
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              alignment: .center,
-              decoration: BoxDecoration(
-                color: colors.surfaceContainerHigh,
-                shape: .circle,
-              ),
-              child: Icon(icon, size: 24, color: colors.onSurfaceVariant),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              title,
-              textAlign: .center,
-              style: textTheme.bodyMedium?.copyWith(
-                fontWeight: .w600,
-                color: colors.onSurface,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              message,
-              textAlign: .center,
-              style: textTheme.bodySmall?.copyWith(
-                color: colors.onSurfaceVariant,
-              ),
-            ),
-            if (onRetry != null) ...[
-              const SizedBox(height: 12),
-              OutlinedButton(
-                onPressed: onRetry,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Theme.of(context).primaryColor,
-                  side: BorderSide(color: colors.outlineVariant),
-                  minimumSize: const Size(0, 40),
-                  shape: RoundedRectangleBorder(borderRadius: .circular(8)),
-                  textStyle: textTheme.labelMedium,
-                ),
-                child: const Text("Try again"),
-              ),
-            ],
-          ],
-        ),
-      ),
     );
   }
 }

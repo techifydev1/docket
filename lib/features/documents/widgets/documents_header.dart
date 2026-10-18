@@ -1,3 +1,4 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:flutter/material.dart';
 
 class DocumentsHeader extends StatelessWidget {
@@ -11,27 +12,18 @@ class DocumentsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final textTheme = VaultTheme.textTheme;
     return Row(
       children: [
         Expanded(
           child: Column(
             crossAxisAlignment: .start,
             children: [
-              Text(
-                "Documents",
-                style: textTheme.headlineLarge?.copyWith(
-                  fontWeight: .w700,
-                  color: colors.onSurface,
-                ),
-              ),
+              Text("Documents", style: textTheme.headlineLarge),
               const SizedBox(height: 2),
               Text(
                 "$documentCount encrypted files in this vault",
-                style: textTheme.bodyMedium?.copyWith(
-                  color: colors.onSurfaceVariant,
-                ),
+                style: textTheme.bodyMedium,
               ),
             ],
           ),
@@ -39,16 +31,11 @@ class DocumentsHeader extends StatelessWidget {
         FilledButton.icon(
           onPressed: onAdd,
           style: FilledButton.styleFrom(
-            backgroundColor: colors.primary,
-            foregroundColor: colors.onPrimary,
-            elevation: 1,
-            shape: RoundedRectangleBorder(borderRadius: .circular(8)),
+            minimumSize: const Size(0, 44),
+            padding: const .symmetric(horizontal: 16),
           ),
-          icon: const Icon(Icons.upload_file, size: 18),
-          label: Text(
-            "Add",
-            style: textTheme.labelLarge?.copyWith(color: colors.onPrimary),
-          ),
+          icon: const Icon(Icons.upload_file_rounded, size: 18),
+          label: const Text("Add"),
         ),
       ],
     );

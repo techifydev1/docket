@@ -1,3 +1,4 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:flutter/material.dart';
 
 class CtaSection extends StatelessWidget {
@@ -19,22 +20,26 @@ class CtaSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final textTheme = VaultTheme.textTheme;
+    final background = isEntry ? VaultTheme.primary : VaultTheme.primarySoft;
+    final foreground = isEntry ? VaultTheme.onPrimary : VaultTheme.primary;
     return Column(
       children: [
         SizedBox(
           width: double.infinity,
-          height: isEntry ? 52 : 48,
+          height: 54,
           child: FilledButton(
             onPressed: isLoading ? null : onPressed,
             style: FilledButton.styleFrom(
-              backgroundColor: isEntry
-                  ? colors.primary
-                  : colors.primaryContainer,
-              foregroundColor: colors.onPrimary,
-              elevation: 1,
-              shape: RoundedRectangleBorder(borderRadius: .circular(8)),
+              backgroundColor: background,
+              foregroundColor: foreground,
+              disabledBackgroundColor: VaultTheme.surfaceMuted,
+              disabledForegroundColor: VaultTheme.inkMuted,
+              elevation: isEntry ? 1 : 0,
+              shadowColor: VaultTheme.ink.withValues(alpha: 0.3),
+              shape: RoundedRectangleBorder(
+                borderRadius: .circular(VaultTheme.radiusMd),
+              ),
             ),
             child: isLoading
                 ? SizedBox(
@@ -42,7 +47,7 @@ class CtaSection extends StatelessWidget {
                     height: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: colors.onPrimary,
+                      color: foreground,
                     ),
                   )
                 : Row(
@@ -51,14 +56,14 @@ class CtaSection extends StatelessWidget {
                       Text(
                         label,
                         style: textTheme.labelLarge?.copyWith(
-                          color: colors.onPrimary,
+                          color: foreground,
                         ),
                       ),
                       const SizedBox(width: 8),
                       Icon(
-                        Icons.arrow_forward,
-                        size: isEntry ? 20 : 18,
-                        color: colors.onPrimary,
+                        Icons.arrow_forward_rounded,
+                        size: 20,
+                        color: foreground,
                       ),
                     ],
                   ),
@@ -66,13 +71,7 @@ class CtaSection extends StatelessWidget {
         ),
         if (helperText != null) ...[
           const SizedBox(height: 12),
-          Text(
-            helperText!,
-            textAlign: .center,
-            style: textTheme.bodySmall?.copyWith(
-              color: colors.onSurfaceVariant,
-            ),
-          ),
+          Text(helperText!, textAlign: .center, style: textTheme.bodySmall),
         ],
         if (footer != null) ...[const SizedBox(height: 8), footer!],
       ],

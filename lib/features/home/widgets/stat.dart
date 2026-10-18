@@ -1,3 +1,4 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:flutter/material.dart';
 
 class Stat extends StatelessWidget {
@@ -7,22 +8,11 @@ class Stat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
     return Column(
       children: [
-        Text(
-          value,
-          style: textTheme.headlineSmall?.copyWith(
-            fontWeight: .w700,
-            color: colors.onSurface,
-          ),
-        ),
+        Text(value, style: VaultTheme.stat),
         const SizedBox(height: 2),
-        Text(
-          label,
-          style: textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant),
-        ),
+        Text(label, style: VaultTheme.overline),
       ],
     );
   }

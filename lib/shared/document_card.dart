@@ -1,3 +1,6 @@
+import 'package:docket/core/theme/vault_theme.dart';
+import 'package:docket/shared/docket_card.dart';
+import 'package:docket/shared/icon_tile.dart';
 import 'package:docket/shared/pill_chip.dart';
 import 'package:flutter/material.dart';
 
@@ -16,73 +19,37 @@ class DocumentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
-    return Container(
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerLowest,
-        borderRadius: .circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: colors.onSurface.withValues(alpha: 0.05),
-            offset: const Offset(0, 1),
-            blurRadius: 2,
-            spreadRadius: 0,
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: .circular(12),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: Padding(
-            padding: const .all(14),
-            child: Row(
+    final textTheme = VaultTheme.textTheme;
+    return DocketCard(
+      padding: const .all(14),
+      onTap: onTap,
+      child: Row(
+        children: [
+          IconTile(icon: icon, size: 40, filled: false, iconSize: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: .start,
               children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: colors.surfaceContainer,
-                    borderRadius: .circular(8),
-                  ),
-                  child: Icon(
-                    icon,
-                    size: 20,
-                    color: Theme.of(context).primaryColor,
-                  ),
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: .ellipsis,
+                  style: textTheme.labelLarge,
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: .start,
-                    children: [
-                      Text(
-                        title,
-                        maxLines: 1,
-                        overflow: .ellipsis,
-                        style: textTheme.labelLarge?.copyWith(
-                          color: colors.onSurface,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        subtitle,
-                        style: textTheme.bodySmall?.copyWith(
-                          color: colors.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  maxLines: 1,
+                  overflow: .ellipsis,
+                  style: textTheme.bodySmall,
                 ),
-                const SizedBox(width: 8),
-                const PillChip(icon: Icons.lock_outline, label: "Encrypted"),
               ],
             ),
           ),
-        ),
+          const SizedBox(width: 8),
+          const PillChip(icon: Icons.lock_outline, label: "Encrypted"),
+        ],
       ),
     );
   }

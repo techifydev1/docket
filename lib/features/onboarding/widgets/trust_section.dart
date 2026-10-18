@@ -1,3 +1,6 @@
+import 'package:docket/core/theme/vault_theme.dart';
+import 'package:docket/shared/docket_card.dart';
+import 'package:docket/shared/icon_tile.dart';
 import 'package:flutter/material.dart';
 
 class TrustSection extends StatelessWidget {
@@ -5,70 +8,25 @@ class TrustSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return Container(
+    final textTheme = VaultTheme.textTheme;
+    return DocketCard(
       padding: const .all(16),
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
-        borderRadius: .circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: colors.onSurface.withValues(alpha: 0.05),
-            offset: const Offset(0, 1),
-            blurRadius: 2,
-            spreadRadius: 0,
-          ),
-        ],
-      ),
       child: Row(
         children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: colors.surfaceContainer,
-              borderRadius: .circular(8),
-              boxShadow: [
-                BoxShadow(
-                  color: colors.onSurface.withValues(alpha: 0.05),
-                  offset: const Offset(0, 1),
-                  blurRadius: 2,
-                  spreadRadius: 0,
-                ),
-              ],
-            ),
-            child: Icon(
-              Icons.roofing,
-              color: Theme.of(context).primaryColor,
-              size: 26,
-            ),
-          ),
+          const IconTile(icon: Icons.roofing_rounded, size: 48, iconSize: 24),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: .start,
               children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.verified_user,
-                      size: 15,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      "ZERO-KNOWLEDGE VAULT",
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                  ],
+                Text(
+                  "ZERO-KNOWLEDGE VAULT",
+                  style: VaultTheme.overline.copyWith(
+                    color: VaultTheme.primary,
+                  ),
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  "Househould Archival System",
-                  style: Theme.of(context).textTheme.labelLarge,
-                ),
+                Text("Household Archival System", style: textTheme.labelLarge),
               ],
             ),
           ),

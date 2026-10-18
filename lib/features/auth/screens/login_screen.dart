@@ -1,3 +1,4 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/features/auth/auth_service.dart';
 import 'package:docket/features/auth/models/login_request.dart';
 import 'package:docket/features/auth/screens/password_reset_screen.dart';
@@ -5,7 +6,9 @@ import 'package:docket/features/family/screens/select_family_screen.dart';
 import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/onboarding/screens/main_screen.dart';
 import 'package:docket/shared/cta_section.dart';
+import 'package:docket/shared/docket_back_button.dart';
 import 'package:docket/shared/header.dart';
+import 'package:docket/shared/link_button.dart';
 import 'package:docket/shared/toast.dart';
 import 'package:docket/shared/trust_card.dart';
 import 'package:flutter/material.dart';
@@ -72,7 +75,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -80,19 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             crossAxisAlignment: .stretch,
             children: [
-              Align(
-                alignment: .centerLeft,
-                child: IconButton(
-                  onPressed: () => Navigator.of(context).maybePop(),
-                  tooltip: 'Go back',
-                  visualDensity: .compact,
-                  icon: Icon(
-                    Icons.arrow_back,
-                    size: 20,
-                    color: colors.onSurfaceVariant,
-                  ),
-                ),
-              ),
+              const Align(alignment: .centerLeft, child: DocketBackButton()),
               const SizedBox(height: 8),
               const Header(
                 icon: Icons.lock_outline,
@@ -113,7 +103,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 title: "End-to-End Encrypted",
                 description:
                     "Your credentials are shielded with zero-knowledge encryption. We never see your password.",
-                cardRadius: 8,
               ),
               const SizedBox(height: 16),
               CtaSection(
@@ -126,29 +115,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Text(
                       "Don't have a vault? ",
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: colors.onSurfaceVariant,
-                      ),
+                      style: VaultTheme.textTheme.bodySmall,
                     ),
-                    TextButton(
+                    LinkButton(
+                      label: "Create one",
                       onPressed: () => Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const MainScreen(),
                         ),
-                      ),
-                      style: TextButton.styleFrom(
-                        padding: .zero,
-                        minimumSize: const Size(0, 0),
-                        tapTargetSize: .shrinkWrap,
-                      ),
-                      child: Text(
-                        "Create one",
-                        style: Theme.of(context).textTheme.labelMedium
-                            ?.copyWith(
-                              fontWeight: .w700,
-                              color: Theme.of(context).primaryColor,
-                            ),
                       ),
                     ),
                   ],

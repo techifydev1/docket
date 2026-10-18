@@ -1,3 +1,4 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/features/documents/add_document_provider.dart';
 import 'package:docket/features/documents/widgets/attach_file_tile.dart';
 import 'package:docket/features/documents/document_category.dart';
@@ -11,6 +12,7 @@ import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/user/user_provider.dart';
 import 'package:docket/shared/cta_section.dart';
 import 'package:docket/shared/chip_selector.dart';
+import 'package:docket/shared/docket_back_button.dart';
 import 'package:docket/shared/form_card.dart';
 import 'package:docket/shared/header.dart';
 import 'package:docket/shared/pill_chip.dart';
@@ -125,8 +127,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final textTheme = VaultTheme.textTheme;
     final document = context.watch<AddDocumentProvider>();
     final family = context.watch<FamilyProvider>().selectedFamily!;
     final user = context.watch<UserProvider>().userResponse!;
@@ -141,19 +142,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
           child: Column(
             crossAxisAlignment: .stretch,
             children: [
-              Align(
-                alignment: .centerLeft,
-                child: IconButton(
-                  onPressed: () => Navigator.of(context).maybePop(),
-                  tooltip: 'Go back',
-                  visualDensity: .compact,
-                  icon: Icon(
-                    Icons.arrow_back,
-                    size: 20,
-                    color: colors.onSurfaceVariant,
-                  ),
-                ),
-              ),
+              const Align(alignment: .centerLeft, child: DocketBackButton()),
               const SizedBox(height: 8),
               const Header(
                 icon: Icons.upload_file,
@@ -176,12 +165,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                       onChanged: () => setState(() {}),
                     ),
                     const SizedBox(height: 16),
-                    Text(
-                      "Category",
-                      style: textTheme.labelMedium?.copyWith(
-                        color: colors.onSurface,
-                      ),
-                    ),
+                    Text("Category", style: textTheme.labelMedium),
                     const SizedBox(height: 8),
                     ChipSelector<DocumentCategory>(
                       values: documentCategories,
@@ -216,18 +200,16 @@ class _AddFileScreenState extends State<AddFileScreen> {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.lock_outline,
                           size: 12,
-                          color: colors.onSurfaceVariant,
+                          color: VaultTheme.inkMuted,
                         ),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
                             "Pick carefully, the owner of a document can never be changed once it is added.",
-                            style: textTheme.bodySmall?.copyWith(
-                              color: colors.onSurfaceVariant,
-                            ),
+                            style: textTheme.bodySmall,
                           ),
                         ),
                       ],
@@ -236,18 +218,16 @@ class _AddFileScreenState extends State<AddFileScreen> {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.info_outline,
                             size: 12,
-                            color: colors.onSurfaceVariant,
+                            color: VaultTheme.inkMuted,
                           ),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
                               "You're just a member here, so you can't upload documents for someone else.",
-                              style: textTheme.bodySmall?.copyWith(
-                                color: colors.onSurfaceVariant,
-                              ),
+                              style: textTheme.bodySmall,
                             ),
                           ),
                         ],
@@ -271,9 +251,6 @@ class _AddFileScreenState extends State<AddFileScreen> {
                 title: "Encrypted before it syncs",
                 description:
                     "New records are sealed on your device with zero-knowledge encryption before anything is uploaded.",
-                cardRadius: 8,
-                iconBgColor: null,
-                iconColor: null,
               ),
               const SizedBox(height: 16),
               CtaSection(

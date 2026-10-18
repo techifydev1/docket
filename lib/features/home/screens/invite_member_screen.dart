@@ -189,9 +189,6 @@ class _InviteMemberScreenState extends State<InviteMemberScreen> {
                 title: "They hold their own key",
                 description:
                     "Each member sets up their own encryption key when they accept. Nobody, including you, can read what they add.",
-                cardRadius: 8,
-                iconBgColor: null,
-                iconColor: null,
               ),
               const SizedBox(height: 16),
               CtaSection(

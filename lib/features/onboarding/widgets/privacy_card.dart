@@ -1,3 +1,6 @@
+import 'package:docket/core/theme/vault_theme.dart';
+import 'package:docket/shared/docket_card.dart';
+import 'package:docket/shared/icon_tile.dart';
 import 'package:flutter/material.dart';
 
 class PrivacyCard extends StatelessWidget {
@@ -5,57 +8,28 @@ class PrivacyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
-    return Container(
+    final textTheme = VaultTheme.textTheme;
+    return DocketCard(
       padding: const .all(14),
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
-        borderRadius: .circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: colors.onSurface.withValues(alpha: 0.05),
-            offset: const Offset(0, 1),
-            blurRadius: 2,
-            spreadRadius: 0,
-          ),
-        ],
-      ),
       child: Row(
         crossAxisAlignment: .start,
         children: [
-          Container(
-            width: 32,
-            height: 32,
-            margin: const .only(top: 2),
-            decoration: BoxDecoration(
-              color: colors.secondaryContainer,
-              shape: .circle,
-            ),
-            child: Icon(
-              Icons.lock_outline,
-              size: 18,
-              color: colors.onSecondaryContainer,
-            ),
+          const IconTile(
+            icon: Icons.lock_outline,
+            size: 36,
+            filled: false,
+            iconSize: 18,
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: .start,
               children: [
-                Text(
-                  "Strict Family Privacy",
-                  style: textTheme.labelMedium?.copyWith(
-                    fontWeight: .w600,
-                    color: colors.onSurface,
-                  ),
-                ),
+                Text("Strict Family Privacy", style: textTheme.labelMedium),
                 const SizedBox(height: 2),
                 Text(
                   "Only invited household members can access these documents. You will be prompted to invite loved ones or an executor in Step 3.",
-                  style: textTheme.bodySmall?.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
+                  style: textTheme.bodySmall,
                 ),
               ],
             ),

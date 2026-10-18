@@ -1,3 +1,4 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/features/documents/screens/add_file_screen.dart';
 import 'package:docket/features/documents/add_document_provider.dart';
 import 'package:docket/features/documents/document_item.dart';
@@ -11,9 +12,11 @@ import 'package:docket/features/home/widgets/home_header.dart';
 import 'package:docket/features/home/widgets/quick_actions.dart';
 import 'package:docket/features/home/widgets/vault_card.dart';
 import 'package:docket/features/invitation/screens/invitations_screen.dart';
-import 'package:docket/shared/bottom_nav.dart';
+import 'package:docket/shared/app_shell.dart';
 import 'package:docket/shared/document_card.dart';
+import 'package:docket/shared/docket_card.dart';
 import 'package:docket/shared/section_header.dart';
+import 'package:docket/shared/status_message.dart';
 import 'package:docket/shared/trust_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -68,6 +71,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _openDocuments(BuildContext context) {
+    final scope = AppShellScope.maybeOf(context);
+    if (scope != null) {
+      scope.goToTab(1);
+      return;
+    }
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => const DocumentsScreen()));
@@ -97,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Expanded(
               child: SingleChildScrollView(
-                padding: .fromLTRB(16, 24, 16, 16),
+                padding: const .fromLTRB(16, 24, 16, VaultTheme.navClearance),
                 child: Column(
                   crossAxisAlignment: .stretch,
                   children: [
@@ -146,7 +154,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomNav(currentIndex: 0),
     );
   }
 }
@@ -156,14 +163,8 @@ class _LoadingDocuments extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
-    return Container(
+    return DocketCard(
       padding: const .all(16),
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
-        borderRadius: .circular(12),
-      ),
       child: Row(
         children: [
           const SizedBox(
@@ -175,9 +176,7 @@ class _LoadingDocuments extends StatelessWidget {
           Expanded(
             child: Text(
               "Loading your documents…",
-              style: textTheme.bodySmall?.copyWith(
-                color: colors.onSurfaceVariant,
-              ),
+              style: VaultTheme.textTheme.bodySmall,
             ),
           ),
         ],
@@ -191,41 +190,10 @@ class _EmptyDocuments extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
-    return Container(
-      padding: const .all(16),
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
-        borderRadius: .circular(12),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            alignment: .center,
-            decoration: BoxDecoration(
-              color: colors.surfaceContainerHigh,
-              borderRadius: .circular(8),
-            ),
-            child: Icon(
-              Icons.folder_open_outlined,
-              size: 20,
-              color: colors.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              "No documents yet. Add your first file and it'll show up here.",
-              style: textTheme.bodySmall?.copyWith(
-                color: colors.onSurfaceVariant,
-              ),
-            ),
-          ),
-        ],
-      ),
+    return const StatusMessage(
+      icon: Icons.folder_open_outlined,
+      title: "No documents yet",
+      message: "Add your first file and it'll show up here.",
     );
   }
 }

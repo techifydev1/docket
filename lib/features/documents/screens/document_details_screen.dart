@@ -1,11 +1,14 @@
 import 'dart:typed_data';
 
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/features/documents/document_item.dart';
 import 'package:docket/features/documents/documents_provider.dart';
 import 'package:docket/features/documents/screens/document_viewer_screen.dart';
 import 'package:docket/features/family/family_provider.dart';
 import 'package:docket/features/http/api_response.dart';
 import 'package:docket/shared/confirm_dialog.dart';
+import 'package:docket/shared/docket_back_button.dart';
+import 'package:docket/shared/docket_card.dart';
 import 'package:docket/shared/info_row.dart';
 import 'package:docket/shared/pill_chip.dart';
 import 'package:docket/shared/toast.dart';
@@ -150,15 +153,14 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
   }
 
   Widget _preview(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     final bytes = _previewBytes;
     if (bytes != null) {
       return ClipRRect(
-        borderRadius: .circular(12),
+        borderRadius: .circular(VaultTheme.radiusMd),
         child: Container(
           height: 220,
           width: double.infinity,
-          color: colors.surfaceContainerLow,
+          color: VaultTheme.surfaceMuted,
           alignment: .center,
           child: Image.memory(bytes, fit: BoxFit.contain),
         ),
@@ -171,39 +173,23 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
   }
 
   Widget _actions(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     return Row(
       children: [
         Expanded(
-          child: SizedBox(
-            height: 48,
-            child: FilledButton(
-              onPressed: _view,
-              style: FilledButton.styleFrom(
-                shape: RoundedRectangleBorder(borderRadius: .circular(8)),
-              ),
-              child: Text("View", style: textTheme.labelLarge),
-            ),
-          ),
+          child: FilledButton(onPressed: _view, child: const Text("View")),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: SizedBox(
-            height: 48,
-            child: OutlinedButton.icon(
-              onPressed: _isSharing ? null : _share,
-              style: OutlinedButton.styleFrom(
-                shape: RoundedRectangleBorder(borderRadius: .circular(8)),
-              ),
-              icon: _isSharing
-                  ? const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.ios_share, size: 18),
-              label: const Text("Share"),
-            ),
+          child: OutlinedButton.icon(
+            onPressed: _isSharing ? null : _share,
+            icon: _isSharing
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.ios_share, size: 18),
+            label: const Text("Share"),
           ),
         ),
       ],
@@ -212,46 +198,33 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final textTheme = VaultTheme.textTheme;
     return Scaffold(
       body: SafeArea(
         child: Column(
           crossAxisAlignment: .stretch,
           children: [
             Padding(
-              padding: const .fromLTRB(8, 8, 16, 0),
+              padding: const .fromLTRB(4, 4, 8, 0),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).maybePop(),
-                    tooltip: 'Go back',
-                    visualDensity: .compact,
-                    icon: Icon(
-                      Icons.arrow_back,
-                      size: 20,
-                      color: colors.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
+                  const DocketBackButton(),
                   Expanded(
                     child: Text(
                       _document.title,
                       maxLines: 1,
                       overflow: .ellipsis,
-                      style: textTheme.labelLarge?.copyWith(
-                        color: colors.onSurface,
-                      ),
+                      style: textTheme.labelLarge,
                     ),
                   ),
                   IconButton(
                     onPressed: _delete,
                     tooltip: 'Delete',
                     visualDensity: .compact,
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.delete_outline,
                       size: 20,
-                      color: colors.error,
+                      color: VaultTheme.error,
                     ),
                   ),
                 ],
@@ -267,29 +240,13 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
                     const SizedBox(height: 12),
                     _actions(context),
                     const SizedBox(height: 16),
-                    Container(
-                      padding: const .all(16),
-                      decoration: BoxDecoration(
-                        color: colors.surfaceContainerLowest,
-                        borderRadius: .circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: colors.onSurface.withValues(alpha: 0.05),
-                            offset: const Offset(0, 1),
-                            blurRadius: 2,
-                            spreadRadius: 0,
-                          ),
-                        ],
-                      ),
+                    DocketCard(
                       child: Column(
                         crossAxisAlignment: .start,
                         children: [
                           Text(
                             "Document details",
-                            style: textTheme.headlineSmall?.copyWith(
-                              fontWeight: .w700,
-                              color: colors.onSurface,
-                            ),
+                            style: textTheme.headlineSmall,
                           ),
                           const SizedBox(height: 12),
                           InfoRow(
@@ -342,21 +299,11 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
                     ),
                     if (_document.tags.isNotEmpty) ...[
                       const SizedBox(height: 16),
-                      Container(
-                        padding: const .all(16),
-                        decoration: BoxDecoration(
-                          color: colors.surfaceContainerLow,
-                          borderRadius: .circular(12),
-                        ),
+                      DocketCard(
                         child: Column(
                           crossAxisAlignment: .start,
                           children: [
-                            Text(
-                              "Tags",
-                              style: textTheme.labelLarge?.copyWith(
-                                color: colors.onSurface,
-                              ),
-                            ),
+                            Text("Tags", style: textTheme.labelLarge),
                             const SizedBox(height: 12),
                             Wrap(
                               spacing: 8,
@@ -398,13 +345,12 @@ class _PreviewPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final textTheme = VaultTheme.textTheme;
     return Container(
       height: 168,
       decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
-        borderRadius: .circular(12),
+        color: VaultTheme.surfaceMuted,
+        borderRadius: .circular(VaultTheme.radiusMd),
       ),
       child: Center(
         child: isLoading
@@ -412,20 +358,16 @@ class _PreviewPlaceholder extends StatelessWidget {
             : Column(
                 mainAxisAlignment: .center,
                 children: [
-                  Icon(icon, size: 44, color: Theme.of(context).primaryColor),
+                  Icon(icon, size: 44, color: VaultTheme.primary),
                   const SizedBox(height: 12),
                   Text(
                     "Preview not available yet",
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: colors.onSurface,
-                    ),
+                    style: textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 2),
                   Text(
                     "Tap View to open this file",
-                    style: textTheme.bodySmall?.copyWith(
-                      color: colors.onSurfaceVariant,
-                    ),
+                    style: textTheme.bodySmall,
                   ),
                 ],
               ),

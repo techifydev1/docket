@@ -1,4 +1,6 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/features/onboarding/widgets/step_indicator.dart';
+import 'package:docket/shared/docket_back_button.dart';
 import 'package:flutter/material.dart';
 
 class TopBar extends StatelessWidget {
@@ -27,7 +29,7 @@ class TopBar extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Row(
             mainAxisAlignment: .spaceBetween,
             children: [
@@ -36,24 +38,9 @@ class TopBar extends StatelessWidget {
                 stepLabel: _stepLabels[currentScreen],
               ),
               if (onBack != null)
-                IconButton(
-                  onPressed: onBack,
-                  tooltip: 'Go back',
-                  visualDensity: .compact,
-                  icon: Icon(
-                    Icons.arrow_back,
-                    size: 20,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                )
+                DocketBackButton(onPressed: onBack)
               else
-                Text(
-                  "Setup",
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: .w700,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
+                Text("SETUP", style: VaultTheme.overline),
             ],
           ),
         ],
@@ -68,10 +55,10 @@ class _CustomDot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 10,
-      height: 10,
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
+      width: 8,
+      height: 8,
+      decoration: const BoxDecoration(
+        color: VaultTheme.primary,
         shape: .circle,
       ),
     );
@@ -86,26 +73,20 @@ class _StepInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const .symmetric(vertical: 6, horizontal: 10),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainer,
-        borderRadius: .circular(20),
+        color: VaultTheme.surfaceContainer,
+        borderRadius: .circular(999),
       ),
-      child: Padding(
-        padding: const .symmetric(vertical: 4, horizontal: 8),
-        child: Row(
-          crossAxisAlignment: .center,
-          children: [
-            const _CustomDot(),
-            const SizedBox(width: 2),
-            Text(
-              "STEP ${currentStep + 1} OF 3 \u2022 $stepLabel",
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontWeight: .w700,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
+      child: Row(
+        children: [
+          const _CustomDot(),
+          const SizedBox(width: 8),
+          Text(
+            "STEP ${currentStep + 1} OF 3 \u2022 $stepLabel",
+            style: VaultTheme.overline,
+          ),
+        ],
       ),
     );
   }

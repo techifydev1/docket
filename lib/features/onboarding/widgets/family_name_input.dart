@@ -1,3 +1,4 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:flutter/material.dart';
 
 class FamilyNameInput extends StatelessWidget {
@@ -11,53 +12,37 @@ class FamilyNameInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final textTheme = VaultTheme.textTheme;
     return Column(
       children: [
         Row(
           mainAxisAlignment: .spaceBetween,
           children: [
-            Text(
-              "Vault or Household Name",
-              style: textTheme.labelMedium?.copyWith(color: colors.onSurface),
-            ),
-            Text(
-              "${controller.text.length}/36",
-              style: textTheme.bodySmall?.copyWith(
-                color: colors.onSurfaceVariant,
-              ),
-            ),
+            Text("VAULT OR HOUSEHOLD NAME", style: textTheme.labelSmall),
+            Text("${controller.text.length}/36", style: textTheme.bodySmall),
           ],
         ),
         const SizedBox(height: 8),
         Container(
-          padding: const .symmetric(vertical: 6),
           decoration: BoxDecoration(
-            color: colors.surfaceContainerLowest,
-            borderRadius: .circular(8),
-            boxShadow: [
-              BoxShadow(
-                color: colors.onSurface.withValues(alpha: 0.05),
-                offset: const Offset(0, 1),
-                blurRadius: 2,
-                spreadRadius: 0,
-              ),
-            ],
+            color: VaultTheme.surfaceMuted,
+            borderRadius: .circular(VaultTheme.radiusMd),
           ),
           child: TextField(
             controller: controller,
             maxLength: 36,
             onChanged: (_) => onChanged(),
             textCapitalization: .sentences,
-            style: textTheme.bodyLarge?.copyWith(color: colors.onSurface),
+            style: textTheme.bodyLarge,
             decoration: InputDecoration(
               border: InputBorder.none,
               counterText: '',
-              prefixIcon: Icon(Icons.folder_shared, size: 20),
-              prefixIconColor: colors.onSurfaceVariant,
+              prefixIcon: const Icon(Icons.folder_shared_rounded, size: 20),
+              prefixIconColor: VaultTheme.inkMuted,
               hintText: "e.g., The Aina Family",
-              hintStyle: textTheme.bodyLarge?.copyWith(color: colors.outline),
+              hintStyle: textTheme.bodyLarge?.copyWith(
+                color: VaultTheme.inkMuted.withValues(alpha: 0.6),
+              ),
             ),
           ),
         ),

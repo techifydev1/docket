@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:ui';
 
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:flutter/material.dart';
 
 enum ToastVariant { info, success, error }
@@ -125,36 +127,35 @@ class _ToastCardState extends State<_ToastCard>
                 color: Colors.transparent,
                 child: InkWell(
                   onTap: _hide,
-                  borderRadius: .circular(8),
-                  child: Container(
-                    padding: const .symmetric(horizontal: 14, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: colors.surfaceContainerHigh,
-                      borderRadius: .circular(8),
-                      border: .all(color: colors.outlineVariant),
-                      boxShadow: [
-                        BoxShadow(
-                          color: colors.onSurface.withValues(alpha: 0.08),
-                          offset: const Offset(0, 2),
-                          blurRadius: 8,
-                          spreadRadius: 0,
+                  borderRadius: .circular(VaultTheme.radiusMd),
+                  child: ClipRRect(
+                    borderRadius: .circular(VaultTheme.radiusMd),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+                      child: Container(
+                        padding: const .symmetric(horizontal: 14, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: colors.surface.withValues(alpha: 0.82),
+                          borderRadius: .circular(VaultTheme.radiusMd),
+                          border: .all(color: VaultTheme.hairline),
+                          boxShadow: VaultTheme.e2,
                         ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: .min,
-                      children: [
-                        Icon(_icon, size: 16, color: _iconColor(colors)),
-                        const SizedBox(width: 10),
-                        Flexible(
-                          child: Text(
-                            widget.message,
-                            style: textTheme.labelMedium?.copyWith(
-                              color: colors.onSurface,
+                        child: Row(
+                          mainAxisSize: .min,
+                          children: [
+                            Icon(_icon, size: 18, color: _iconColor(colors)),
+                            const SizedBox(width: 10),
+                            Flexible(
+                              child: Text(
+                                widget.message,
+                                style: textTheme.labelMedium?.copyWith(
+                                  color: colors.onSurface,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),

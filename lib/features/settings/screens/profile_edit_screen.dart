@@ -125,9 +125,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 title: "Visible to vault members",
                 description:
                     "Your name and email are shared with the people in your vault so they can recognise who owns each document.",
-                cardRadius: 8,
-                iconBgColor: null,
-                iconColor: null,
               ),
               const SizedBox(height: 16),
               CtaSection(

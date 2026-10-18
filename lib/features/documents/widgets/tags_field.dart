@@ -1,3 +1,4 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/shared/pill_chip.dart';
 import 'package:docket/shared/text_field.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +60,7 @@ class _TagsFieldState extends State<TagsField> {
             onPressed: _commit,
             tooltip: 'Add tag',
             icon: const Icon(Icons.add),
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            color: VaultTheme.primary,
           ),
         ),
         if (widget.tags.isNotEmpty) ...[

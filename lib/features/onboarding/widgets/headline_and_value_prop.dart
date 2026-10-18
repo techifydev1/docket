@@ -1,3 +1,4 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:flutter/material.dart';
 
 class HeadlineAndValueProp extends StatelessWidget {
@@ -5,21 +6,18 @@ class HeadlineAndValueProp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final textTheme = VaultTheme.textTheme;
     return Column(
+      crossAxisAlignment: .start,
       children: [
         Text(
           "What's your family vault called?",
-          style: textTheme.headlineLarge?.copyWith(
-            fontWeight: .w700,
-            color: colors.onSurface,
-          ),
+          style: textTheme.headlineLarge,
         ),
         const SizedBox(height: 8),
         Text(
           "Keep birth certificates, IDs, health records, and deeds encrypted and immediately accessible to everyone in your home.",
-          style: textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
+          style: textTheme.bodyMedium,
         ),
       ],
     );

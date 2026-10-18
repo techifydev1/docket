@@ -1,4 +1,6 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/features/family/family_member.dart';
+import 'package:docket/shared/docket_avatar.dart';
 import 'package:docket/shared/initials.dart';
 import 'package:flutter/material.dart';
 
@@ -58,79 +60,67 @@ class _MemberRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final textTheme = VaultTheme.textTheme;
     final isSelf = member.userId == currentUserId;
-    return Container(
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
-        borderRadius: .circular(8),
-        border: Border.all(
-          color: isSelected ? colors.primary : colors.surfaceContainerLow,
-          width: 1.5,
-        ),
-      ),
+    return Opacity(
+      opacity: isEnabled ? 1 : 0.4,
       child: Material(
         type: MaterialType.transparency,
-        borderRadius: .circular(8),
+        borderRadius: .circular(VaultTheme.radiusMd),
         child: InkWell(
           onTap: isEnabled ? onTap : null,
-          borderRadius: .circular(8),
-          child: Padding(
+          borderRadius: .circular(VaultTheme.radiusMd),
+          child: Container(
             padding: const .symmetric(horizontal: 12, vertical: 10),
-            child: Opacity(
-              opacity: isEnabled ? 1 : 0.4,
-              child: Row(
-                children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    alignment: .center,
-                    decoration: BoxDecoration(
-                      color: colors.surfaceContainerHighest,
-                      shape: .circle,
-                    ),
-                    child: Text(
-                      initialsOf(member.name),
-                      style: textTheme.labelMedium?.copyWith(
-                        color: colors.onSurfaceVariant,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: .start,
-                      children: [
-                        Text(
-                          member.name,
-                          style: textTheme.labelLarge?.copyWith(
-                            color: colors.onSurface,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          isSelf ? "You" : _roleLabel,
-                          style: textTheme.bodySmall?.copyWith(
-                            color: colors.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Icon(
-                    isEnabled
-                        ? (isSelected
-                              ? Icons.check_circle
-                              : Icons.circle_outlined)
-                        : Icons.lock_outline,
-                    size: 20,
-                    color: isSelected
-                        ? Theme.of(context).primaryColor
-                        : colors.onSurfaceVariant,
-                  ),
-                ],
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? VaultTheme.primarySoft
+                  : VaultTheme.surfaceMuted,
+              borderRadius: .circular(VaultTheme.radiusMd),
+              border: Border.all(
+                color: isSelected
+                    ? VaultTheme.primary.withValues(alpha: 0.3)
+                    : Colors.transparent,
+                width: 1.5,
               ),
+            ),
+            child: Row(
+              children: [
+                DocketAvatar(
+                  initials: initialsOf(member.name),
+                  size: 36,
+                  soft: !isSelected,
+                  ring: false,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: .start,
+                    children: [
+                      Text(
+                        member.name,
+                        maxLines: 1,
+                        overflow: .ellipsis,
+                        style: textTheme.labelLarge,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        isSelf ? "You" : _roleLabel,
+                        style: textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  isEnabled
+                      ? (isSelected
+                            ? Icons.check_circle
+                            : Icons.radio_button_unchecked)
+                      : Icons.lock_outline,
+                  size: 20,
+                  color: isSelected ? VaultTheme.primary : VaultTheme.inkMuted,
+                ),
+              ],
             ),
           ),
         ),

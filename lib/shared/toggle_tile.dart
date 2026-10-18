@@ -1,3 +1,6 @@
+import 'package:docket/core/theme/vault_theme.dart';
+import 'package:docket/shared/docket_card.dart';
+import 'package:docket/shared/icon_tile.dart';
 import 'package:flutter/material.dart';
 
 class ToggleTile extends StatelessWidget {
@@ -19,24 +22,20 @@ class ToggleTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
-    return Container(
-      padding: const .all(12),
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
-        borderRadius: .circular(8),
-      ),
+    final textTheme = VaultTheme.textTheme;
+    return DocketCard(
+      padding: const .symmetric(horizontal: 14, vertical: 10),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 20,
-            color: enabled
-                ? Theme.of(context).primaryColor
-                : colors.onSurfaceVariant,
+          IconTile(
+            icon: icon,
+            size: 38,
+            filled: false,
+            iconSize: 20,
+            color: enabled ? null : VaultTheme.surfaceContainer,
+            iconColor: enabled ? null : VaultTheme.inkMuted,
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: .start,
@@ -45,17 +44,15 @@ class ToggleTile extends StatelessWidget {
                   title,
                   maxLines: 1,
                   overflow: .ellipsis,
-                  style: textTheme.labelMedium?.copyWith(
-                    color: enabled ? colors.onSurface : colors.onSurfaceVariant,
+                  style: textTheme.labelLarge?.copyWith(
+                    color: enabled ? VaultTheme.ink : VaultTheme.inkMuted,
                   ),
                 ),
                 Text(
                   subtitle,
                   maxLines: 1,
                   overflow: .ellipsis,
-                  style: textTheme.bodySmall?.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
+                  style: textTheme.bodySmall,
                 ),
               ],
             ),
@@ -64,10 +61,10 @@ class ToggleTile extends StatelessWidget {
           Switch(
             value: value,
             onChanged: enabled ? onChanged : null,
-            activeThumbColor: colors.onPrimary,
-            activeTrackColor: colors.primaryContainer,
-            inactiveThumbColor: colors.onSurfaceVariant,
-            inactiveTrackColor: colors.surfaceContainerHighest,
+            activeThumbColor: VaultTheme.onPrimary,
+            activeTrackColor: VaultTheme.primary,
+            inactiveThumbColor: VaultTheme.surface,
+            inactiveTrackColor: VaultTheme.surfaceContainerHighest,
           ),
         ],
       ),

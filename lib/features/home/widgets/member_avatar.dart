@@ -1,3 +1,5 @@
+import 'package:docket/core/theme/vault_theme.dart';
+import 'package:docket/shared/docket_avatar.dart';
 import 'package:flutter/material.dart';
 
 class MemberAvatar extends StatelessWidget {
@@ -15,43 +17,19 @@ class MemberAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final textTheme = VaultTheme.textTheme;
     return SizedBox(
       width: 72,
       child: Column(
         children: [
-          Container(
-            width: 48,
-            height: 48,
-            alignment: .center,
-            decoration: BoxDecoration(
-              color: colors.surfaceContainerHigh,
-              shape: .circle,
-              border: isYou
-                  ? Border.all(
-                      color: colors.primaryContainer.withValues(alpha: 0.4),
-                      width: 2,
-                    )
-                  : null,
-            ),
-            child: Text(
-              initials,
-              style: textTheme.labelLarge?.copyWith(
-                fontWeight: .w700,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ),
+          DocketAvatar(initials: initials, size: 48, soft: !isYou),
           const SizedBox(height: 6),
           Text(
             name,
             maxLines: 1,
             overflow: .ellipsis,
             textAlign: .center,
-            style: textTheme.bodySmall?.copyWith(
-              color: colors.onSurfaceVariant,
-            ),
+            style: textTheme.labelMedium,
           ),
           if (relation.isNotEmpty) ...[
             const SizedBox(height: 2),
@@ -60,9 +38,7 @@ class MemberAvatar extends StatelessWidget {
               maxLines: 1,
               overflow: .ellipsis,
               textAlign: .center,
-              style: textTheme.labelSmall?.copyWith(
-                color: colors.onSurfaceVariant,
-              ),
+              style: textTheme.bodySmall,
             ),
           ],
         ],

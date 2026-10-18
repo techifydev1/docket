@@ -1,3 +1,4 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:flutter/material.dart';
 
 class StepIndicator extends StatelessWidget {
@@ -7,14 +8,12 @@ class StepIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // margin: .all(4.0),
-      height: 10,
-
+      height: 8,
       decoration: BoxDecoration(
-        borderRadius: .circular(8),
+        borderRadius: .circular(999),
         color: currentOrPassed
-            ? Theme.of(context).primaryColor
-            : Theme.of(context).colorScheme.surfaceContainer,
+            ? VaultTheme.primary
+            : VaultTheme.surfaceContainer,
       ),
     );
   }

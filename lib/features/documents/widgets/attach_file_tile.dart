@@ -1,4 +1,7 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/features/documents/add_document_provider.dart';
+import 'package:docket/shared/docket_card.dart';
+import 'package:docket/shared/icon_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
@@ -24,32 +27,18 @@ class AttachFileTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final textTheme = VaultTheme.textTheme;
     final document = context.watch<AddDocumentProvider>();
     final isAttached = document.hasFile;
-    return Container(
-      padding: const .all(16),
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
-        borderRadius: .circular(12),
-      ),
+    return DocketCard(
       child: Column(
         children: [
           Row(
             children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: colors.surfaceContainerHigh,
-                  borderRadius: .circular(8),
-                ),
-                child: Icon(
-                  Icons.upload_file,
-                  size: 24,
-                  color: Theme.of(context).primaryColor,
-                ),
+              const IconTile(
+                icon: Icons.upload_file_rounded,
+                size: 48,
+                iconSize: 24,
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -58,18 +47,16 @@ class AttachFileTile extends StatelessWidget {
                   children: [
                     Text(
                       isAttached ? document.fileName! : "No file attached",
-                      style: textTheme.labelLarge?.copyWith(
-                        color: colors.onSurface,
-                      ),
+                      maxLines: 1,
+                      overflow: .ellipsis,
+                      style: textTheme.labelLarge,
                     ),
                     const SizedBox(height: 2),
                     Text(
                       isAttached
                           ? "${document.dataType!.toUpperCase()} · ${document.sizeLabel}"
                           : "Pick a file from your device to get started",
-                      style: textTheme.bodySmall?.copyWith(
-                        color: colors.onSurfaceVariant,
-                      ),
+                      style: textTheme.bodySmall,
                     ),
                   ],
                 ),
@@ -79,18 +66,11 @@ class AttachFileTile extends StatelessWidget {
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
-            height: 48,
             child: FilledButton(
               onPressed: () async {
                 await _attach(context);
               },
-              style: FilledButton.styleFrom(
-                shape: RoundedRectangleBorder(borderRadius: .circular(8)),
-              ),
-              child: Text(
-                isAttached ? "Change file" : "Choose file",
-                style: textTheme.labelLarge,
-              ),
+              child: Text(isAttached ? "Change file" : "Choose file"),
             ),
           ),
         ],

@@ -111,7 +111,6 @@ class _ThirdScreenState extends State<ThirdScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     final isValid = _code.length == 6;
     return SingleChildScrollView(
       child: Column(
@@ -131,15 +130,11 @@ class _ThirdScreenState extends State<ThirdScreen> {
             resetKey: _codeResets,
           ),
           const SizedBox(height: 16),
-          TrustCard(
+          const TrustCard(
             icon: Icons.lock_outline,
             title: "Secure Email Verification",
             description:
                 "Your code expires in 15 minutes and is single-use. It's never shared with anyone else.",
-            cardRadius: 8,
-            iconBgColor: colors.secondaryContainer,
-            iconColor: colors.onSecondaryContainer,
-            iconShape: .circle,
           ),
           const SizedBox(height: 16),
           CtaSection(

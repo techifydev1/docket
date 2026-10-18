@@ -1,3 +1,5 @@
+import 'package:docket/core/theme/vault_theme.dart';
+import 'package:docket/shared/docket_card.dart';
 import 'package:docket/shared/text_field.dart';
 import 'package:flutter/material.dart';
 
@@ -21,31 +23,15 @@ class ProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return Container(
-      padding: const .all(16),
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerLowest,
-        borderRadius: .circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: colors.onSurface.withValues(alpha: 0.05),
-            offset: const Offset(0, 1),
-            blurRadius: 2,
-            spreadRadius: 0,
-          ),
-        ],
-      ),
+    final textTheme = VaultTheme.textTheme;
+    return DocketCard(
       child: Column(
         children: [
           Container(
-            padding: const .only(bottom: 4),
-            decoration: BoxDecoration(
+            padding: const .only(bottom: 12),
+            decoration: const BoxDecoration(
               border: Border(
-                bottom: BorderSide(
-                  color: colors.surfaceContainerHigh.withValues(alpha: 0.6),
-                  width: 1,
-                ),
+                bottom: BorderSide(color: VaultTheme.hairline, width: 1),
               ),
             ),
             child: Row(
@@ -56,18 +42,11 @@ class ProfileCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: .start,
                     children: [
-                      Text(
-                        "Profile Avatar",
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: colors.onSurface,
-                        ),
-                      ),
+                      Text("Profile Avatar", style: textTheme.labelLarge),
                       const SizedBox(height: 2),
                       Text(
                         "Tap camera to upload or take a photo",
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: colors.onSurfaceVariant,
-                        ),
+                        style: textTheme.bodySmall,
                       ),
                     ],
                   ),

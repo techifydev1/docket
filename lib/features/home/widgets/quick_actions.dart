@@ -1,3 +1,4 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:flutter/material.dart';
 
 class QuickActions extends StatelessWidget {
@@ -11,62 +12,39 @@ class QuickActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
     return Row(
       children: [
         Expanded(
-          child: SizedBox(
-            height: 48,
-            child: FilledButton(
-              onPressed: onUpload,
-              style: FilledButton.styleFrom(
-                backgroundColor: colors.primary,
-                foregroundColor: colors.onPrimary,
-                elevation: 1,
-                shape: RoundedRectangleBorder(borderRadius: .circular(8)),
-              ),
-              child: Row(
-                mainAxisAlignment: .center,
-                children: [
-                  const Icon(Icons.upload_file, size: 18),
-                  const SizedBox(width: 8),
-                  Text(
-                    "Upload",
-                    style: textTheme.labelLarge?.copyWith(
-                      color: colors.onPrimary,
-                    ),
-                  ),
-                ],
-              ),
+          child: FilledButton(
+            onPressed: onUpload,
+            style: FilledButton.styleFrom(minimumSize: const Size(0, 48)),
+            child: const Row(
+              mainAxisAlignment: .center,
+              children: [
+                Icon(Icons.upload_file_rounded, size: 18),
+                SizedBox(width: 8),
+                Text("Upload"),
+              ],
             ),
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: SizedBox(
-            height: 48,
-            child: OutlinedButton(
-              onPressed: onInvite,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: colors.onSurface,
-                backgroundColor: colors.surfaceContainerLowest,
-                side: BorderSide(color: colors.outlineVariant),
-                shape: RoundedRectangleBorder(borderRadius: .circular(8)),
-              ),
-              child: Row(
-                mainAxisAlignment: .center,
-                children: [
-                  const Icon(Icons.person_add_alt_1_outlined, size: 18),
-                  const SizedBox(width: 8),
-                  Text(
-                    "Invite",
-                    style: textTheme.labelLarge?.copyWith(
-                      color: colors.onSurface,
-                    ),
-                  ),
-                ],
-              ),
+          child: FilledButton(
+            onPressed: onInvite,
+            style: FilledButton.styleFrom(
+              backgroundColor: VaultTheme.primarySoft,
+              foregroundColor: VaultTheme.primary,
+              elevation: 0,
+              minimumSize: const Size(0, 48),
+            ),
+            child: const Row(
+              mainAxisAlignment: .center,
+              children: [
+                Icon(Icons.person_add_alt_1_outlined, size: 18),
+                SizedBox(width: 8),
+                Text("Invite"),
+              ],
             ),
           ),
         ),

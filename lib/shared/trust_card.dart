@@ -1,71 +1,36 @@
+import 'package:docket/core/theme/vault_theme.dart';
+import 'package:docket/shared/docket_card.dart';
+import 'package:docket/shared/icon_tile.dart';
 import 'package:flutter/material.dart';
 
 class TrustCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final String description;
-  final double cardRadius;
-  final Color? iconBgColor;
-  final Color? iconColor;
-  final BoxShape iconShape;
   const TrustCard({
     super.key,
     required this.icon,
     required this.title,
     required this.description,
-    this.cardRadius = 12,
-    this.iconBgColor,
-    this.iconColor,
-    this.iconShape = .rectangle,
   });
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
-    return Container(
+    final textTheme = VaultTheme.textTheme;
+    return DocketCard(
       padding: const .all(14),
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
-        borderRadius: .circular(cardRadius),
-      ),
       child: Row(
         crossAxisAlignment: .start,
         children: [
-          Container(
-            width: 32,
-            height: 32,
-            margin: const .only(top: 2),
-            decoration: BoxDecoration(
-              color: iconBgColor ?? colors.surfaceContainerHighest,
-              borderRadius: iconShape == .rectangle ? .circular(8) : null,
-              shape: iconShape,
-            ),
-            child: Icon(
-              icon,
-              size: 18,
-              color: iconColor ?? Theme.of(context).primaryColor,
-            ),
-          ),
+          IconTile(icon: icon, size: 36, filled: false, iconSize: 18),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: .start,
               children: [
-                Text(
-                  title,
-                  style: textTheme.labelMedium?.copyWith(
-                    fontWeight: .w600,
-                    color: colors.onSurface,
-                  ),
-                ),
+                Text(title, style: textTheme.labelMedium),
                 const SizedBox(height: 2),
-                Text(
-                  description,
-                  style: textTheme.bodySmall?.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
-                ),
+                Text(description, style: textTheme.bodySmall),
               ],
             ),
           ),

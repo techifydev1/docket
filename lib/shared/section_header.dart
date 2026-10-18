@@ -1,3 +1,4 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:flutter/material.dart';
 
 class SectionHeader extends StatelessWidget {
@@ -15,29 +16,24 @@ class SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final textTheme = VaultTheme.textTheme;
     return Row(
       mainAxisAlignment: .spaceBetween,
       children: [
         Text(
           title,
           style: textTheme.headlineSmall?.copyWith(
-            fontWeight: .w700,
-            color: enabled ? colors.onSurface : colors.onSurfaceVariant,
+            color: enabled ? VaultTheme.ink : VaultTheme.inkMuted,
           ),
         ),
         if (action != null)
           GestureDetector(
             onTap: onAction,
-            behavior: HitTestBehavior.opaque,
+            behavior: .opaque,
             child: Text(
               action!,
               style: textTheme.labelMedium?.copyWith(
-                fontWeight: .w700,
-                color: enabled
-                    ? Theme.of(context).primaryColor
-                    : colors.onSurfaceVariant,
+                color: enabled ? VaultTheme.primary : VaultTheme.inkMuted,
               ),
             ),
           ),

@@ -1,3 +1,5 @@
+import 'package:docket/shared/docket_card.dart';
+import 'package:docket/shared/link_button.dart';
 import 'package:docket/shared/text_field.dart';
 import 'package:flutter/material.dart';
 
@@ -16,22 +18,7 @@ class LoginCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
-    return Container(
-      padding: const .all(16),
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerLowest,
-        borderRadius: .circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: colors.onSurface.withValues(alpha: 0.05),
-            offset: const Offset(0, 1),
-            blurRadius: 2,
-            spreadRadius: 0,
-          ),
-        ],
-      ),
+    return DocketCard(
       child: Column(
         children: [
           DocketTextField(
@@ -51,20 +38,9 @@ class LoginCard extends StatelessWidget {
           ),
           Align(
             alignment: .centerRight,
-            child: TextButton(
+            child: LinkButton(
+              label: "Forgot password?",
               onPressed: onForgotPassword,
-              style: TextButton.styleFrom(
-                padding: .zero,
-                minimumSize: const Size(0, 0),
-                tapTargetSize: .shrinkWrap,
-              ),
-              child: Text(
-                "Forgot password?",
-                style: textTheme.labelMedium?.copyWith(
-                  fontWeight: .w700,
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
             ),
           ),
         ],

@@ -1,3 +1,4 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:flutter/material.dart';
 
 class PillChip extends StatelessWidget {
@@ -13,27 +14,24 @@ class PillChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final textTheme = VaultTheme.textTheme;
     return Container(
-      height: 24,
-      padding: const .symmetric(horizontal: 8),
+      height: 26,
+      padding: const .symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        color: colors.secondaryContainer,
-        borderRadius: .circular(9999),
+        color: VaultTheme.primarySoft,
+        borderRadius: .circular(999),
       ),
       child: Row(
         mainAxisSize: .min,
         children: [
-          Icon(icon, size: 12, color: colors.onSecondaryContainer),
+          Icon(icon, size: 13, color: VaultTheme.primary),
           const SizedBox(width: 4),
           Text(
             label,
             maxLines: 1,
             overflow: .ellipsis,
-            style: textTheme.labelSmall?.copyWith(
-              color: colors.onSecondaryContainer,
-            ),
+            style: textTheme.labelMedium?.copyWith(color: VaultTheme.primary),
           ),
           if (onDeleted != null) ...[
             const SizedBox(width: 2),
@@ -44,8 +42,8 @@ class PillChip extends StatelessWidget {
               iconSize: 12,
               padding: .zero,
               visualDensity: .compact,
-              constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
-              color: colors.onSecondaryContainer,
+              constraints: const BoxConstraints(minWidth: 22, minHeight: 22),
+              color: VaultTheme.primary,
             ),
           ],
         ],

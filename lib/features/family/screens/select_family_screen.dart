@@ -6,7 +6,6 @@ import 'package:docket/features/family/screens/create_family_screen.dart';
 import 'package:docket/features/family/family_response.dart';
 import 'package:docket/features/family/family_service.dart';
 import 'package:docket/features/family/widgets/family_card.dart';
-import 'package:docket/features/home/screens/home_screen.dart';
 import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/recovery/screens/recovery_screen.dart';
 import 'package:docket/features/recovery/screens/recovery_setup_screen.dart';
@@ -19,6 +18,7 @@ import 'package:docket/shared/toast.dart';
 import 'package:docket/shared/header.dart';
 import 'package:docket/shared/section_header.dart';
 import 'package:docket/shared/sign_out_button.dart';
+import 'package:docket/shared/app_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -154,7 +154,7 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
     context.read<UserProvider>().updateUser(currentUser);
     if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const HomeScreen()),
+      MaterialPageRoute(builder: (_) => const AppShell()),
       (route) => false,
     );
   }

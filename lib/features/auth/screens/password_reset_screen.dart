@@ -2,8 +2,10 @@ import 'package:docket/features/auth/auth_service.dart';
 import 'package:docket/features/http/api_response.dart';
 import 'package:docket/features/onboarding/widgets/code_card.dart';
 import 'package:docket/shared/cta_section.dart';
+import 'package:docket/shared/docket_back_button.dart';
 import 'package:docket/shared/form_card.dart';
 import 'package:docket/shared/header.dart';
+import 'package:docket/shared/link_button.dart';
 import 'package:docket/shared/text_field.dart';
 import 'package:docket/shared/toast.dart';
 import 'package:flutter/material.dart';
@@ -89,7 +91,6 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     return Scaffold(
       body: SafeArea(
         child: LayoutBuilder(
@@ -103,18 +104,9 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                 mainAxisAlignment: .center,
                 crossAxisAlignment: .stretch,
                 children: [
-                  Align(
+                  const Align(
                     alignment: .centerLeft,
-                    child: IconButton(
-                      onPressed: () => Navigator.of(context).maybePop(),
-                      tooltip: 'Go back',
-                      visualDensity: .compact,
-                      icon: Icon(
-                        Icons.arrow_back,
-                        size: 20,
-                        color: colors.onSurfaceVariant,
-                      ),
-                    ),
+                    child: DocketBackButton(),
                   ),
                   const SizedBox(height: 8),
                   Header(
@@ -180,11 +172,13 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                           "Use at least 6 characters for your new password.",
                     ),
                     const SizedBox(height: 12),
-                    TextButton(
-                      onPressed: _isResetting
-                          ? null
-                          : () => setState(() => _codeSent = false),
-                      child: const Text("Use a different email"),
+                    Center(
+                      child: LinkButton(
+                        label: "Use a different email",
+                        onPressed: _isResetting
+                            ? null
+                            : () => setState(() => _codeSent = false),
+                      ),
                     ),
                   ],
                 ],

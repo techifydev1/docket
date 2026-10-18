@@ -7,7 +7,7 @@ import 'package:docket/features/settings/widgets/profile_settings_card.dart';
 import 'package:docket/features/settings/widgets/settings_header.dart';
 import 'package:docket/features/settings/widgets/sign_out_row.dart';
 import 'package:docket/features/settings/widgets/vault_info_card.dart';
-import 'package:docket/shared/bottom_nav.dart';
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/shared/action_tile.dart';
 import 'package:docket/shared/section_header.dart';
 import 'package:docket/features/user/user_provider.dart';
@@ -60,7 +60,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: 16),
             Expanded(
               child: SingleChildScrollView(
-                padding: const .fromLTRB(16, 0, 16, 16),
+                padding: const .fromLTRB(16, 0, 16, VaultTheme.navClearance),
                 child: Column(
                   crossAxisAlignment: .stretch,
                   children: [
@@ -138,7 +138,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomNav(currentIndex: 2),
     );
   }
 }

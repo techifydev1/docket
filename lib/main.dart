@@ -1,4 +1,5 @@
-import 'package:docket/core/theme/app_theme.dart';
+import 'package:docket/core/dev/style_guide_screen.dart';
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/features/auth/auth_gate.dart';
 import 'package:docket/features/crypto/crypto_service.dart';
 import 'package:docket/features/documents/add_document_provider.dart';
@@ -12,6 +13,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+
+const bool _showStyleGuide = false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,12 +47,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: AppTheme.lightTheme,
+      theme: VaultTheme.build(),
       builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
         child: child!,
       ),
-      home: AuthGate(),
+      home: _showStyleGuide ? const StyleGuideScreen() : AuthGate(),
     );
   }
 }

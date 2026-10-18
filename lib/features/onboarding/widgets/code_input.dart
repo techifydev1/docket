@@ -1,3 +1,4 @@
+import 'package:docket/core/theme/vault_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 
@@ -7,24 +8,20 @@ class CodeInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final textTheme = VaultTheme.textTheme;
 
     final defaultPinTheme = PinTheme(
       width: 44,
       height: 52,
-      textStyle: textTheme.headlineMedium?.copyWith(
-        fontWeight: .w700,
-        color: colors.onSurface,
-      ),
+      textStyle: textTheme.headlineMedium,
       decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
-        borderRadius: .circular(8),
+        color: VaultTheme.surfaceMuted,
+        borderRadius: .circular(VaultTheme.radiusMd),
       ),
     );
 
     final focusedPinTheme = defaultPinTheme.copyDecorationWith(
-      border: Border.all(color: colors.primaryContainer, width: 1.5),
+      border: Border.all(color: VaultTheme.primary, width: 1.5),
     );
 
     return Pinput(
