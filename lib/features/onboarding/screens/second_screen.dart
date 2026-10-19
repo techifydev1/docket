@@ -92,9 +92,23 @@ class _SecondScreenState extends State<SecondScreen> {
                       UserProvider userProvider = context.read<UserProvider>();
                       FamilyProvider familyProvider = context
                           .read<FamilyProvider>();
+                      final storage = crypto.storage;
+                      final biometricsReady =
+                          await storage.saveUseBiometrics(_useBiometrics) &&
+                          await storage.verifyBiometrics();
+                      if (!biometricsReady) {
+                        await storage.saveUseBiometrics(false);
+                        if (mounted) setState(() => _useBiometrics = false);
+                        if (context.mounted) {
+                          Toast.show(
+                            context,
+                            "Biometrics aren't set up on this device",
+                            variant: ToastVariant.error,
+                          );
+                        }
+                      }
                       final publicKey = await crypto.createUserKeys();
                       familyKey = crypto.generateFamilyKey();
-                      await crypto.storage.saveUseBiometrics(_useBiometrics);
                       cont.updateStep2(
                         name: _nameController.value.text,
                         email: _emailController.value.text,

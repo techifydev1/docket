@@ -98,7 +98,18 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
   Future<void> _continue(FamilyResponse? selected) async {
     if (selected == null || _isContinuing) return;
     setState(() => _isContinuing = true);
-    await context.read<CryptoService>().storage.prime();
+    try {
+      await context.read<CryptoService>().storage.prime();
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _isContinuing = false);
+      Toast.show(
+        context,
+        "We couldn't unlock your vault, please try again",
+        variant: ToastVariant.error,
+      );
+      return;
+    }
     UserResponse user;
     try {
       user = await _userService.getUser();
@@ -243,11 +254,21 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
                               provider.updateFamily(selected);
                               final documentsProvider = context
                                   .read<DocumentsProvider>();
+                              try {
+                                await context
+                                    .read<CryptoService>()
+                                    .storage
+                                    .prime();
+                              } catch (_) {
+                                if (!context.mounted) return;
+                                Toast.show(
+                                  context,
+                                  "We couldn't unlock your vault, please try again",
+                                  variant: ToastVariant.error,
+                                );
+                                return;
+                              }
                               documentsProvider.clear();
-                              await context
-                                  .read<CryptoService>()
-                                  .storage
-                                  .prime();
                               documentsProvider.load(
                                 familyId: selected.id,
                                 members: selected.familyMembers,

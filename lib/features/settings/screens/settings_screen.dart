@@ -1,4 +1,5 @@
 import 'package:docket/features/family/family_provider.dart';
+import 'package:docket/features/crypto/crypto_service.dart';
 import 'package:docket/features/family/screens/create_family_screen.dart';
 import 'package:docket/features/family/screens/select_family_screen.dart';
 import 'package:docket/features/settings/profile.dart';
@@ -10,6 +11,7 @@ import 'package:docket/features/settings/widgets/vault_info_card.dart';
 import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/shared/action_tile.dart';
 import 'package:docket/shared/section_header.dart';
+import 'package:docket/shared/toast.dart';
 import 'package:docket/features/user/user_provider.dart';
 import 'package:docket/shared/toggle_tile.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +25,38 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  bool _useBiometrics = true;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadBiometrics());
+  }
+
+  Future<void> _loadBiometrics() async {
+    if (!mounted) return;
+    final value = await context.read<CryptoService>().storage.useBiometrics();
+    if (!mounted) return;
+    setState(() => _useBiometrics = value);
+  }
+
+  Future<void> _setBiometrics(bool value) async {
+    final storage = context.read<CryptoService>().storage;
+    setState(() => _useBiometrics = value);
+    final applied =
+        await storage.saveUseBiometrics(value) &&
+        await storage.verifyBiometrics();
+    if (applied) return;
+    await storage.saveUseBiometrics(false);
+    if (!mounted) return;
+    setState(() => _useBiometrics = false);
+    Toast.show(
+      context,
+      "Biometrics aren't set up on this device",
+      variant: ToastVariant.error,
+    );
+  }
+
   Profile? _editedProfile;
 
   Future<void> _editProfile(Profile profile) async {
@@ -69,18 +103,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       onEdit: () => _editProfile(profile),
                     ),
                     const SizedBox(height: 24),
-                    const SectionHeader(
-                      title: "Security",
-                      action: "Coming soon",
-                      enabled: false,
-                    ),
+                    const SectionHeader(title: "Security"),
                     const SizedBox(height: 12),
-                    const ToggleTile(
+                    ToggleTile(
                       icon: Icons.fingerprint,
                       title: "Biometric / Face ID Lock",
                       subtitle: "Require biometric passkey to open the vault",
-                      value: true,
-                      enabled: false,
+                      value: _useBiometrics,
+                      onChanged: _setBiometrics,
                     ),
                     if (family != null) ...[
                       const SizedBox(height: 24),
