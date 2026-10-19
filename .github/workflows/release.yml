@@ -20,9 +20,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Extract version from pubspec
+      - name: Extract version from tag
         run: |
-          VERSION=$(grep 'version:' pubspec.yaml | awk '{print $2}' | cut -d'+' -f1)
+          VERSION="${GITHUB_REF_NAME#v}"
           echo "APP_VERSION=$VERSION" >> "$GITHUB_ENV"
           echo "Extracted version: $VERSION"
 
@@ -43,7 +43,7 @@ jobs:
         run: flutter pub get
 
       - name: Build release apk
-        run: flutter build apk --release
+        run: flutter build apk --release --build-name="$APP_VERSION" --build-number="${{ github.run_number }}"
 
       - name: Rename apk
         run: mv build/app/outputs/flutter-apk/app-release.apk "docket-v${APP_VERSION}.apk"

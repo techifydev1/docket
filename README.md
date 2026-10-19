@@ -66,7 +66,7 @@ lib/
 
 ## Releasing an APK
 
-Pushing a tag starting with `v` triggers GitHub Actions (`.github/workflows/release.yml`), which builds a release APK and publishes a GitHub release named after the `version:` in `pubspec.yaml`:
+Pushing a tag starting with `v` triggers GitHub Actions (`.github/workflows/release.yml`), which builds a release APK and publishes a GitHub release named after the tag:
 
 ```bash
 git tag v1.0.0
