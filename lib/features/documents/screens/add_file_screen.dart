@@ -90,6 +90,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
       if (!mounted) return;
       final now = DateTime.now();
       final today = "${now.day} ${_months[now.month - 1]} ${now.year}";
+      Toast.show(context, "Document added", variant: ToastVariant.success);
       Navigator.of(context).pop(
         DocumentItem(
           record: record,
