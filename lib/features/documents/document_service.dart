@@ -179,6 +179,7 @@ class DocumentService {
       "type": "authenticated",
       "overwrite": "false",
       "signature": "${sign["signature"]}",
+      "max_file_size": "${sign["max_file_size"]}",
     });
     try {
       final response = await Dio().post(

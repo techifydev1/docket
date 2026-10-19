@@ -110,6 +110,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
         ),
       );
     } on ApiError catch (e) {
+      debugPrint(e.errorMessage);
       if (!mounted) return;
       Toast.show(context, e.errorMessage, variant: ToastVariant.error);
     } catch (e) {
