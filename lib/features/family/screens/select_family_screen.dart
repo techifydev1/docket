@@ -98,6 +98,7 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
   Future<void> _continue(FamilyResponse? selected) async {
     if (selected == null || _isContinuing) return;
     setState(() => _isContinuing = true);
+    await context.read<CryptoService>().storage.prime();
     UserResponse user;
     try {
       user = await _userService.getUser();
@@ -243,6 +244,10 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
                               final documentsProvider = context
                                   .read<DocumentsProvider>();
                               documentsProvider.clear();
+                              await context
+                                  .read<CryptoService>()
+                                  .storage
+                                  .prime();
                               documentsProvider.load(
                                 familyId: selected.id,
                                 members: selected.familyMembers,

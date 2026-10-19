@@ -11,6 +11,8 @@ class ProfileCard extends StatelessWidget {
   final TextEditingController emailController;
   final TextEditingController phoneController;
   final TextEditingController passwordController;
+  final bool biometricsEnabled;
+  final ValueChanged<bool> onBiometricsChanged;
   final VoidCallback onChanged;
   const ProfileCard({
     super.key,
@@ -18,6 +20,8 @@ class ProfileCard extends StatelessWidget {
     required this.emailController,
     required this.phoneController,
     required this.passwordController,
+    required this.biometricsEnabled,
+    required this.onBiometricsChanged,
     required this.onChanged,
   });
 
@@ -86,7 +90,10 @@ class ProfileCard extends StatelessWidget {
             onChanged: onChanged,
           ),
           const SizedBox(height: 16),
-          const BiometricToggle(),
+          BiometricToggle(
+            value: biometricsEnabled,
+            onChanged: onBiometricsChanged,
+          ),
         ],
       ),
     );

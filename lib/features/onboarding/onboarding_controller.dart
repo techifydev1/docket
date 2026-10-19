@@ -20,7 +20,6 @@ class OnboardingController with ChangeNotifier {
     required String email,
     required String phone,
     required String password,
-    bool biometricsActive = false,
     required String publicKey,
     required String wrappedFamilyKey,
   }) {
@@ -28,7 +27,6 @@ class OnboardingController with ChangeNotifier {
     _requestData.email = email;
     _requestData.password = password;
     _requestData.phone = phone;
-    _requestData.isBiometricsEnabled = biometricsActive;
     _requestData.publicKey = publicKey;
     _requestData.wrappedFamilyKey = wrappedFamilyKey;
     notifyListeners();

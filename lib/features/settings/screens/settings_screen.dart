@@ -82,22 +82,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       value: true,
                       enabled: false,
                     ),
-                    const SizedBox(height: 12),
-                    const ToggleTile(
-                      icon: Icons.lock_outline,
-                      title: "Lock on exit",
-                      subtitle: "Re-authenticate whenever the app is reopened",
-                      value: false,
-                      enabled: false,
-                    ),
-                    const SizedBox(height: 12),
-                    const ToggleTile(
-                      icon: Icons.notifications_none,
-                      title: "Vault email alerts",
-                      subtitle: "Notify me when a document is added or shared",
-                      value: true,
-                      enabled: false,
-                    ),
                     if (family != null) ...[
                       const SizedBox(height: 24),
                       const SectionHeader(title: "Vault"),

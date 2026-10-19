@@ -32,6 +32,7 @@ class _SecondScreenState extends State<SecondScreen> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isRegistering = false;
+  bool _useBiometrics = true;
 
   @override
   void dispose() {
@@ -65,6 +66,9 @@ class _SecondScreenState extends State<SecondScreen> {
             emailController: _emailController,
             phoneController: _phoneController,
             passwordController: _passwordController,
+            biometricsEnabled: _useBiometrics,
+            onBiometricsChanged: (value) =>
+                setState(() => _useBiometrics = value),
             onChanged: () => setState(() {}),
           ),
           const SizedBox(height: 16),
@@ -90,6 +94,7 @@ class _SecondScreenState extends State<SecondScreen> {
                           .read<FamilyProvider>();
                       final publicKey = await crypto.createUserKeys();
                       familyKey = crypto.generateFamilyKey();
+                      await crypto.storage.saveUseBiometrics(_useBiometrics);
                       cont.updateStep2(
                         name: _nameController.value.text,
                         email: _emailController.value.text,
