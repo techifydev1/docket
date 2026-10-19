@@ -205,16 +205,17 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
           crossAxisAlignment: .stretch,
           children: [
             Padding(
-              padding: const .fromLTRB(4, 4, 8, 0),
+              padding: const .fromLTRB(8, 12, 8, 4),
               child: Row(
                 children: [
                   const DocketBackButton(),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       _document.title,
                       maxLines: 1,
                       overflow: .ellipsis,
-                      style: textTheme.labelLarge,
+                      style: textTheme.titleMedium,
                     ),
                   ),
                   IconButton(
