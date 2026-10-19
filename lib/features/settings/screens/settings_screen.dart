@@ -109,12 +109,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           icon: Icons.swap_horiz,
                           title: "Switch vault",
                           subtitle: "Open a different family vault",
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  const SelectFamilyScreen(isPicker: true),
+                          onTap: () => {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    const SelectFamilyScreen(isPicker: true),
+                              ),
                             ),
-                          ),
+                          },
                         ),
                       ],
                       const SizedBox(height: 12),

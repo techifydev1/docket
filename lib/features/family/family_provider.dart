@@ -10,7 +10,15 @@ class FamilyProvider extends ChangeNotifier {
 
   void updateFamilies(List<FamilyResponse> families) {
     _families = families;
-    _selectedFamily = families.isEmpty ? null : families.first;
+    final selectedId = _selectedFamily?.id;
+    FamilyResponse? next;
+    for (final family in families) {
+      if (family.id == selectedId) {
+        next = family;
+        break;
+      }
+    }
+    _selectedFamily = next ?? (families.isEmpty ? null : families.first);
     notifyListeners();
   }
 

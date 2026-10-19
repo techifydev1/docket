@@ -2,6 +2,7 @@ import 'package:docket/core/theme/vault_theme.dart';
 import 'package:docket/features/auth/auth_gate.dart';
 import 'package:docket/features/auth/logout.dart';
 import 'package:docket/features/crypto/crypto_service.dart';
+import 'package:docket/features/documents/documents_provider.dart';
 import 'package:docket/features/family/family_provider.dart';
 import 'package:docket/features/family/screens/create_family_screen.dart';
 import 'package:docket/features/family/family_response.dart';
@@ -236,9 +237,19 @@ class _SelectFamilyScreenState extends State<SelectFamilyScreen> {
                   CtaSection(
                     onPressed: selected == null || _isLoading || _isContinuing
                         ? null
-                        : () {
+                        : () async {
                             if (widget.isPicker) {
                               provider.updateFamily(selected);
+                              final documentsProvider = context
+                                  .read<DocumentsProvider>();
+                              documentsProvider.clear();
+                              documentsProvider.load(
+                                familyId: selected.id,
+                                members: selected.familyMembers,
+                                wrappedKey: selected.wrappedKey,
+                                keyVersion: selected.keyVersion,
+                              );
+                              if (!context.mounted) return;
                               Navigator.of(context).maybePop();
                             } else {
                               _continue(selected);
