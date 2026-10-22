@@ -1,4 +1,4 @@
-package com.example.docket
+package com.qudus.docket
 
 import io.flutter.embedding.android.FlutterActivity
 
