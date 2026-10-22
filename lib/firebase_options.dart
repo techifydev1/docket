@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -51,13 +42,31 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAyJKU_0cbE8h2L6FIIZNMIc7_VbuuTgeE',
-    appId: '1:183220422155:android:bda707a601ac6fe790690e',
+    appId: '1:183220422155:android:e9953d63ed987c7d90690e',
     messagingSenderId: '183220422155',
     projectId: 'docket-bd33b',
     storageBucket: 'docket-bd33b.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyCnOxaTYsqKT6qyiE2N4crZBXfCdyw8QoE',
+    appId: '1:183220422155:ios:0ba821d3bf5a64de90690e',
+    messagingSenderId: '183220422155',
+    projectId: 'docket-bd33b',
+    storageBucket: 'docket-bd33b.firebasestorage.app',
+    iosClientId: '183220422155-1k6dssvij5n7iqroa1ja8g1112pnnufr.apps.googleusercontent.com',
+    iosBundleId: 'com.qudus.docket',
+  );
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyC6egMSKUvZsEiprSe2DC8R8oUnDVH9mgc',
+    appId: '1:183220422155:web:1756593de935bcdc90690e',
+    messagingSenderId: '183220422155',
+    projectId: 'docket-bd33b',
+    authDomain: 'docket-bd33b.firebaseapp.com',
+    storageBucket: 'docket-bd33b.firebasestorage.app',
+    measurementId: 'G-WRH3L3M3TW',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyCnOxaTYsqKT6qyiE2N4crZBXfCdyw8QoE',
     appId: '1:183220422155:ios:7572002409eb074390690e',
     messagingSenderId: '183220422155',
@@ -65,5 +74,15 @@ class DefaultFirebaseOptions {
     storageBucket: 'docket-bd33b.firebasestorage.app',
     iosClientId: '183220422155-br9958s9fo3ek2v4e4os4v7ruu2srn0b.apps.googleusercontent.com',
     iosBundleId: 'com.example.docket',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyC6egMSKUvZsEiprSe2DC8R8oUnDVH9mgc',
+    appId: '1:183220422155:web:83f0fa9e596c364c90690e',
+    messagingSenderId: '183220422155',
+    projectId: 'docket-bd33b',
+    authDomain: 'docket-bd33b.firebaseapp.com',
+    storageBucket: 'docket-bd33b.firebasestorage.app',
+    measurementId: 'G-77V5173BB8',
   );
 }
